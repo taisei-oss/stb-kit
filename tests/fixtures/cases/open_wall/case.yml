@@ -1,0 +1,22 @@
+# Copyright 2026 TAISEI CORPORATION
+# SPDX-License-Identifier: MPL-2.0
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+id: open_wall
+description: 壁開孔
+
+input:
+  format: stb_v2_0_2
+
+tree:
+  to: stb_v2_1_0
+  children:
+    - to: stb_v2_1_1
+      children:
+        - to: ply
+        - to: ifc4
+          children:
+            - to: ply
+    

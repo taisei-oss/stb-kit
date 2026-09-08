@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://www.building-smart.or.jp/dl" version="2.1.1">
+ <StbCommon project_name="column_rc" app_name="stbkit-core" app_version="0.0.0"/>
+ <StbModel>
+  <StbNodes>
+   <StbNode id="11" X="0.0" Y="0.0" Z="0.0" kind="ON_GRID"/>
+   <StbNode id="12" X="0.0" Y="0.0" Z="5000.0" kind="ON_GRID"/>
+   <StbNode id="21" X="5000.0" Y="0.0" Z="0.0" kind="ON_GRID"/>
+   <StbNode id="22" X="5000.0" Y="0.0" Z="5000.0" kind="ON_GRID"/>
+  </StbNodes>
+  <StbMembers>
+   <StbColumns>
+    <StbColumn id="1" name="rect" id_node_bottom="11" id_node_top="12" id_section="1" kind_structure="RC"/>
+    <StbColumn id="2" name="circle" id_node_bottom="21" id_node_top="22" id_section="2" kind_structure="RC"/>
+   </StbColumns>
+  </StbMembers>
+  <StbSections>
+   <StbSecColumn_RC id="1" name="rect">
+    <StbSecFigureColumn_RC>
+     <StbSecColumnRect width_X="600.0" width_Y="500.0"/>
+    </StbSecFigureColumn_RC>
+   </StbSecColumn_RC>
+   <StbSecColumn_RC id="2" name="circle">
+    <StbSecFigureColumn_RC>
+     <StbSecColumnCircle D="700.0"/>
+    </StbSecFigureColumn_RC>
+   </StbSecColumn_RC>
+  </StbSections>
+ </StbModel>
+</ST_BRIDGE>

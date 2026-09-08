@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ST_BRIDGE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="2.0.2" xmlns="https://www.building-smart.or.jp/dl">
+  <StbCommon project_name="test" app_name="stbkit-core" app_version="0.0.0" />
+  <StbModel>
+    <StbNodes>
+      <StbNode id="11" X="0" Y="0" Z="0" kind="ON_GRID" />
+      <StbNode id="12" X="5000" Y="0" Z="0" kind="ON_GRID" />
+      <StbNode id="13" X="10000" Y="0" Z="0" kind="ON_GRID" />
+      <StbNode id="14" X="15000" Y="0" Z="0" kind="ON_GRID" />
+    </StbNodes>
+    <StbMembers>
+      <StbGirders>
+        <StbGirder id="1" name="straight" id_node_start="11" id_node_end="12" id_section="1" kind_structure="RC" isFoundation="false" />
+        <StbGirder id="2" name="taper" id_node_start="12" id_node_end="13" id_section="2" kind_structure="RC" isFoundation="false" />
+        <StbGirder id="3" name="haunch" id_node_start="13" id_node_end="14" id_section="3" kind_structure="RC" isFoundation="false" haunch_start="1000" haunch_end="1500" />
+      </StbGirders>
+    </StbMembers>
+    <StbSections>
+      <StbSecBeam_RC id="1" name="straight">
+        <StbSecFigureBeam_RC>
+          <StbSecBeam_RC_Straight width="400" depth="700" />
+        </StbSecFigureBeam_RC>
+      </StbSecBeam_RC>
+      <StbSecBeam_RC id="2" name="taper">
+        <StbSecFigureBeam_RC>
+          <StbSecBeam_RC_Taper pos="START" width="300" depth="500" />
+          <StbSecBeam_RC_Taper pos="END" width="700" depth="1000" />
+        </StbSecFigureBeam_RC>
+      </StbSecBeam_RC>
+      <StbSecBeam_RC id="3" name="haunch">
+        <StbSecFigureBeam_RC>
+          <StbSecBeam_RC_Haunch pos="START" width="800" depth="1200" />
+          <StbSecBeam_RC_Haunch pos="CENTER" width="400" depth="700" />
+          <StbSecBeam_RC_Haunch pos="END" width="800" depth="1500" />
+        </StbSecFigureBeam_RC>
+      </StbSecBeam_RC>
+    </StbSections>
+  </StbModel>
+</ST_BRIDGE>

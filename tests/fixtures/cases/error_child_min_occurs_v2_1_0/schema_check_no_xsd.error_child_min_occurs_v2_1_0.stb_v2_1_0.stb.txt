@@ -1,0 +1,1 @@
+WARNING schema_error validate /ST_BRIDGE/StbCommon 必須要素[StbCommon]の最小回数は1です

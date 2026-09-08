@@ -1,0 +1,83 @@
+# Copyright 2025-2026 TAISEI CORPORATION
+# SPDX-License-Identifier: MPL-2.0
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stbkit"
+version = "0.1.0a9.dev1"
+description = "ST-Bridgeを扱うライブラリSTB-KIT"
+authors = [
+    { name = "STB-KIT Development Team (TAISEI CORPORATION)", email = "oss-dev@pub.taisei.co.jp" },
+]
+dependencies = ["stbkit-core==0.1.0a9.dev1"]
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MPL-2.0"
+license-files = ["LICENSE"]
+keywords = ["ST-Bridge", "BIM", "IFC", "structural-engineering", "stbridge"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Natural Language :: Japanese",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Multimedia :: Graphics :: 3D Modeling",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Text Processing :: Markup :: XML",
+    "Typing :: Typed",
+]
+
+[project.urls]
+Homepage = "https://github.com/taisei-oss/stb-kit"
+Repository = "https://github.com/taisei-oss/stb-kit"
+Issues = "https://github.com/taisei-oss/stb-kit/issues"
+Changelog = "https://github.com/taisei-oss/stb-kit/blob/main/CHANGELOG.md"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+namespaces = true
+
+[tool.uv.sources]
+stbkit-core = { workspace = true }
+
+[project.scripts]
+stbkit = "stbkit.__main__:main"
+
+[project.optional-dependencies]
+xsd = ["xmlschema>=4.3.2"]
+ifc = [
+    "ifcopenshell>=0.8.5",
+    "numpy"
+]
+full = [
+    "ifcopenshell>=0.8.5",
+    "numpy",
+    "xmlschema>=4.3.2",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# 辞書形式の要素名が長いため1行になるのを許容
+"src/stbkit/tools/transform/versioning/_internal/upgrade_v202_to_v210/tables.py" = [
+    "E501",
+]
+# 社内用コードから公開用コードへ切り出す際に生じてしまうエラーの除外
+"src/stbkit/cli/_internal/diff.py" = ["F401", "I001"]
+
+[tool.ruff.format]
+# 社内用コードから公開用コードへ切り出す際に生じてしまうフォーマットエラーの除外
+exclude = [
+    "src/stbkit/cli/_internal/entry_points.py",
+    "src/stbkit/cli/_internal/diff.py",
+]

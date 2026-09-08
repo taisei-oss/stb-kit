@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://www.building-smart.or.jp/dl" version="2.1.1">
+ <StbCommon project_name="test" app_name="stbkit-core" app_version="0.0.0"/>
+ <StbModel>
+  <StbNodes>
+   <StbNode id="11" X="0.0" Y="0.0" Z="0.0" kind="ON_GRID"/>
+   <StbNode id="12" X="0.0" Y="0.0" Z="5000.0" kind="ON_GRID"/>
+   <StbNode id="111" X="0.0" Y="5000.0" Z="0.0" kind="ON_GRID"/>
+   <StbNode id="112" X="0.0" Y="5000.0" Z="5000.0" kind="ON_GRID"/>
+   <StbNode id="211" X="0.0" Y="10000.0" Z="0.0" kind="ON_GRID"/>
+   <StbNode id="212" X="0.0" Y="10000.0" Z="5000.0" kind="ON_GRID"/>
+   <StbNode id="21" X="4000.0" Y="0.0" Z="0.0" kind="ON_GRID"/>
+   <StbNode id="22" X="4000.0" Y="0.0" Z="5000.0" kind="ON_GRID"/>
+   <StbNode id="311" X="0.0" Y="15000.0" Z="0.0" kind="ON_GRID"/>
+   <StbNode id="312" X="0.0" Y="15000.0" Z="5000.0" kind="ON_GRID"/>
+   <StbNode id="313" X="0.0" Y="15000.0" Z="10000.0" kind="ON_GRID"/>
+   <StbNode id="321" X="5000.0" Y="4000.0" Z="0.0" kind="ON_GRID"/>
+   <StbNode id="322" X="5000.0" Y="4000.0" Z="5000.0" kind="ON_GRID"/>
+   <StbNode id="323" X="5000.0" Y="4000.0" Z="10000.0" kind="ON_GRID"/>
+  </StbNodes>
+  <StbMembers>
+   <StbColumns>
+    <StbColumn id="1" name="same_box" id_node_bottom="11" id_node_top="12" id_section="1" kind_structure="S"/>
+    <StbColumn id="11" name="not_same_box" id_node_bottom="111" id_node_top="112" id_section="11" kind_structure="S" steel_switch_height_bottom="1000.0"/>
+    <StbColumn id="21" name="three_types_box" id_node_bottom="211" id_node_top="212" id_section="21" kind_structure="S" steel_switch_height_bottom="1000.0" steel_switch_height_top="1500.0"/>
+    <StbColumn id="2" name="rotate_and_offset" id_node_bottom="21" id_node_top="22" rotate="45.0" id_section="1" kind_structure="S" offset_bottom_X="100.0" offset_bottom_Y="200.0" offset_bottom_Z="300.0" offset_top_X="100.0" offset_top_Y="200.0" offset_top_Z="300.0"/>
+    <StbColumn id="31" name="same_bh_ref_dir_true" id_node_bottom="311" id_node_top="312" id_section="31" kind_structure="S"/>
+    <StbColumn id="310" name="same_bh_ref_dir_true_rotate" id_node_bottom="312" id_node_top="313" rotate="45.0" id_section="31" kind_structure="S"/>
+    <StbColumn id="32" name="same_bh_ref_dir_false" id_node_bottom="321" id_node_top="322" id_section="32" kind_structure="S"/>
+    <StbColumn id="320" name="same_bh_ref_dir_false_rotate" id_node_bottom="322" id_node_top="323" rotate="45.0" id_section="32" kind_structure="S"/>
+   </StbColumns>
+   <StbFoundationColumns>
+    <StbFoundationColumn id="1001" name="fd+wr" id_node="11" kind_structure="RC" id_section_FD="1001" length_FD="1000.0" id_section_WR="1002" length_WR="500.0"/>
+    <StbFoundationColumn id="2002" name="fd+wr_rotate_and_offset" id_node="21" rotate="45.0" offset_Z="300.0" kind_structure="RC" id_section_FD="1001" length_FD="1000.0" offset_FD_X="100.0" offset_FD_Y="200.0" id_section_WR="1002" length_WR="500.0" offset_WR_X="100.0" offset_WR_Y="200.0"/>
+   </StbFoundationColumns>
+  </StbMembers>
+  <StbSections>
+   <StbSecColumn_RC id="1001" name="fd">
+    <StbSecFigureColumn_RC>
+     <StbSecColumnRect width_X="2000.0" width_Y="2000.0"/>
+    </StbSecFigureColumn_RC>
+   </StbSecColumn_RC>
+   <StbSecColumn_RC id="1002" name="rw">
+    <StbSecFigureColumn_RC>
+     <StbSecColumnRect width_X="1800.0" width_Y="1800.0"/>
+    </StbSecFigureColumn_RC>
+   </StbSecColumn_RC>
+   <StbSecColumn_S id="1" name="same_box">
+    <StbSecSteelFigureColumn_S>
+     <StbSecSteelColumn_S_Same shape="BB-1200x1000x25x50" strength_main="SN400"/>
+    </StbSecSteelFigureColumn_S>
+   </StbSecColumn_S>
+   <StbSecColumn_S id="11" name="not_same_box">
+    <StbSecSteelFigureColumn_S>
+     <StbSecSteelColumn_S_NotSame pos="BOTTOM" shape="BB-1200x1000x100x150" strength_main="SN400"/>
+     <StbSecSteelColumn_S_NotSame pos="TOP" shape="BB-1200x1000x25x50" strength_main="SN400"/>
+    </StbSecSteelFigureColumn_S>
+   </StbSecColumn_S>
+   <StbSecColumn_S id="21" name="three_types_box">
+    <StbSecSteelFigureColumn_S>
+     <StbSecSteelColumn_S_ThreeTypes pos="BOTTOM" shape="BB-1200x1000x25x50" strength_main="SN400"/>
+     <StbSecSteelColumn_S_ThreeTypes pos="CENTER" shape="BB-1200x1000x100x150" strength_main="SN400"/>
+     <StbSecSteelColumn_S_ThreeTypes pos="TOP" shape="BB-1200x1000x100x150" strength_main="SN400"/>
+    </StbSecSteelFigureColumn_S>
+   </StbSecColumn_S>
+   <StbSecColumn_S id="31" name="same_bh_ref_dir_true" isReferenceDirection="true">
+    <StbSecSteelFigureColumn_S>
+     <StbSecSteelColumn_S_Same shape="BH-700x300x12x22" strength_main="SN400"/>
+    </StbSecSteelFigureColumn_S>
+   </StbSecColumn_S>
+   <StbSecColumn_S id="32" name="same_bh_ref_dir_false" isReferenceDirection="false">
+    <StbSecSteelFigureColumn_S>
+     <StbSecSteelColumn_S_Same shape="BH-700x300x12x22" strength_main="SN400"/>
+    </StbSecSteelFigureColumn_S>
+   </StbSecColumn_S>
+   <StbSecSteel>
+    <StbSecBuild-H name="BH-700x300x12x22" A="700.0" B="300.0" t1="12.0" t2="22.0"/>
+    <StbSecBuild-BOX name="BB-1200x1000x25x50" A="1200.0" B="1000.0" t1="25.0" t2="50.0"/>
+    <StbSecBuild-BOX name="BB-1200x1000x100x150" A="1200.0" B="1000.0" t1="100.0" t2="150.0"/>
+   </StbSecSteel>
+  </StbSections>
+ </StbModel>
+</ST_BRIDGE>

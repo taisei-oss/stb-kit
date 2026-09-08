@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://www.building-smart.or.jp/dl" version="2.1.0">
+ <StbCommon project_name="error_child_v210" app_name="stbkit-core" app_version="0.0.0">
+  <ErrorChild attr1="error"/>
+ </StbCommon>
+ <StbModel>
+  <StbNodes>
+   <StbNode id="1" X="0" Y="0" Z="0" kind="ON_GRID"/>
+  </StbNodes>
+ </StbModel>
+</ST_BRIDGE>

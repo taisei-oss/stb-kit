@@ -1,0 +1,14 @@
+# Copyright 2026 TAISEI CORPORATION
+# SPDX-License-Identifier: MPL-2.0
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+blank_issues_enabled: false
+contact_links:
+  - name: 脆弱性の報告
+    url: https://forms.office.com/r/7xDrj1SCL1
+    about: 脆弱性の報告は公開Issueに書かず、フォームからご連絡ください。詳細はSECURITY.mdを参照してください。
+  - name: 質問・相談
+    url: https://github.com/taisei-oss/stb-kit/discussions
+    about: 質問や相談はDiscussionsへ投稿してください。

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ST_BRIDGE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="2.0.2" xmlns="https://www.building-smart.or.jp/dl">
+  <StbCommon project_name="test" app_name="stbkit-core" app_version="0.0.0" />
+  <StbModel>
+    <StbNodes>
+      <StbNode id="11" X="0" Y="0" Z="0" kind="ON_GRID" />
+      <StbNode id="12" X="2000" Y="0" Z="0" kind="ON_GRID" />
+      <StbNode id="13" X="4000" Y="0" Z="0" kind="ON_GRID" />
+      <StbNode id="14" X="6000" Y="0" Z="0" kind="ON_GRID" />
+      <StbNode id="21" X="0" Y="2000" Z="0" kind="ON_GRID" />
+      <StbNode id="22" X="2000" Y="2000" Z="0" kind="ON_GRID" />
+    </StbNodes>
+    <StbMembers>
+      <StbPiles>
+        <StbPile id="11" name="straight" id_node="11" id_section="11" kind_structure="RC" length_all="8000" />
+        <StbPile id="12" name="extend_foot" id_node="12" id_section="12" kind_structure="RC" level_top="-100" length_all="8000" length_foot="2000" />
+        <StbPile id="13" name="extend_top" id_node="13" id_section="13" kind_structure="RC" level_top="100" length_all="8000" length_head="1000" />
+        <StbPile id="14" name="extend_top_foot" id_node="14" id_section="14" kind_structure="RC" level_top="0" length_all="8000" length_head="1000" length_foot="2000" />
+        <StbPile id="21" name="s_straight+rotational" id_node="21" id_section="21" kind_structure="S" />
+        <StbPile id="22" name="s_straight+taper" id_node="22" id_section="22" kind_structure="S" />
+      </StbPiles>
+    </StbMembers>
+    <StbSections>
+      <StbSecPile_RC id="11" name="straight">
+        <StbSecFigurePile_RC>
+          <StbSecPile_RC_Straight D="400" />
+        </StbSecFigurePile_RC>
+      </StbSecPile_RC>
+      <StbSecPile_RC id="12" name="extend_foot">
+        <StbSecFigurePile_RC>
+          <StbSecPile_RC_ExtendedFoot D_axial="400" D_extended_foot="600" length_extended_foot="200" angle_extended_foot_taper="30" />
+        </StbSecFigurePile_RC>
+      </StbSecPile_RC>
+      <StbSecPile_RC id="13" name="extend_top">
+        <StbSecFigurePile_RC>
+          <StbSecPile_RC_ExtendedTop D_extended_top="600" D_axial="400" angle_extended_top_taper="30" />
+        </StbSecFigurePile_RC>
+      </StbSecPile_RC>
+      <StbSecPile_RC id="14" name="extend_top_foot">
+        <StbSecFigurePile_RC>
+          <StbSecPile_RC_ExtendedTopFoot D_extended_top="600" D_axial="400" D_extended_foot="800" angle_extended_top_taper="45" length_extended_foot="200" angle_extended_foot_taper="30" />
+        </StbSecFigurePile_RC>
+      </StbSecPile_RC>
+      <StbSecPile_S id="21" name="straight+rotational">
+        <StbSecFigurePile_S>
+          <StbSecPile_S_Straight id_order="1" length_pile="5000" D="400" t="50" strength="SN400" />
+          <StbSecPile_S_Rotational id_order="2" length_pile="3000" D1="400" D2="600" t="50" strength="SN400" />
+        </StbSecFigurePile_S>
+      </StbSecPile_S>
+      <StbSecPile_S id="22" name="straight+taper">
+        <StbSecFigurePile_S>
+          <StbSecPile_S_Straight id_order="1" length_pile="5000" D="400" t="50" strength="SN400" />
+          <StbSecPile_S_Taper id_order="2" length_pile="3000" D1="400" D2="200" t="50" strength="SN400" />
+        </StbSecFigurePile_S>
+      </StbSecPile_S>
+    </StbSections>
+  </StbModel>
+</ST_BRIDGE>

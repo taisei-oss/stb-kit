@@ -1,0 +1,1 @@
+ERROR schema_error validate /ST_BRIDGE xsd:attribute 'version' has a fixed value '2.1.0'

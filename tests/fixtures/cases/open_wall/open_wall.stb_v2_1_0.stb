@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://www.building-smart.or.jp/dl" version="2.1.0">
+ <StbCommon project_name="open_wall" app_name="stbkit-core" app_version="0.0.0"/>
+ <StbModel>
+  <StbNodes>
+   <StbNode id="11" X="0.0" Y="0.0" Z="0.0" kind="ON_GRID"/>
+   <StbNode id="21" X="5000.0" Y="0.0" Z="0.0" kind="ON_GRID"/>
+   <StbNode id="12" X="0.0" Y="0.0" Z="5000.0" kind="ON_GRID"/>
+   <StbNode id="22" X="5000.0" Y="0.0" Z="5000.0" kind="ON_GRID"/>
+   <StbNode id="13" X="0.0" Y="0.0" Z="10000.0" kind="ON_GRID"/>
+   <StbNode id="23" X="5000.0" Y="0.0" Z="10000.0" kind="ON_GRID"/>
+  </StbNodes>
+  <StbMembers>
+   <StbWalls>
+    <StbWall id="1" name="open_1" id_section="1" kind_structure="RC" kind_layout="ON_GIRDER">
+     <StbNodeIdOrder>11 21 22 12</StbNodeIdOrder>
+    </StbWall>
+    <StbWall id="2" name="open_2" id_section="1" kind_structure="RC" kind_layout="ON_GIRDER">
+     <StbNodeIdOrder>12 22 23 13</StbNodeIdOrder>
+    </StbWall>
+   </StbWalls>
+   <StbOpenArrangements>
+    <StbOpenArrangement id="11" name="open_1-1" id_section="1" kind_member="WALL" id_member="1" position_X="100.0" position_Y="200.0" rotate="0.0"/>
+    <StbOpenArrangement id="21" name="open_2-1" id_section="2" kind_member="WALL" id_member="2" position_X="100.0" position_Y="200.0" rotate="0.0"/>
+    <StbOpenArrangement id="22" name="open_2-2" id_section="3" kind_member="WALL" id_member="2" position_X="400.0" position_Y="600.0" rotate="0.0"/>
+   </StbOpenArrangements>
+  </StbMembers>
+  <StbSections>
+   <StbSecWall_RC id="1" name="w15">
+    <StbSecFigureWall_RC>
+     <StbSecWall_RC_Straight t="150.0"/>
+    </StbSecFigureWall_RC>
+   </StbSecWall_RC>
+   <StbSecOpen_RC id="1" guid="00000000000000000000000000000000" name="open_1-1_sec" length_X="300.0" length_Y="400.0"/>
+   <StbSecOpen_RC id="2" guid="00000000000000000000000000000001" name="open_2-1_sec" length_X="300.0" length_Y="400.0"/>
+   <StbSecOpen_RC id="3" guid="00000000000000000000000000000002" name="open_2-2_sec" length_X="500.0" length_Y="600.0"/>
+  </StbSections>
+ </StbModel>
+</ST_BRIDGE>

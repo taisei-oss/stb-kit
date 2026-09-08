@@ -1,0 +1,2 @@
+ERROR schema_error validate /ST_BRIDGE/StbModel/StbNodes/StbNode xsd:attribute X='a': value doesn't match any pattern of ['(\\+|-)?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([Ee](\\+|-)?[0-9]+)?|INF|-INF|NaN']
+ERROR schema_error validate /ST_BRIDGE/StbModel/StbNodes/StbNode xsd:attribute X='a': could not convert string to float: 'a'

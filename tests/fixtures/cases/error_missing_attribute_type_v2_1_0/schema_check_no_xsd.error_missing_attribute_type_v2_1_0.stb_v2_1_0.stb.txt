@@ -1,0 +1,1 @@
+WARNING schema_error validate /ST_BRIDGE/StbModel/StbNodes/StbNode[1]/@X 必須属性[X]がnullです

@@ -1,0 +1,1 @@
+ERROR extension_error load /ST_BRIDGE/StbCommon/@err_attr 要素[StbCommon]の不明な拡張属性[err_attr]を削除しました (value: error)

@@ -1,0 +1,1 @@
+WARNING schema_error validate /ST_BRIDGE/StbModel/StbMembers/StbSlabs/StbSlab[1]/StbNodeIdOrder/text() 要素[StbNodeIdOrder]の内容がありません

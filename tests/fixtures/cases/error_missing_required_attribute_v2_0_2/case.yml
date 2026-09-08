@@ -1,0 +1,19 @@
+# Copyright 2026 TAISEI CORPORATION
+# SPDX-License-Identifier: MPL-2.0
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+id: error_missing_required_attribute_v2_0_2
+description: 必須属性が欠落しているエラーケース（v2.0.2）
+
+input:
+  format: stb_v2_0_2
+  enable-repair: true
+  compare-options:
+    ignore-application-information: true
+    filter:
+      element-attribute-filters:
+        StbNode:
+          exclude-attributes:
+            - Z

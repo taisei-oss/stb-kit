@@ -1,0 +1,16 @@
+# Copyright 2026 TAISEI CORPORATION
+# SPDX-License-Identifier: MPL-2.0
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+id: error_child_min_occurs_v2_1_0
+description: 子要素の出現回数下限を満たさないエラーケース（v2.1.0）
+
+input:
+  format: stb_v2_1_0
+  enable-repair: true
+  compare-options:
+    filter:
+      exclude-elements:
+        - StbCommon

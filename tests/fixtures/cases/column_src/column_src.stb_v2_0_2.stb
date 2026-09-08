@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ST_BRIDGE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="2.0.2" xmlns="https://www.building-smart.or.jp/dl">
+  <StbCommon project_name="test" app_name="stbkit-core" app_version="0.0.0" />
+  <StbModel>
+    <StbNodes>
+      <StbNode id="11" X="0" Y="0" Z="0" kind="ON_GRID" />
+      <StbNode id="12" X="0" Y="0" Z="5000" kind="ON_GRID" />
+      <StbNode id="21" X="2000" Y="0" Z="0" kind="ON_GRID" />
+      <StbNode id="22" X="2000" Y="0" Z="5000" kind="ON_GRID" />
+      <StbNode id="31" X="4000" Y="0" Z="0" kind="ON_GRID" />
+      <StbNode id="32" X="4000" Y="0" Z="5000" kind="ON_GRID" />
+      <StbNode id="41" X="6000" Y="0" Z="0" kind="ON_GRID" />
+      <StbNode id="42" X="6000" Y="0" Z="5000" kind="ON_GRID" />
+      <StbNode id="51" X="8000" Y="0" Z="0" kind="ON_GRID" />
+      <StbNode id="52" X="8000" Y="0" Z="5000" kind="ON_GRID" />
+      <StbNode id="111" X="0" Y="5000" Z="0" kind="ON_GRID" />
+      <StbNode id="112" X="0" Y="5000" Z="5000" kind="ON_GRID" />
+      <StbNode id="61" X="10000" Y="0" Z="0" kind="ON_GRID" />
+      <StbNode id="62" X="10000" Y="0" Z="5000" kind="ON_GRID" />
+      <StbNode id="71" X="12000" Y="0" Z="0" kind="ON_GRID" />
+      <StbNode id="72" X="12000" Y="0" Z="5000" kind="ON_GRID" />
+      <StbNode id="81" X="14000" Y="0" Z="0" kind="ON_GRID" />
+      <StbNode id="82" X="14000" Y="0" Z="5000" kind="ON_GRID" />
+      <StbNode id="91" X="16000" Y="0" Z="0" kind="ON_GRID" />
+      <StbNode id="92" X="16000" Y="0" Z="5000" kind="ON_GRID" />
+      <StbNode id="211" X="0" Y="10000" Z="0" kind="ON_GRID" />
+      <StbNode id="212" X="0" Y="10000" Z="5000" kind="ON_GRID" />
+    </StbNodes>
+    <StbMembers>
+      <StbColumns>
+        <StbColumn id="1" name="rc_rect_s_same_I" id_node_bottom="11" id_node_top="12" id_section="1" kind_structure="SRC" />
+        <StbColumn id="2" name="rc_rect_s_same_h" id_node_bottom="21" id_node_top="22" id_section="2" kind_structure="SRC" />
+        <StbColumn id="3" name="rc_rect_s_same_box" id_node_bottom="31" id_node_top="32" id_section="3" kind_structure="SRC" />
+        <StbColumn id="4" name="rc_rect_s_same_pipe" id_node_bottom="41" id_node_top="42" id_section="4" kind_structure="SRC" />
+        <StbColumn id="5" name="rc_circle_s_same_I" id_node_bottom="51" id_node_top="52" id_section="5" kind_structure="SRC" />
+        <StbColumn id="11" name="rc_rect_s_not_same_box" id_node_bottom="111" id_node_top="112" id_section="11" kind_structure="SRC" joint_bottom="1000" />
+        <StbColumn id="6" name="rc_rect_s_same_cross_h" id_node_bottom="61" id_node_top="62" id_section="6" kind_structure="SRC" />
+        <StbColumn id="7" name="rc_rect_s_same_cross_h_offset" id_node_bottom="71" id_node_top="72" id_section="7" kind_structure="SRC" />
+        <StbColumn id="8" name="rc_circle_s_same_t" id_node_bottom="81" id_node_top="82" id_section="8" kind_structure="SRC" />
+        <StbColumn id="9" name="rc_rect_s_same_t_offset" id_node_bottom="91" id_node_top="92" id_section="9" kind_structure="SRC" />
+        <StbColumn id="21" name="rc_rect_s_three_types_pipe" id_node_bottom="211" id_node_top="212" id_section="21" kind_structure="SRC" joint_top="1000" joint_bottom="1500" />
+      </StbColumns>
+    </StbMembers>
+    <StbSections>
+      <StbSecColumn_SRC id="1" name="rc_rect_s_same_I">
+        <StbSecFigureColumn_SRC>
+          <StbSecColumn_SRC_Rect width_X="1000" width_Y="1200" />
+        </StbSecFigureColumn_SRC>
+        <StbSecSteelFigureColumn_SRC>
+          <StbSecSteelColumn_SRC_Same>
+            <StbSecColumn_SRC_SameShapeH direction_type="I" shape="H-588x300x12x20" strength_main="SN400" offset_X="100" offset_Y="200" />
+          </StbSecSteelColumn_SRC_Same>
+        </StbSecSteelFigureColumn_SRC>
+      </StbSecColumn_SRC>
+      <StbSecColumn_SRC id="2" name="rc_rect_s_same_h">
+        <StbSecFigureColumn_SRC>
+          <StbSecColumn_SRC_Rect width_X="1200" width_Y="1000" />
+        </StbSecFigureColumn_SRC>
+        <StbSecSteelFigureColumn_SRC>
+          <StbSecSteelColumn_SRC_Same>
+            <StbSecColumn_SRC_SameShapeH direction_type="H" shape="H-588x300x12x20" strength_main="SN400" offset_X="100" offset_Y="200" />
+          </StbSecSteelColumn_SRC_Same>
+        </StbSecSteelFigureColumn_SRC>
+      </StbSecColumn_SRC>
+      <StbSecColumn_SRC id="3" name="rc_rect_s_same_box">
+        <StbSecFigureColumn_SRC>
+          <StbSecColumn_SRC_Rect width_X="1200" width_Y="1000" />
+        </StbSecFigureColumn_SRC>
+        <StbSecSteelFigureColumn_SRC>
+          <StbSecSteelColumn_SRC_Same>
+            <StbSecColumn_SRC_SameShapeBox shape="BB-700x900x25x50" encase_type="ENCASEDANDINFILLED" strength="SN400" offset_X="50" offset_Y="100" />
+          </StbSecSteelColumn_SRC_Same>
+        </StbSecSteelFigureColumn_SRC>
+      </StbSecColumn_SRC>
+      <StbSecColumn_SRC id="4" name="rc_rect_s_same_pipe">
+        <StbSecFigureColumn_SRC>
+          <StbSecColumn_SRC_Rect width_X="1000" width_Y="1000" />
+        </StbSecFigureColumn_SRC>
+        <StbSecSteelFigureColumn_SRC>
+          <StbSecSteelColumn_SRC_Same>
+            <StbSecColumn_SRC_SameShapePipe shape="P-700x50" encase_type="ENCASEDANDINFILLED" strength="SN400" offset_X="50" offset_Y="100" />
+          </StbSecSteelColumn_SRC_Same>
+        </StbSecSteelFigureColumn_SRC>
+      </StbSecColumn_SRC>
+      <StbSecColumn_SRC id="5" name="rc_circle_s_same_I">
+        <StbSecFigureColumn_SRC>
+          <StbSecColumn_SRC_Circle D="1000" />
+        </StbSecFigureColumn_SRC>
+        <StbSecSteelFigureColumn_SRC>
+          <StbSecSteelColumn_SRC_Same>
+            <StbSecColumn_SRC_SameShapeH direction_type="I" shape="H-588x300x12x20" strength_main="SN400" offset_X="50" offset_Y="100" />
+          </StbSecSteelColumn_SRC_Same>
+        </StbSecSteelFigureColumn_SRC>
+      </StbSecColumn_SRC>
+      <StbSecColumn_SRC id="11" name="rc_rect_s_not_same_box">
+        <StbSecFigureColumn_SRC>
+          <StbSecColumn_SRC_Rect width_X="1200" width_Y="1000" />
+        </StbSecFigureColumn_SRC>
+        <StbSecSteelFigureColumn_SRC>
+          <StbSecSteelColumn_SRC_NotSame pos="BOTTOM">
+            <StbSecColumn_SRC_NotSameShapeBox shape="BB-700x900x150x150" encase_type="ENCASEDANDINFILLED" strength="SN400" />
+          </StbSecSteelColumn_SRC_NotSame>
+          <StbSecSteelColumn_SRC_NotSame pos="TOP">
+            <StbSecColumn_SRC_NotSameShapeBox shape="BB-700x900x25x50" encase_type="ENCASEDANDINFILLED" strength="SN400" />
+          </StbSecSteelColumn_SRC_NotSame>
+        </StbSecSteelFigureColumn_SRC>
+      </StbSecColumn_SRC>
+      <StbSecColumn_SRC id="6" name="rc_rect_s_same_cross_h">
+        <StbSecFigureColumn_SRC>
+          <StbSecColumn_SRC_Rect width_X="1200" width_Y="1000" />
+        </StbSecFigureColumn_SRC>
+        <StbSecSteelFigureColumn_SRC>
+          <StbSecSteelColumn_SRC_Same>
+            <StbSecColumn_SRC_SameShapeCross shape_X="H-588x300x12x20" shape_Y="H-588x300x12x20" strength_main_X="SN400" />
+          </StbSecSteelColumn_SRC_Same>
+        </StbSecSteelFigureColumn_SRC>
+      </StbSecColumn_SRC>
+      <StbSecColumn_SRC id="7" name="rc_rect_s_same_cross_h_offset">
+        <StbSecFigureColumn_SRC>
+          <StbSecColumn_SRC_Rect width_X="1000" width_Y="1000" />
+        </StbSecFigureColumn_SRC>
+        <StbSecSteelFigureColumn_SRC>
+          <StbSecSteelColumn_SRC_Same>
+            <StbSecColumn_SRC_SameShapeCross shape_X="H-588x300x12x20" shape_Y="H-588x300x12x20" strength_main_X="SN400" offset_XX="100" offset_XY="-244" offset_YX="244" offset_YY="-100" />
+          </StbSecSteelColumn_SRC_Same>
+        </StbSecSteelFigureColumn_SRC>
+      </StbSecColumn_SRC>
+      <StbSecColumn_SRC id="8" name="rc_circle_s_same_t">
+        <StbSecFigureColumn_SRC>
+          <StbSecColumn_SRC_Circle D="1000" />
+        </StbSecFigureColumn_SRC>
+        <StbSecSteelFigureColumn_SRC>
+          <StbSecSteelColumn_SRC_Same>
+            <StbSecColumn_SRC_SameShapeT direction_type="T2" shape_H="H-588x300x12x20" shape_T="T-294x300x12x20" strength_main_H="SN400" strength_main_T="SN400" />
+          </StbSecSteelColumn_SRC_Same>
+        </StbSecSteelFigureColumn_SRC>
+      </StbSecColumn_SRC>
+      <StbSecColumn_SRC id="9" name="rc_circle_s_same_t_offset">
+        <StbSecFigureColumn_SRC>
+          <StbSecColumn_SRC_Rect width_X="1000" width_Y="1000" />
+        </StbSecFigureColumn_SRC>
+        <StbSecSteelFigureColumn_SRC>
+          <StbSecSteelColumn_SRC_Same>
+            <StbSecColumn_SRC_SameShapeT direction_type="T3" shape_H="H-588x300x12x20" shape_T="T-294x300x12x20" strength_main_H="SN400" strength_main_T="SN400" offset_HX="100" offset_HY="100" offset_T="200" />
+          </StbSecSteelColumn_SRC_Same>
+        </StbSecSteelFigureColumn_SRC>
+      </StbSecColumn_SRC>
+      <StbSecColumn_SRC id="21" name="rc_rect_s_three_types_pipe">
+        <StbSecFigureColumn_SRC>
+          <StbSecColumn_SRC_Rect width_X="1200" width_Y="1000" />
+        </StbSecFigureColumn_SRC>
+        <StbSecSteelFigureColumn_SRC>
+          <StbSecSteelColumn_SRC_ThreeTypes pos="BOTTOM">
+            <StbSecColumn_SRC_ThreeTypesShapePipe shape="P-700x50" encase_type="ENCASEDANDINFILLED" strength="SN400" />
+          </StbSecSteelColumn_SRC_ThreeTypes>
+          <StbSecSteelColumn_SRC_ThreeTypes pos="CENTER">
+            <StbSecColumn_SRC_ThreeTypesShapePipe shape="P-700x150" encase_type="ENCASEDANDINFILLED" strength="SN400" />
+          </StbSecSteelColumn_SRC_ThreeTypes>
+          <StbSecSteelColumn_SRC_ThreeTypes pos="TOP">
+            <StbSecColumn_SRC_ThreeTypesShapePipe shape="P-700x50" encase_type="ENCASEDANDINFILLED" strength="SN400" />
+          </StbSecSteelColumn_SRC_ThreeTypes>
+        </StbSecSteelFigureColumn_SRC>
+      </StbSecColumn_SRC>
+      <StbSecSteel>
+        <StbSecRoll-H name="H-588x300x12x20" type="H" A="588" B="300" t1="12" t2="20" r="13" />
+        <StbSecBuild-BOX name="BB-700x900x25x50" A="700" B="900" t1="25" t2="50" />
+        <StbSecBuild-BOX name="BB-700x900x150x150" A="700" B="900" t1="150" t2="150" />
+        <StbSecPipe name="P-700x50" D="700" t="50" />
+        <StbSecPipe name="P-700x150" D="700" t="150" />
+        <StbSecRoll-T name="T-294x300x12x20" type="T" A="294" B="300" t1="12" t2="20" r="13" />
+      </StbSecSteel>
+    </StbSections>
+  </StbModel>
+</ST_BRIDGE>

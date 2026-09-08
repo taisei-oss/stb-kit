@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ST_BRIDGE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="2.0.2" xmlns="https://www.building-smart.or.jp/dl">
+  <StbCommon project_name="test" app_name="stbkit-core" app_version="0.0.0" />
+  <StbModel>
+    <StbNodes>
+      <StbNode id="1" X="0" Y="0" Z="0" kind="ON_GRID" />
+      <StbNode id="2" X="2000" Y="0" Z="0" kind="ON_GRID" />
+      <StbNode id="3" X="4000" Y="0" Z="0" kind="ON_GRID" />
+      <StbNode id="4" X="6000" Y="0" Z="0" kind="ON_GRID" />
+      <StbNode id="5" X="8000" Y="0" Z="0" kind="ON_GRID" />
+      <StbNode id="11" X="0" Y="2000" Z="0" kind="ON_GRID" />
+      <StbNode id="12" X="2000" Y="2000" Z="0" kind="ON_GRID" />
+      <StbNode id="13" X="4000" Y="2000" Z="0" kind="ON_GRID" />
+      <StbNode id="14" X="6000" Y="2000" Z="0" kind="ON_GRID" />
+      <StbNode id="15" X="8000" Y="2000" Z="0" kind="ON_GRID" />
+    </StbNodes>
+    <StbMembers>
+      <StbFootings>
+        <StbFooting id="1" name="rect" id_node="1" id_section="1" />
+        <StbFooting id="2" name="taperd_rect" id_node="2" id_section="2" />
+        <StbFooting id="3" name="triangle" id_node="3" id_section="3" />
+        <StbFooting id="4" name="equi_triangle" id_node="4" id_section="4" />
+        <StbFooting id="5" name="octagon" id_node="5" id_section="5" />
+      </StbFootings>
+      <StbStripFootings>
+        <StbStripFooting id="11" name="continuous_rect" id_node_start="11" id_node_end="12" id_section="11" kind_structure="RC" />
+        <StbStripFooting id="12" name="continuous_T" id_node_start="12" id_node_end="13" id_section="12" kind_structure="RC" length_ex_start="-50" length_ex_end="-100" />
+        <StbStripFooting id="13" name="continuous_L" id_node_start="13" id_node_end="14" id_section="13" kind_structure="RC" length_ex_start="100" length_ex_end="150" />
+        <StbStripFooting id="14" name="continuous_R" id_node_start="14" id_node_end="15" id_section="14" kind_structure="RC" level="-200" offset="200" length_ex_start="-150" />
+      </StbStripFootings>
+    </StbMembers>
+    <StbSections>
+      <StbSecFoundation_RC id="1" name="rect">
+        <StbSecFigureFoundation_RC>
+          <StbSecFoundation_RC_Rect width_X="600" width_Y="400" depth="200" />
+        </StbSecFigureFoundation_RC>
+      </StbSecFoundation_RC>
+      <StbSecFoundation_RC id="2" name="taperd_rect">
+        <StbSecFigureFoundation_RC>
+          <StbSecFoundation_RC_TaperedRect width_X="600" width_Y="400" depth_base="500" depth_tip="200" />
+        </StbSecFigureFoundation_RC>
+      </StbSecFoundation_RC>
+      <StbSecFoundation_RC id="3" name="triangle">
+        <StbSecFigureFoundation_RC>
+          <StbSecFoundation_RC_Triangle width_X="600" width_Y="400" depth="200" />
+        </StbSecFigureFoundation_RC>
+      </StbSecFoundation_RC>
+      <StbSecFoundation_RC id="4" name="equi_triangle">
+        <StbSecFigureFoundation_RC>
+          <StbSecFoundation_RC_EquiTriangle width_base="300" width_chamfer="100" depth="200" />
+        </StbSecFigureFoundation_RC>
+      </StbSecFoundation_RC>
+      <StbSecFoundation_RC id="5" name="octagon">
+        <StbSecFigureFoundation_RC>
+          <StbSecFoundation_RC_Octagon width_X="1500" width_Y="1000" width_chamfer1_X="50" width_chamfer1_Y="100" width_chamfer2_X="150" width_chamfer2_Y="200" width_chamfer3_X="250" width_chamfer3_Y="300" width_chamfer4_X="350" width_chamfer4_Y="400" depth="500" />
+        </StbSecFigureFoundation_RC>
+      </StbSecFoundation_RC>
+      <StbSecFoundation_RC id="11" name="continuous_rect">
+        <StbSecFigureFoundation_RC>
+          <StbSecFoundation_RC_Continuous width="500" depth_base="200" depth_tip="200" type="REVERSE_T" />
+        </StbSecFigureFoundation_RC>
+      </StbSecFoundation_RC>
+      <StbSecFoundation_RC id="12" name="continuous_T">
+        <StbSecFigureFoundation_RC>
+          <StbSecFoundation_RC_Continuous width="500" depth_base="300" depth_tip="200" type="REVERSE_T" />
+        </StbSecFigureFoundation_RC>
+      </StbSecFoundation_RC>
+      <StbSecFoundation_RC id="13" name="continuous_L">
+        <StbSecFigureFoundation_RC>
+          <StbSecFoundation_RC_Continuous width="500" depth_base="300" depth_tip="200" type="LEFT_L" />
+        </StbSecFigureFoundation_RC>
+      </StbSecFoundation_RC>
+      <StbSecFoundation_RC id="14" name="continuous_R">
+        <StbSecFigureFoundation_RC>
+          <StbSecFoundation_RC_Continuous width="500" depth_base="300" depth_tip="200" type="RIGHT_L" />
+        </StbSecFigureFoundation_RC>
+      </StbSecFoundation_RC>
+    </StbSections>
+  </StbModel>
+</ST_BRIDGE>

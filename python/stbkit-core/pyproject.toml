@@ -1,0 +1,63 @@
+# Copyright 2025-2026 TAISEI CORPORATION
+# SPDX-License-Identifier: MPL-2.0
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stbkit-core"
+version = "0.1.0a9.dev1"
+description = "ST-Bridgeを扱うツールキットSTB-KITのコアパッケージ"
+authors = [
+    { name = "STB-KIT Development Team (TAISEI CORPORATION)", email = "oss-dev@pub.taisei.co.jp" },
+]
+dependencies = []
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MPL-2.0"
+license-files = ["LICENSE"]
+keywords = ["ST-Bridge", "BIM", "building", "structural-engineering", "stbridge"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Natural Language :: Japanese",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Text Processing :: Markup :: XML",
+    "Typing :: Typed",
+]
+
+[project.urls]
+Homepage = "https://github.com/taisei-oss/stb-kit"
+Repository = "https://github.com/taisei-oss/stb-kit"
+Issues = "https://github.com/taisei-oss/stb-kit/issues"
+Changelog = "https://github.com/taisei-oss/stb-kit/blob/main/CHANGELOG.md"
+
+[project.optional-dependencies]
+xsd = ["xmlschema>=4.3.2"]
+full = ["xmlschema>=4.3.2"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+namespaces = true
+
+[tool.ruff.lint.per-file-ignores]
+# 自動生成コードは桁数制限を無視する
+"src/stbkit/core/data_model/stb_v2_0_1.py" = ["E501","E741"]
+"src/stbkit/core/data_model/stb_v2_0_1.pyi" = ["E501","E741"]
+"src/stbkit/core/data_model/stb_v2_0_2.py" = ["E501","E741"]
+"src/stbkit/core/data_model/stb_v2_0_2.pyi" = ["E501","E741"]
+"src/stbkit/core/data_model/stb_v2_1_0.py" = ["E501","E741"]
+"src/stbkit/core/data_model/stb_v2_1_0.pyi" = ["E501","E741"]
+"src/stbkit/core/data_model/stb_v2_1_1.py" = ["E501","E741"]
+"src/stbkit/core/data_model/stb_v2_1_1.pyi" = ["E501","E741"]

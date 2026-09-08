@@ -1,0 +1,1 @@
+ERROR schema_error validate /ST_BRIDGE/StbModel/StbNodes/StbNode xsd:missing required attribute 'Z'

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ST_BRIDGE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="2.0.2" xmlns="https://www.building-smart.or.jp/dl">
+  <StbCommon project_name="test_girder_s" app_name="stbkit-core" app_version="0.0.0" />
+  <StbModel>
+    <StbNodes>
+      <StbNode id="11" X="0" Y="0" Z="0" kind="ON_GRID" />
+      <StbNode id="12" X="5000" Y="0" Z="0" kind="ON_GRID" />
+      <StbNode id="21" X="0" Y="2000" Z="0" kind="ON_GRID" />
+      <StbNode id="22" X="5000" Y="2000" Z="0" kind="ON_GRID" />
+      <StbNode id="31" X="0" Y="4000" Z="0" kind="ON_GRID" />
+      <StbNode id="32" X="5000" Y="4000" Z="0" kind="ON_GRID" />
+      <StbNode id="41" X="0" Y="6000" Z="0" kind="ON_GRID" />
+      <StbNode id="42" X="5000" Y="6000" Z="0" kind="ON_GRID" />
+      <StbNode id="43" X="10000" Y="6000" Z="0" kind="ON_GRID" />
+      <StbNode id="51" X="0" Y="8000" Z="0" kind="ON_GRID" />
+      <StbNode id="52" X="5000" Y="8000" Z="0" kind="ON_GRID" />
+      <StbNode id="53" X="10000" Y="8000" Z="0" kind="ON_GRID" />
+      <StbNode id="54" X="15000" Y="8000" Z="0" kind="ON_GRID" />
+      <StbNode id="55" X="20000" Y="8000" Z="0" kind="ON_GRID" />
+    </StbNodes>
+    <StbMembers>
+      <StbGirders>
+        <StbGirder id="1" name="straight" id_node_start="11" id_node_end="12" id_section="1" kind_structure="S" isFoundation="false" />
+        <StbGirder id="2" name="taper" id_node_start="21" id_node_end="22" id_section="2" kind_structure="S" isFoundation="false" />
+        <StbGirder id="3" name="joint" id_node_start="31" id_node_end="32" id_section="3" kind_structure="S" isFoundation="false" joint_start="1000" joint_end="1000" />
+        <StbGirder id="41" name="haunch_slope" id_node_start="41" id_node_end="42" id_section="4" kind_structure="S" isFoundation="false" haunch_start="1000" haunch_end="1000" />
+        <StbGirder id="42" name="haunch_drop" id_node_start="42" id_node_end="43" id_section="4" kind_structure="S" isFoundation="false" haunch_start="1000" haunch_end="1000" kind_haunch_start="DROP" kind_haunch_end="DROP" />
+        <StbGirder id="51" name="five_types_5-1_slope" id_node_start="51" id_node_end="52" id_section="51" kind_structure="S" isFoundation="false" haunch_start="500" haunch_end="1000" joint_start="1500" joint_end="2000" />
+        <StbGirder id="52" name="five_types_5-1_drop" id_node_start="52" id_node_end="53" id_section="52" kind_structure="S" isFoundation="false" haunch_start="500" haunch_end="1000" joint_start="1500" joint_end="2000" kind_haunch_start="DROP" kind_haunch_end="DROP" />
+        <StbGirder id="53" name="five_types_5-2_slope" id_node_start="53" id_node_end="54" id_section="53" kind_structure="S" isFoundation="false" haunch_start="1500" haunch_end="2000" joint_start="500" joint_end="1000" />
+        <StbGirder id="54" name="five_types_5-3_drop" id_node_start="54" id_node_end="55" id_section="54" kind_structure="S" isFoundation="false" haunch_start="1500" haunch_end="2000" joint_start="500" joint_end="1000" kind_haunch_start="DROP" kind_haunch_end="DROP" />
+      </StbGirders>
+    </StbMembers>
+    <StbSections>
+      <StbSecBeam_S id="1" name="straight">
+        <StbSecSteelFigureBeam_S>
+          <StbSecSteelBeam_S_Straight shape="BH-700x300x12x16" strength_main="SN400" />
+        </StbSecSteelFigureBeam_S>
+      </StbSecBeam_S>
+      <StbSecBeam_S id="2" name="taper">
+        <StbSecSteelFigureBeam_S>
+          <StbSecSteelBeam_S_Taper pos="START" shape="BH-700x300x12x16" strength_main="SN400" />
+          <StbSecSteelBeam_S_Taper pos="END" shape="BH-1200x700x12x16" strength_main="SN400" />
+        </StbSecSteelFigureBeam_S>
+      </StbSecBeam_S>
+      <StbSecBeam_S id="3" name="joint">
+        <StbSecSteelFigureBeam_S>
+          <StbSecSteelBeam_S_Joint pos="START" shape="BH-700x300x50x100" strength_main="SN400" />
+          <StbSecSteelBeam_S_Joint pos="CENTER" shape="BH-700x300x12x16" strength_main="SN400" />
+          <StbSecSteelBeam_S_Joint pos="END" shape="BH-700x300x50x100" strength_main="SN400" />
+        </StbSecSteelFigureBeam_S>
+      </StbSecBeam_S>
+      <StbSecBeam_S id="4" name="haunch">
+        <StbSecSteelFigureBeam_S>
+          <StbSecSteelBeam_S_Haunch pos="START" shape="BH-1000x500x12x16" strength_main="SN400" />
+          <StbSecSteelBeam_S_Haunch pos="CENTER" shape="BH-700x300x12x16" strength_main="SN400" />
+          <StbSecSteelBeam_S_Haunch pos="END" shape="BH-1200x700x12x16" strength_main="SN400" />
+        </StbSecSteelFigureBeam_S>
+      </StbSecBeam_S>
+      <StbSecBeam_S id="51" name="five_types_5-1_slope">
+        <StbSecSteelFigureBeam_S>
+          <StbSecSteelBeam_S_FiveTypes pos="START" shape="BH-1000x500x50x100" strength_main="SN400" />
+          <StbSecSteelBeam_S_FiveTypes pos="HAUNCH_S" shape="BH-700x300x50x100" strength_main="SN400" />
+          <StbSecSteelBeam_S_FiveTypes pos="CENTER" shape="BH-700x300x12x16" strength_main="SN400" />
+          <StbSecSteelBeam_S_FiveTypes pos="HAUNCH_E" shape="BH-700x300x50x100" strength_main="SN400" />
+          <StbSecSteelBeam_S_FiveTypes pos="END" shape="BH-1200x700x50x100" strength_main="SN400" />
+        </StbSecSteelFigureBeam_S>
+      </StbSecBeam_S>
+      <StbSecBeam_S id="52" name="five_types_5-1_drop">
+        <StbSecSteelFigureBeam_S>
+          <StbSecSteelBeam_S_FiveTypes pos="START" shape="BH-700x500x12x16" strength_main="SN400" />
+          <StbSecSteelBeam_S_FiveTypes pos="HAUNCH_S" shape="BH-700x300x12x16" strength_main="SN400" />
+          <StbSecSteelBeam_S_FiveTypes pos="CENTER" shape="BH-700x300x12x16" strength_main="SN400" />
+          <StbSecSteelBeam_S_FiveTypes pos="HAUNCH_E" shape="BH-700x300x12x16" strength_main="SN400" />
+          <StbSecSteelBeam_S_FiveTypes pos="END" shape="BH-700x700x12x16" strength_main="SN400" />
+        </StbSecSteelFigureBeam_S>
+      </StbSecBeam_S>
+      <StbSecBeam_S id="53" name="five_types_5-2_slope">
+        <StbSecSteelFigureBeam_S>
+          <StbSecSteelBeam_S_FiveTypes pos="START" shape="BH-1200x700x55x150" strength_main="SN400" />
+          <StbSecSteelBeam_S_FiveTypes pos="HAUNCH_S" shape="BH-1000x500x12x16" strength_main="SN400" />
+          <StbSecSteelBeam_S_FiveTypes pos="CENTER" shape="BH-700x300x12x16" strength_main="SN400" />
+          <StbSecSteelBeam_S_FiveTypes pos="HAUNCH_E" shape="BH-1000x500x12x16" strength_main="SN400" />
+          <StbSecSteelBeam_S_FiveTypes pos="END" shape="BH-1200x700x50x100" strength_main="SN400" />
+        </StbSecSteelFigureBeam_S>
+      </StbSecBeam_S>
+      <StbSecBeam_S id="54" name="five_types_5-2_drop">
+        <StbSecSteelFigureBeam_S>
+          <StbSecSteelBeam_S_FiveTypes pos="START" shape="BH-700x500x12x16" strength_main="SN400" />
+          <StbSecSteelBeam_S_FiveTypes pos="HAUNCH_S" shape="BH-700x500x12x16" strength_main="SN400" />
+          <StbSecSteelBeam_S_FiveTypes pos="CENTER" shape="BH-700x300x12x16" strength_main="SN400" />
+          <StbSecSteelBeam_S_FiveTypes pos="HAUNCH_E" shape="BH-700x700x12x16" strength_main="SN400" />
+          <StbSecSteelBeam_S_FiveTypes pos="END" shape="BH-700x700x12x16" strength_main="SN400" />
+        </StbSecSteelFigureBeam_S>
+      </StbSecBeam_S>
+      <StbSecSteel>
+        <StbSecBuild-H name="BH-700x300x12x16" A="700" B="300" t1="12" t2="16" />
+        <StbSecBuild-H name="BH-1000x500x12x16" A="1000" B="500" t1="12" t2="16" />
+        <StbSecBuild-H name="BH-1200x700x12x16" A="1200" B="700" t1="12" t2="16" />
+        <StbSecBuild-H name="BH-700x300x50x100" A="700" B="300" t1="50" t2="100" />
+        <StbSecBuild-H name="BH-1000x500x50x100" A="1000" B="500" t1="50" t2="100" />
+        <StbSecBuild-H name="BH-1200x700x50x100" A="1200" B="700" t1="50" t2="100" />
+        <StbSecBuild-H name="BH-700x700x12x16" A="700" B="700" t1="12" t2="16" />
+        <StbSecBuild-H name="BH-700x500x12x16" A="700" B="500" t1="12" t2="16" />
+        <StbSecBuild-H name="BH-1200x700x55x150" A="1200" B="700" t1="55" t2="150" />
+      </StbSecSteel>
+    </StbSections>
+  </StbModel>
+</ST_BRIDGE>

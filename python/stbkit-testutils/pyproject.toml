@@ -1,0 +1,36 @@
+# Copyright 2026 TAISEI CORPORATION
+# SPDX-License-Identifier: MPL-2.0
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+[project]
+name = "stbkit-testutils"
+version = "0.1.0a1.dev1"
+description = "STB-KIT テスト用ユーティリティ"
+readme = "README.md"
+authors = [
+    { name = "STB-KIT Development Team (TAISEI CORPORATION)", email = "oss-dev@pub.taisei.co.jp" },
+]
+requires-python = ">=3.12"
+license = "MPL-2.0"
+license-files = ["LICENSE"]
+classifiers = [
+    "Private :: Do Not Upload",
+]
+dependencies = [
+    "pyyaml>=6.0.3",
+    "types-PyYAML>=6.0.12.20260815",
+    "pytest>=9.1.1",
+    "pytest-env>=1.7.0",
+    "trimesh>=5.1.0",
+    "freezegun>=1.5.5",
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+namespaces = true

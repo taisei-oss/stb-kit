@@ -1,0 +1,5 @@
+WARNING unexpected_error convert_ifc 連続基礎の上側の幅が不明なため、底面の1/2のサイズで出力します。
+WARNING unexpected_error convert_ifc 連続基礎の上側の幅が不明なため、底面の1/2のサイズで出力します。
+WARNING unexpected_error convert_ifc 連続基礎の上側の幅が不明なため、底面の1/2のサイズで出力します。
+WARNING unexpected_error convert_ifc 連続基礎の上側の幅が不明なため、底面の1/2のサイズで出力します。
+WARNING unexpected_error convert_ifc TaperedRectの上側のサイズが不明なため、底面の1/2のサイズで出力します。

@@ -1,0 +1,19 @@
+# Copyright 2026 TAISEI CORPORATION
+# SPDX-License-Identifier: MPL-2.0
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+id: error_attribute_v2_0_2
+description: 未定義の属性を持つエラーケース（v2.0.2）
+
+input:
+  format: stb_v2_0_2
+  compare-options:
+    ignore-application-information: true
+    # 拡張定義のない想定外属性は不正値として退避され、出力されない
+    filter:
+      element-attribute-filters:
+        StbCommon:
+          exclude-attributes:
+            - err_attr

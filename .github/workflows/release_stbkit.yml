@@ -1,0 +1,90 @@
+# Copyright 2026 TAISEI CORPORATION
+# SPDX-License-Identifier: MPL-2.0
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+name: Release stbkit
+
+on:
+  push:
+    tags:
+      - stbkit-v*
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "確認用リリースタグ 例: stbkit-v0.1.0a9"
+        required: true
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  stbkit-release-check:
+    name: stbkitのチェック
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+      - uses: astral-sh/setup-uv@v10.0.1
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: タグ名の取得
+        shell: bash
+        env:
+          DISPATCH_TAG: ${{ inputs.tag }}
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then
+            printf 'TAG_NAME=%s\n' "$DISPATCH_TAG" >> "$GITHUB_ENV"
+          else
+            printf 'TAG_NAME=%s\n' "$GITHUB_REF_NAME" >> "$GITHUB_ENV"
+          fi
+
+      - name: ビルドとチェック
+        run: |
+          python .github/scripts/release_check_stbkit.py \
+            --tag "${TAG_NAME}" \
+            --python-version "3.14"
+
+      - name: wheelの保存
+        uses: actions/upload-artifact@v7
+        with:
+          name: dist-stbkit
+          path: dist/
+          if-no-files-found: error
+
+  stbkit-publish:
+    name: stbkitの公開
+    if: github.event_name != 'workflow_dispatch'
+    needs: stbkit-release-check
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ vars.STBKIT_PYPI_ENVIRONMENT_NAME != '' && vars.STBKIT_PYPI_ENVIRONMENT_NAME || 'testpypi' }}
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: wheelの取得
+        uses: actions/download-artifact@v8
+        with:
+          name: dist-stbkit
+          path: dist/
+
+      - name: PyPIへの公開
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist
+          repository-url: ${{ vars.STBKIT_PYPI_REPOSITORY_URL != '' && vars.STBKIT_PYPI_REPOSITORY_URL || 'https://test.pypi.org/legacy/' }}

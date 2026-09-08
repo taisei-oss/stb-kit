@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://www.building-smart.or.jp/dl" version="2.0.2">
+ <StbCommon project_name="slab" app_name="stbkit-rs" app_version="0.1.0-alpha.4"/>
+ <StbModel>
+  <StbNodes>
+   <StbNode id="11" X="0" Y="0" Z="0" kind="ON_GRID"/>
+   <StbNode id="12" X="5000" Y="0" Z="0" kind="ON_GRID"/>
+   <StbNode id="22" X="5000" Y="5000" Z="0" kind="ON_GRID"/>
+   <StbNode id="21" X="0" Y="5000" Z="0" kind="ON_GRID"/>
+  </StbNodes>
+  <StbMembers>
+   <StbSlabs>
+    <StbSlab id="11" name="slab" id_section="11" kind_structure="RC" kind_slab="NORMAL" isFoundation="false">
+     <StbNodeIdOrder>11 12 22 21</StbNodeIdOrder>
+    </StbSlab>
+   </StbSlabs>
+  </StbMembers>
+  <StbSections>
+   <StbSecSlab_RC id="11" name="S15">
+    <StbSecFigureSlab_RC>
+     <StbSecSlab_RC_Straight depth="150"/>
+    </StbSecFigureSlab_RC>
+   </StbSecSlab_RC>
+  </StbSections>
+ </StbModel>
+</ST_BRIDGE>

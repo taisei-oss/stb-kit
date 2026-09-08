@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://www.building-smart.or.jp/dl" version="2.1.0">
+ <StbCommon project_name="pj_name" app_name="stbkit-core" app_version="0.0.0"/>
+ <StbModel>
+  <StbNodes>
+   <StbNode id="1" X="0.0" Y="0.0" Z="0.0" kind="ON_GRID" ext_attr_1="attr1"/>
+  </StbNodes>
+  <ExtElement1 id="1"/>
+  <ExtElement1 id="2"/>
+  <ExtElement2 id="2">
+   <ExtElement3 name="3"/>
+  </ExtElement2>
+ </StbModel>
+ <StbExtensions>
+  <StbExtension identifier="test_ext">
+   <StbExtElement object_name="StbNode">
+    <StbExtPropertyDef key="ext_attr_1" type="string"/>
+   </StbExtElement>
+   <StbExtElement object_name="StbModel" element_name="ExtElement1">
+    <StbExtPropertyDef key="id" type="integer"/>
+   </StbExtElement>
+   <StbExtElement object_name="StbModel" element_name="ExtElement2">
+    <StbExtPropertyDef key="id" type="integer"/>
+   </StbExtElement>
+   <StbExtElement object_name="ExtElement2" element_name="ExtElement3">
+    <StbExtPropertyDef key="name" type="string"/>
+   </StbExtElement>
+  </StbExtension>
+ </StbExtensions>
+</ST_BRIDGE>

@@ -1,0 +1,1 @@
+ERROR schema_error validate /ST_BRIDGE/StbModel/StbMembers/StbSlabs/StbSlab/StbNodeIdOrder xsd:value length cannot be lesser than 3

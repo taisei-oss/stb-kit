@@ -1,0 +1,1 @@
+ERROR schema_error load /ST_BRIDGE/StbCommon 要素[StbCommon]の最大回数[1]を超過しています。超過分を不正値として退避しました (value: 2 expected: <=1)

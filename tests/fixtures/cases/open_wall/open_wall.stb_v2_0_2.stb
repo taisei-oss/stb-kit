@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://www.building-smart.or.jp/dl" version="2.0.2">
+ <StbCommon project_name="open_wall" app_name="stbkit-core" app_version="0.0.0"/>
+ <StbModel>
+  <StbNodes>
+   <StbNode id="11" X="0" Y="0" Z="0" kind="ON_GRID"/>
+   <StbNode id="21" X="5000" Y="0" Z="0" kind="ON_GRID"/>
+   <StbNode id="12" X="0" Y="0" Z="5000" kind="ON_GRID"/>
+   <StbNode id="22" X="5000" Y="0" Z="5000" kind="ON_GRID"/>
+   <StbNode id="13" X="0" Y="0" Z="10000" kind="ON_GRID"/>
+   <StbNode id="23" X="5000" Y="0" Z="10000" kind="ON_GRID"/>
+  </StbNodes>
+  <StbMembers>
+   <StbWalls>
+    <StbWall id="1" name="open_1" id_section="1" kind_structure="RC" kind_layout="ON_GIRDER">
+     <StbNodeIdOrder>11 21 22 12
+     </StbNodeIdOrder>
+     <StbOpenIdList>
+      <StbOpenId id="11"/>
+     </StbOpenIdList>
+    </StbWall>
+    <StbWall id="2" name="open_2" id_section="1" kind_structure="RC" kind_layout="ON_GIRDER">
+     <StbNodeIdOrder>12 22 23 13
+     </StbNodeIdOrder>
+     <StbOpenIdList>
+      <StbOpenId id="21"/>
+      <StbOpenId id="22"/>
+     </StbOpenIdList>
+    </StbWall>
+   </StbWalls>
+   <StbOpens>
+    <StbOpen id="11" name="open_1-1" position_X="100" position_Y="200" length_X="300" length_Y="400" rotate="0"/>
+    <StbOpen id="21" name="open_2-1" position_X="100" position_Y="200" length_X="300" length_Y="400" rotate="0"/>
+    <StbOpen id="22" name="open_2-2" position_X="400" position_Y="600" length_X="500" length_Y="600" rotate="0"/>
+   </StbOpens>
+  </StbMembers>
+  <StbSections>
+   <StbSecWall_RC id="1" name="w15">
+    <StbSecFigureWall_RC>
+     <StbSecWall_RC_Straight t="150"/>
+    </StbSecFigureWall_RC>
+   </StbSecWall_RC>
+  </StbSections>
+ </StbModel>
+</ST_BRIDGE>

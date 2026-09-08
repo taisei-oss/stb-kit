@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://www.building-smart.or.jp/dl" version="2.1.1">
+ <StbCommon project_name="test" app_name="stbkit-core" app_version="0.0.0"/>
+ <StbModel>
+  <StbNodes>
+   <StbNode id="1" X="0.0" Y="0.0" Z="0.0" kind="ON_GRID"/>
+   <StbNode id="2" X="5000.0" Y="0.0" Z="0.0" kind="ON_GIRDER"/>
+  </StbNodes>
+  <StbMembers>
+   <StbGirders>
+    <StbGirder id="1" name="G1" id_node_start="1" id_node_end="2" id_section="1" kind_structure="S" isFoundation="false"/>
+   </StbGirders>
+  </StbMembers>
+  <StbSections>
+   <StbSecBeam_S id="1" name="G1">
+    <StbSecSteelFigureBeam_S>
+     <StbSecSteelBeam_S_Shape order="1">
+      <StbSecSteelBeamStraight shape="C-150x75x20x3.2" strength_main="SN400"/>
+     </StbSecSteelBeam_S_Shape>
+    </StbSecSteelFigureBeam_S>
+   </StbSecBeam_S>
+   <StbSecSteel>
+    <StbSecLipC name="C-150x75x20x3.2" H="150.0" A="75.0" C="20.0" t="3.2"/>
+   </StbSecSteel>
+  </StbSections>
+ </StbModel>
+</ST_BRIDGE>

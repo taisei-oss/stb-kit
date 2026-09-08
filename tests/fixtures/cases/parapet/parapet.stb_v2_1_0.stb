@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://www.building-smart.or.jp/dl" version="2.1.0">
+ <StbCommon project_name="test" app_name="stbkit-core" app_version="0.0.0"/>
+ <StbModel>
+  <StbNodes>
+   <StbNode id="1" X="0.0" Y="0.0" Z="0.0" kind="ON_GRID"/>
+   <StbNode id="2" X="5000.0" Y="0.0" Z="0.0" kind="ON_GIRDER"/>
+   <StbNode id="3" X="10000.0" Y="0.0" Z="0.0" kind="ON_GRID"/>
+  </StbNodes>
+  <StbMembers>
+   <StbGirders>
+    <StbGirder id="100" name="G1" id_node_start="1" id_node_end="2" id_section="100" kind_structure="RC" isFoundation="false"/>
+    <StbGirder id="101" name="G1_offset" id_node_start="2" id_node_end="3" id_section="100" kind_structure="RC" isFoundation="false" offset_start_Z="200.0" offset_end_Z="200.0"/>
+   </StbGirders>
+   <StbParapets>
+    <StbParapet id="1" name="para" id_node_start="1" id_node_end="2" id_section="1" kind_structure="RC" kind_layout="ON_GIRDER"/>
+    <StbParapet id="2" name="para_offset" id_node_start="2" id_node_end="3" id_section="1" kind_structure="RC" kind_layout="ON_GIRDER" offset="100.0" level="200.0"/>
+   </StbParapets>
+  </StbMembers>
+  <StbSections>
+   <StbSecBeam_RC id="100" name="G1">
+    <StbSecFigureBeam_RC order="1">
+     <StbSecBeamStraight width="400.0" depth="700.0"/>
+    </StbSecFigureBeam_RC>
+   </StbSecBeam_RC>
+   <StbSecParapet_RC id="1" name="PARA1">
+    <StbSecFigureParapet_RC>
+     <StbSecParapet_RC_TypeI t_T="200.0" depth_H="400.0"/>
+    </StbSecFigureParapet_RC>
+   </StbSecParapet_RC>
+  </StbSections>
+ </StbModel>
+</ST_BRIDGE>

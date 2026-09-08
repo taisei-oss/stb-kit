@@ -1,0 +1,1 @@
+ERROR schema_error validate /ST_BRIDGE xsd:Unexpected child with tag '{https://www.building-smart.or.jp/dl}StbCommon' at position 2. Tag 'stb:StbModel' expected.

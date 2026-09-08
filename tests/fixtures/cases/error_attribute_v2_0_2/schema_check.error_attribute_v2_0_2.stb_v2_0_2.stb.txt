@@ -1,0 +1,1 @@
+ERROR schema_error validate /ST_BRIDGE/StbCommon xsd:'err_attr' attribute not allowed for element

@@ -1,0 +1,68 @@
+# Copyright 2026 TAISEI CORPORATION
+# SPDX-License-Identifier: MPL-2.0
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+[tool.uv.workspace]
+members = [
+    "python/*",
+]
+exclude = [
+    "python/tests"
+]
+
+[project]
+name = "stbkit-dev"
+version = "0.1.0a1.dev1"
+requires-python = ">=3.12"
+dependencies = [
+    "stbkit-core",
+    "stbkit",
+    "stbkit-testutils",
+]
+classifiers = [
+    "Private :: Do Not Upload",
+]
+
+[dependency-groups]
+dev = [
+    "ifcopenshell>=0.8.5",
+    "mypy>=2.3.1",
+    "ruff>=0.16.5",
+    "xmlschema>=4.3.2",
+]
+
+[tool.uv.sources]
+stbkit-core = { workspace = true }
+stbkit = { workspace = true }
+stbkit-testutils = { workspace = true }
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "I", "UP", "SIM"]
+
+[tool.mypy]
+python_version = "3.14"
+strict = true
+show_error_codes = true
+warn_unreachable = true
+namespace_packages = true
+explicit_package_bases = true
+ignore_missing_imports = false
+check_untyped_defs = true
+disallow_incomplete_defs = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+exclude = [
+    '^build/',
+    '^dist/',
+    '(^|/)\.venv/',
+    '(^|/)\.mypy_cache/',
+    '(^|/)tests?/fixtures?/',
+]
+
+mypy_path = [
+    "$MYPY_CONFIG_FILE_DIR/python/stbkit/src",
+    "$MYPY_CONFIG_FILE_DIR/python/stbkit-core/src",
+    "$MYPY_CONFIG_FILE_DIR/python/stbkit-testutils/src",
+]

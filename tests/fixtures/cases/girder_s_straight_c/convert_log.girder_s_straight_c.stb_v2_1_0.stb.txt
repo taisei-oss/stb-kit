@@ -1,0 +1,1 @@
+WARNING not_implemented upgrade /ST_BRIDGE/StbModel/StbSections/StbSecSteel/StbSecLipC[1]/@type 変換後のバージョンに属性[type]がありません (value: SINGLE)
