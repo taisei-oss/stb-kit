@@ -10,7 +10,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "stbkit-core"
-version = "0.1.0a9.dev1"
+version = "0.1.0a9"
 description = "ST-Bridgeを扱うツールキットSTB-KITのコアパッケージ"
 authors = [
     { name = "STB-KIT Development Team (TAISEI CORPORATION)", email = "oss-dev@pub.taisei.co.jp" },

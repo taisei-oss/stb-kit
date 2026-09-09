@@ -10,12 +10,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "stbkit"
-version = "0.1.0a9.dev1"
+version = "0.1.0a9"
 description = "ST-Bridgeを扱うライブラリSTB-KIT"
 authors = [
     { name = "STB-KIT Development Team (TAISEI CORPORATION)", email = "oss-dev@pub.taisei.co.jp" },
 ]
-dependencies = ["stbkit-core==0.1.0a9.dev1"]
+dependencies = ["stbkit-core==0.1.0a9"]
 readme = "README.md"
 requires-python = ">=3.12"
 license = "MPL-2.0"
