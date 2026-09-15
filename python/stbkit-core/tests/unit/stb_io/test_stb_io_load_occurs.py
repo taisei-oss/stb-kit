@@ -13,7 +13,9 @@ from stbkit.core.data_model.stb_v2_1_1 import StbCommon, StBridge
 from stbkit.core.stb_reporting import Code, CollectingReporter, Phase, Severity
 
 _INVALID_MAX_OCCURS_STB: Final = """<?xml version="1.0" encoding="UTF-8"?>
-<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://www.building-smart.or.jp/dl" version="2.1.1">
+<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="https://www.building-smart.or.jp/dl" version="2.1.1">
  <StbCommon project_name="first" app_name="stbkit" app_version="0.0.0"/>
  <StbCommon project_name="second" app_name="stbkit" app_version="0.0.0"/>
  <StbModel>
@@ -25,7 +27,9 @@ _INVALID_MAX_OCCURS_STB: Final = """<?xml version="1.0" encoding="UTF-8"?>
 """
 
 _VALID_STB: Final = """<?xml version="1.0" encoding="UTF-8"?>
-<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://www.building-smart.or.jp/dl" version="2.1.1">
+<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="https://www.building-smart.or.jp/dl" version="2.1.1">
  <StbCommon project_name="first" app_name="stbkit" app_version="0.0.0"/>
  <StbModel>
   <StbNodes>

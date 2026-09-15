@@ -4,6 +4,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+import contextlib
+
 from stbkit.core.repository import get_repository
 from stbkit.core.stb_exceptions import NoneAccessError
 from stbkit.core.stb_reporting import Code, Phase, Reporter
@@ -107,44 +109,26 @@ def stb_to_element_data(
         | StbFoundationColumn
         | StbParapet
     ] = []
-    try:
+    with contextlib.suppress(NoneAccessError):
         stb_member_lines.extend(stb_members.stb_columns.stb_column)
-    except NoneAccessError:
-        pass
-    try:
+    with contextlib.suppress(NoneAccessError):
         stb_member_lines.extend(stb_members.stb_posts.stb_post)
-    except NoneAccessError:
-        pass
-    try:
+    with contextlib.suppress(NoneAccessError):
         stb_member_lines.extend(stb_members.stb_girders.stb_girder)
-    except NoneAccessError:
-        pass
-    try:
+    with contextlib.suppress(NoneAccessError):
         stb_member_lines.extend(stb_members.stb_beams.stb_beam)
-    except NoneAccessError:
-        pass
-    try:
+    with contextlib.suppress(NoneAccessError):
         stb_member_lines.extend(stb_members.stb_braces.stb_brace)
-    except NoneAccessError:
-        pass
-    try:
+    with contextlib.suppress(NoneAccessError):
         stb_member_lines.extend(stb_members.stb_strip_footings.stb_strip_footing)
-    except NoneAccessError:
-        pass
-    try:
+    with contextlib.suppress(NoneAccessError):
         stb_member_lines.extend(stb_members.stb_piles.stb_pile)
-    except NoneAccessError:
-        pass
-    try:
+    with contextlib.suppress(NoneAccessError):
         stb_member_lines.extend(
             stb_members.stb_foundation_columns.stb_foundation_column
         )
-    except NoneAccessError:
-        pass
-    try:
+    with contextlib.suppress(NoneAccessError):
         stb_member_lines.extend(stb_members.stb_parapets.stb_parapet)
-    except NoneAccessError:
-        pass
 
     result.extend(
         [

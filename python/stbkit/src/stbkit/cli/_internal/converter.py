@@ -10,7 +10,7 @@ import os
 import sys
 from argparse import Namespace, _SubParsersAction
 from dataclasses import dataclass
-from logging import Logger
+from logging import INFO, Logger
 from pathlib import Path
 from typing import Any
 from xml.etree.ElementTree import ParseError
@@ -24,6 +24,7 @@ from stbkit.core.stb_reporting import (
     get_reporter,
 )
 
+from stbkit.tools._internal.data_model.summary import StbSummary, get_summary
 from stbkit.tools.converters._internal.pipeline.data import (
     _Data,
     _DataFormat,
@@ -77,40 +78,11 @@ class ConverterArgs:
     reporter: Reporter
 
     def print_stb_info(self, stb: StBridgeRoot) -> None:
-        logger = self.logger
-        logger.info("ST-Bridgeモデル情報:")
-        model = stb.stb_model_or_none  # type: ignore[attr-defined]
-        if model is None:
-            return
-        if model.stb_nodes_or_none:
-            logger.info(f" node数:{len(model.stb_nodes.stb_node)}")
-        members = model.stb_members_or_none
-        if members is None:
-            return
-        member_types = [
-            "column",
-            "girder",
-            "post",
-            "beam",
-            "brace",
-            "wall",
-            "slab",
-        ]
-        for member_type in member_types:
-            member_group = getattr(
-                members,
-                f"stb_{member_type}s_or_none",
-                None,
-            )
-            if member_group is None:
-                continue
-            member_list = getattr(
-                member_group,
-                f"stb_{member_type}",
-                None,
-            )
-            if member_list:
-                logger.info(f" {member_type}数:{len(member_list)}")
+        summary: StbSummary = get_summary(
+            stb, reporter=CollectingReporter(), validate=False
+        )
+        for line in summary.to_text().splitlines():
+            self.logger.info(line)
 
 
 @dataclass(frozen=True)
@@ -473,7 +445,7 @@ def _pipeline_convert(args: ConverterArgs) -> None:
             max_size=args.max_size,
         )
 
-    if isinstance(input_data, StbData):
+    if isinstance(input_data, StbData) and args.logger.isEnabledFor(INFO):
         args.print_stb_info(input_data.value)
 
     observed_data: dict[_DataFormat, _Data] = {
@@ -569,6 +541,42 @@ def register(subparsers: _SubParsersAction[Any]) -> None:
     )
 
     parser.set_defaults(func=_run, _parser=parser)
+
+
+def register_upgrade(subparsers: _SubParsersAction[Any]) -> None:
+    parser = subparsers.add_parser(
+        "upgrade",
+        parents=[make_global_parent()],
+        help=("ST-Bridgeを最新版へ更新します。"),
+    )
+    parser.add_argument(
+        "input",
+        nargs="?",
+        help="入力ファイルのパス。-で標準入力を使用します。",
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        default="-",
+        help="出力ファイルのパス。-で標準出力を使用します。",
+    )
+    parser.add_argument(
+        "-y", "--yes", action="store_true", help="確認なしで上書きします。"
+    )
+    parser.add_argument(
+        "--input-encoding",
+        help="入力ファイルのエンコーディングを指定します。"
+        "省略時は自動検出またはutf-8を使用します。",
+    )
+    parser.set_defaults(
+        func=_run,
+        _parser=parser,
+        from_format="stb",
+        to_format="stb",
+        list_formats=False,
+        via=None,
+        save_intermediate=None,
+    )
 
 
 def _print_list_formats() -> None:

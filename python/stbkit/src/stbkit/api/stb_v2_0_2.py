@@ -6,6 +6,7 @@
 
 """ST-Bridge v2.0.2のデータモデル
 
-WARNING: ST-Bridge 2.0.xは、2027年末でサポート終了となります。v2.1.xへの移行を推奨します。"""
+WARNING: ST-Bridge 2.0.xは、2027年末でサポート終了となります。
+v2.1.xへの移行を推奨します。"""
 
-from stbkit.core.data_model.stb_v2_0_2 import *
+from stbkit.core.data_model.stb_v2_0_2 import *  # noqa: F403

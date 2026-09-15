@@ -808,7 +808,8 @@ class CollectingReporter(_BaseReporter):
         min_levelを指定しない場合はWARNING以上のメッセージが無いかどうかを返します。
 
         Args:
-            min_level: 不適合とみなす最低の重大度。省略した場合WARNING以上のメッセージがあるかどうかを判定します。
+            min_level: 不適合とみなす最低の重大度。
+                省略した場合WARNING以上のメッセージがあるかどうかを判定します。
 
         Returns:
             bool: min_level以上のメッセージが1件も無ければTrue。
@@ -821,7 +822,8 @@ class LoggerReporter(_BaseReporter):
 
     Args:
         logger: 出力先のロガー。Noneの場合はstbkitののロガーを作成します。
-        level: stbkitのロガーを作成する場合の出力レベル。loggerを指定した場合は参照しません。
+        level: stbkitのロガーを作成する場合の出力レベル。
+            loggerを指定した場合は参照しません。
         default_code: codeのデフォルト。
         default_phase: phaseのデフォルト。
     """

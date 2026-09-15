@@ -11,6 +11,6 @@ from typing import Any
 
 
 def register(subparsers: _SubParsersAction[Any]) -> None:
-    from .._internal import validate
+    from .._internal import converter
 
-    validate.register(subparsers)
+    converter.register_upgrade(subparsers)

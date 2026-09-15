@@ -43,7 +43,8 @@ def validate_schema(
             Noneの場合はrequire_xsd=Trueの場合、環境変数から探します。
         require_xsd: XSDによる検証を必須とするかどうか。
             Trueの場合、XSDを利用できないときはFalseを返します。
-        exclude_legal_extensions: 仕様に準拠した拡張に起因するXSD違反を記録しないかどうか。
+        exclude_legal_extensions: 仕様に準拠した拡張に起因するXSD違反を
+            記録しないかどうか。
             Trueの場合、StbExtensionsで定義された拡張属性・拡張子要素についての違反を除外します。
             仕様準拠しているか判断できなかった場合そのままエラーとして残る場合があります。
             XSDを使わない場合は効果がありません。
@@ -72,7 +73,8 @@ def validate_schema(
     ctx: ValidationContext
     match stb:
         case str():
-            # XSDでチェックする場合、読み込み時の退避エラーはXSDのチェック結果とかぶるため記録しない。
+            # XSDでチェックする場合、読み込み時の退避エラーは
+            # XSDのチェック結果とかぶるため記録しない。
             # XSDを使わない場合は、退避エラーが検出そのものになるため記録する。
             ctx = ValidationContext(
                 reporter=reporter,

@@ -6,4 +6,4 @@
 
 """ST-Bridge v2.1.1のデータモデル"""
 
-from stbkit.core.data_model.stb_v2_1_1 import *
+from stbkit.core.data_model.stb_v2_1_1 import *  # noqa: F403

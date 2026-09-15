@@ -37,9 +37,11 @@ class RepositoryV2_1_1(RepositoryBase):
 
         Raises:
             AttributeError: 属性アクセス時に属性が定義されていない場合。
-            ReferenceElementNotFoundError: 属性アクセス時に、参照値がNoneの場合、または参照先の要素が存在しない場合。
+            ReferenceElementNotFoundError: 属性アクセス時に、参照値がNoneの場合、
+                または参照先の要素が存在しない場合。
                 `_or_none`付きの属性では投げず、Noneを返します。
-            SchemaError: 属性アクセス時に、属性の値が不正で参照先の型が確定できない場合。
+            SchemaError: 属性アクセス時に、属性の値が不正で
+                参照先の型が確定できない場合。
                 `_or_none`付きの属性でも投げます。
             TypeError: 属性アクセス時に型が対応したキーの型でない場合。
 

@@ -25,7 +25,8 @@ class ExtensionInfo:
 
     - element_name: 対象の要素。
     - attribute_infos: その要素が持ってよい属性一覧
-    - parent_name: 対象の要素が所属する親要素。既存要素は既に親が決まっており、親チェックが不要なため省略。
+    - parent_name: 対象の要素が所属する親要素。既存要素は既に親が決まっており、
+        親チェックが不要なため省略。
     """
 
     element_name: str

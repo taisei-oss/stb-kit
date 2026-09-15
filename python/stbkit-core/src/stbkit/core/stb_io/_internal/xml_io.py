@@ -10,7 +10,6 @@ from collections.abc import Iterator
 from logging import Logger
 from typing import IO, Literal, TextIO, overload
 
-from ..._internal import stb_logger
 from ..._internal.constants import (
     DEFAULT_MAX_XML_DEPTH,
     DEFAULT_MAX_XML_SIZE,
@@ -361,7 +360,8 @@ def load(
             versionを指定した場合は、そのバージョンのStBridgeを返します。
 
     Raises:
-        OSError: ファイルを開けない場合。存在しない場合はサブクラスのFileNotFoundErrorを投げます。
+        OSError: ファイルを開けない場合。
+          存在しない場合はサブクラスのFileNotFoundErrorを投げます。
         LookupError: encodingに未知のエンコーディング名を指定した場合。
         UnicodeDecodeError: デコードできない場合。
         UnsafeXmlError: DOCTYPE宣言が含まれる場合。
@@ -374,8 +374,6 @@ def load(
         >>> import stbkit.api
         >>> stb = stbkit.api.load("model.stb")
     """
-    if logger is None:
-        logger = stb_logger.get_logger()
     reporter = get_reporter(logger, reporter)
     if not isinstance(fp, (str, os.PathLike)):
         return _finish_load(
@@ -429,7 +427,10 @@ def _iter_chunks(src: IO[str]) -> Iterator[str]:
 
 
 def _expected_version(stb: StBridgeRoot) -> str:
+
     match stb:
+        case stb_v2_0_0.StBridge():
+            return stb_v2_0_0.VERSION
         case stb_v2_0_1.StBridge():
             return stb_v2_0_1.VERSION
         case stb_v2_0_2.StBridge():

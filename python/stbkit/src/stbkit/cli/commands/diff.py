@@ -9,8 +9,8 @@ from __future__ import annotations
 from argparse import _SubParsersAction
 from typing import Any
 
-from .._internal import diff
-
 
 def register(subparsers: _SubParsersAction[Any]) -> None:
+    from .._internal import diff
+
     diff.register(subparsers)

@@ -107,7 +107,8 @@ def validate_by_xsd(
                 schema = xmlschema.XMLSchema(resolved_xsd_path)
         except XMLSchemaException as e:
             ctx.reporter.error(
-                message=f"xsd:XSDファイルの読み込みに失敗しました: {e}。詳細スキーマチェックはスキップします。",
+                message=f"xsd:XSDファイルの読み込みに失敗しました: {e}。"
+                "詳細スキーマチェックはスキップします。",
                 code=Code.UNEXPECTED_ERROR,
                 phase=Phase.VALIDATE,
             )
@@ -145,7 +146,7 @@ def validate_by_xsd(
         if not errors:
             return True
         else:
-            for err, xpath in zip(errors, xpaths):
+            for err, xpath in zip(errors, xpaths, strict=False):
                 ctx.reporter.error(
                     message=f"xsd:{err}",
                     code=Code.SCHEMA_ERROR,

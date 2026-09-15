@@ -7,7 +7,7 @@
 """stbkitの基本機能をまとめたAPI
 
 ST-Bridgeファイルの読み書き、バージョンアップ、他形式への変換を提供します。
-バージョンごとのデータモデルはstb_latest、stb_v2_0、stb_v2_1から利用してください。
+バージョンごとのデータモデルはstb_latest、stb_v2_0_2、stb_v2_1_1から利用してください。
 
 読み込みは、ファイルのバージョンをそのまま扱うload・loadsと、
 読み込んでから最新版へ変換するload_latest・loads_latestがあります。
@@ -40,8 +40,8 @@ __all__ = [
     "loads",
     "loads_latest",
     "stb_latest",
-    "stb_v2_0",
-    "stb_v2_1",
+    "stb_v2_0_2",
+    "stb_v2_1_1",
     "to_ifc",
     "upgrade_to_latest",
     "validate_schema",

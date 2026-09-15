@@ -27,7 +27,8 @@ def use_input(parser: ArgumentParser) -> None:
 
 
 def read_stdin_xml(*, max_size: int, encoding: str | None = None) -> str:
-    # 端末のエンコーディング設定だとST-Bridgeに記載のencodingを読めないため、bytesとして受け取り、XML宣言から判定する。
+    # 端末のエンコーディング設定だとST-Bridgeに記載のencodingを読めないため、
+    # bytesとして受け取り、XML宣言から判定する。
     # encodingを明示した場合は判定より優先する。
     buffer: IO[bytes] | None = getattr(sys.stdin, "buffer", None)
     if buffer is None:

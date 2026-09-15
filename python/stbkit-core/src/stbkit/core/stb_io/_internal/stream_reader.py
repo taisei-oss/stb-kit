@@ -89,7 +89,8 @@ def read_stream(
 
 def check_no_doctype(xml: str) -> None:
     """XMLの前文にDOCTYPE宣言が無いことを確認する"""
-    # DOCTYPE宣言はルート要素より前に記述するため、ルート要素の開始までを読んで判定する。
+    # DOCTYPE宣言はルート要素より前に記述するため、
+    # ルート要素の開始までを読んで判定する。
     parser: ET.XMLParser = ET.XMLParser(target=_TargetForCheckDoctype())
     try:
         for index in range(0, len(xml), XML_READ_HEADER_CHUNK_SIZE):

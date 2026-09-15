@@ -21,7 +21,8 @@ def building_geometry_to_ply_text(geom: BuildingGeometry) -> str:
     positions = geom.mesh.positions
     for i in range(geom.mesh.vertex_count):
         result.append(
-            f"{round(positions[i * 3], 5)} {round(positions[i * 3 + 1], 5)} {round(positions[i * 3 + 2], 5)}"
+            f"{round(positions[i * 3], 5)} {round(positions[i * 3 + 1], 5)} "
+            f"{round(positions[i * 3 + 2], 5)}"
         )
 
     face_offsets = geom.mesh.face_offsets

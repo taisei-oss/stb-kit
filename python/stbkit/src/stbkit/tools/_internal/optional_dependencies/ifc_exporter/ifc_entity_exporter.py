@@ -275,7 +275,8 @@ class IfcEntityExporter:
             )
             if item_rc is not None:
                 items.append(item_rc)
-        # ifcopenshellのassign_objectは呼ぶたびに集合演算を行うため処理時間がかかり順序も安定しなくなる。
+        # ifcopenshellのassign_objectは呼ぶたびに集合演算を行うため
+        # 処理時間がかかり順序も安定しなくなる。
         # そのため、参照関係はここで1度だけ作る。
         if items:
             self.model.create_entity(
@@ -342,7 +343,8 @@ class IfcEntityExporter:
             code=Code.PROGRESS_INFO,
             phase=Phase.CONVERT_IFC,
         )
-        # ifcopenshellのassign_containerは、呼ぶたびに集合演算を行うため処理時間がかかり順序も安定しなくなる。
+        # ifcopenshellのassign_containerは、呼ぶたびに集合演算を行うため
+        # 処理時間がかかり順序も安定しなくなる。
         # そのため、参照関係はここで1度だけ作る。
         if elements:
             self.model.create_entity(

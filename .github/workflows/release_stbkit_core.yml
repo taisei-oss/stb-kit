@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "確認用リリースタグ 例:stbkit-core-v0.1.0a9"
+        description: "確認用リリースタグ 例:stbkit-core-v0.1.0b1"
         required: true
         type: string
 

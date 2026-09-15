@@ -9,8 +9,8 @@ from __future__ import annotations
 from argparse import _SubParsersAction
 from typing import Any
 
+from .._internal import summary
+
 
 def register(subparsers: _SubParsersAction[Any]) -> None:
-    from .._internal import validate
-
-    validate.register(subparsers)
+    summary.register(subparsers)

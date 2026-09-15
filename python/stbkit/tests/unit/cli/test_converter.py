@@ -128,6 +128,47 @@ def test_cli_convert_writes_intermediate_latest_stb(
     )
 
 
+def test_cli_upgrade(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    output_path: Path = tmp_path / "column.upgraded.stb"
+
+    assert (
+        run_stbkit_cli(
+            monkeypatch,
+            "upgrade",
+            str(_fixture_path()),
+            "-o",
+            str(output_path),
+            "--yes",
+        )
+        == EXIT_OK
+    )
+
+    assert (
+        stb_io.load(output_path, reporter=NullReporter()).version == LATEST_STB_VERSION
+    )
+
+
+def test_cli_upgrade_uses_stdin_and_stdout(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    stdin: str = _fixture_path().read_text(encoding="utf-8")
+    assert (
+        run_stbkit_cli(
+            monkeypatch,
+            "upgrade",
+            "-",
+            stdin=stdin,
+        )
+        == EXIT_OK
+    )
+    output: str = capsys.readouterr().out
+    assert stb_io.loads(output, reporter=NullReporter()).version == LATEST_STB_VERSION
+
+
 def test_cli_convert_uses_stdin_and_stdout(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],

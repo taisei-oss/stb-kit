@@ -25,8 +25,6 @@ from uuid import UUID
 
 from stbkit.core.data_model.common import StBridgeElement, StBridgeRoot
 from stbkit.core.data_model.common import _EnsureAccessorProtocol as _EAP
-
-VERSION: Literal["2.1.0"]
 from stbkit.core.stb_typing import (
     Angle,
     Length,
@@ -37,6 +35,8 @@ from stbkit.core.stb_typing import (
     PositiveInteger,
     Ratio,
 )
+
+VERSION: Literal["2.1.0"]
 
 class StbConnectionSpecGussetPlateConnectionType(StrEnum):
     """StbConnectionSpecGussetPlate.connection_type で使用できる値。"""

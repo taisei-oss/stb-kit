@@ -114,9 +114,15 @@ class TypeMismatchError(SchemaError):
 
     def __str__(self) -> str:
         if self._path:
-            return f"型の不一致: 期待される型 {self.expected_type}, 実際の型 {self.actual_type}\npath:{self._path}"
+            return (
+                f"型の不一致: 期待される型 {self.expected_type}, "
+                f"実際の型 {self.actual_type}\npath:{self._path}"
+            )
         else:
-            return f"型の不一致: 期待される型 {self.expected_type}, 実際の型 {self.actual_type}"
+            return (
+                f"型の不一致: 期待される型 {self.expected_type}, "
+                f"実際の型 {self.actual_type}"
+            )
 
     @property
     def path(self) -> str | None:

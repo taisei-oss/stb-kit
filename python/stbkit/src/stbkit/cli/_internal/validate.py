@@ -48,7 +48,8 @@ def _try_validate_report(
     require_xsd: bool,
     exclude_legal_extensions: bool,
 ) -> tuple[CollectingReporter | None, str]:
-    # XMLとして読み込めなかった場合は、チェック結果ではなく実行の失敗なので(None, エラーメッセージ)を返す。
+    # XMLとして読み込めなかった場合は、チェック結果ではなく実行の失敗なので
+    # (None, エラーメッセージ)を返す。
     # ST-Bridgeとしての不正はチェック結果であるため、エラーとしない。
     try:
         reporter: CollectingReporter = _validate_report(

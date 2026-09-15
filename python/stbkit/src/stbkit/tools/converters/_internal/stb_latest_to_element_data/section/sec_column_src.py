@@ -4,6 +4,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+import contextlib
+
 from stbkit.core.stb_exceptions import NoneAccessError
 from stbkit.core.stb_reporting import Code, Phase, Reporter
 
@@ -39,7 +41,7 @@ def stb_sec_column_src_to_shapes(
     )
     if sec_figure_column_src:
         name_rc: str = f"{sec_column_src.name_or_none}_RC"
-        try:
+        with contextlib.suppress(NoneAccessError):
             shapes_rc.append(
                 ShapePair(
                     ShapeCircle(
@@ -48,8 +50,6 @@ def stb_sec_column_src_to_shapes(
                     ),
                 )
             )
-        except NoneAccessError:
-            pass
         try:
             sec_column_rect: StbSecColumnRect = (
                 sec_figure_column_src.stb_sec_column_rect

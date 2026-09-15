@@ -17,7 +17,9 @@ from stbkit.core.validation import validate_schema
 
 # 安全なXML
 _VALID_STB: Final = """<?xml version="1.0" encoding="UTF-8"?>
-<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://www.building-smart.or.jp/dl" version="2.1.1">
+<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="https://www.building-smart.or.jp/dl" version="2.1.1">
  <StbCommon project_name="safe" app_name="stbkit" app_version="0.0.0"/>
  <StbModel/>
 </ST_BRIDGE>
@@ -26,7 +28,9 @@ _VALID_STB: Final = """<?xml version="1.0" encoding="UTF-8"?>
 # 内部実体定義を含むXML
 _INTERNAL_ENTITY_STB: Final = """<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ST_BRIDGE [ <!ENTITY name "leaked"> ]>
-<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://www.building-smart.or.jp/dl" version="2.1.1">
+<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="https://www.building-smart.or.jp/dl" version="2.1.1">
  <StbCommon project_name="&name;" app_name="stbkit" app_version="0.0.0"/>
 </ST_BRIDGE>
 """
@@ -39,7 +43,9 @@ _BILLION_LAUGHS_STB: Final = """<?xml version="1.0" encoding="UTF-8"?>
  <!ENTITY c "&b;&b;&b;&b;&b;&b;&b;&b;&b;&b;">
  <!ENTITY d "&c;&c;&c;&c;&c;&c;&c;&c;&c;&c;">
 ]>
-<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://www.building-smart.or.jp/dl" version="2.1.1">
+<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="https://www.building-smart.or.jp/dl" version="2.1.1">
  <StbCommon project_name="&d;" app_name="stbkit" app_version="0.0.0"/>
 </ST_BRIDGE>
 """
@@ -47,14 +53,18 @@ _BILLION_LAUGHS_STB: Final = """<?xml version="1.0" encoding="UTF-8"?>
 # 外部DTD参照を含むXML
 _EXTERNAL_ENTITY_STB: Final = """<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ST_BRIDGE SYSTEM "http://example.invalid/evil.dtd">
-<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://www.building-smart.or.jp/dl" version="2.1.1">
+<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="https://www.building-smart.or.jp/dl" version="2.1.1">
  <StbCommon project_name="external" app_name="stbkit" app_version="0.0.0"/>
 </ST_BRIDGE>
 """
 
 # DTDなしの未定義実体参照: セキュリティ例外ではなくXML構文エラーとなる
 _UNDEFINED_ENTITY_STB: Final = """<?xml version="1.0" encoding="UTF-8"?>
-<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://www.building-smart.or.jp/dl" version="2.1.1">
+<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="https://www.building-smart.or.jp/dl" version="2.1.1">
  <StbCommon project_name="&undefined;" app_name="stbkit" app_version="0.0.0"/>
 </ST_BRIDGE>
 """

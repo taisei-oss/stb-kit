@@ -10,7 +10,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "stbkit-core"
-version = "0.1.0a9"
+version = "0.1.0b1"
 description = "ST-Bridgeを扱うツールキットSTB-KITのコアパッケージ"
 authors = [
     { name = "STB-KIT Development Team (TAISEI CORPORATION)", email = "oss-dev@pub.taisei.co.jp" },
@@ -22,7 +22,7 @@ license = "MPL-2.0"
 license-files = ["LICENSE"]
 keywords = ["ST-Bridge", "BIM", "building", "structural-engineering", "stbridge"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "Natural Language :: Japanese",
@@ -51,8 +51,13 @@ full = ["xmlschema>=4.3.2"]
 where = ["src"]
 namespaces = true
 
+[tool.ruff]
+extend = "../../pyproject.toml"
+
 [tool.ruff.lint.per-file-ignores]
 # 自動生成コードは桁数制限を無視する
+"src/stbkit/core/data_model/stb_v2_0_0.py" = ["E501","E741"]
+"src/stbkit/core/data_model/stb_v2_0_0.pyi" = ["E501","E741"]
 "src/stbkit/core/data_model/stb_v2_0_1.py" = ["E501","E741"]
 "src/stbkit/core/data_model/stb_v2_0_1.pyi" = ["E501","E741"]
 "src/stbkit/core/data_model/stb_v2_0_2.py" = ["E501","E741"]

@@ -28,4 +28,4 @@ def test_vector2d_neg() -> None:
 
 
 def test_vector2d_distanse_to() -> None:
-    assert 5.0 == Vector2d(4.0, 5.0).distance_to(Vector2d(1.0, 1.0))
+    assert Vector2d(4.0, 5.0).distance_to(Vector2d(1.0, 1.0)) == 5.0

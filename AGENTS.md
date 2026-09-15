@@ -56,7 +56,7 @@ path: python/stbkit
 
 - Pythonの総合パッケージ。APIやCLIの入口のほか、変換処理などを実装する。
 - ifcopenshell以外の依存は、できるだけ利用しない。
-- PyPIに公開予定。
+- PyPIに公開。
 
 #### stbkit-testutils
 path: python/stbkit-testutils

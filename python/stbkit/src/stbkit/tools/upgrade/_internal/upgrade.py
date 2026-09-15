@@ -111,16 +111,15 @@ def upgrade_to_v2_0_1(stb: StBridgeRoot, *, reporter: Reporter) -> stb_v2_0_1.St
     elif isinstance(stb, stb_v2_0_0.StBridge):
         return upgrade_v2_0_0_to_v2_0_1(stb, reporter=reporter)
     else:
-        raise NotImplementedError()
+        raise NotImplementedError("対応していないバージョン変換です")
 
 
 def upgrade_to_v2_0_2(stb: StBridgeRoot, *, reporter: Reporter) -> stb_v2_0_2.StBridge:
     if isinstance(stb, stb_v2_0_2.StBridge):
         return stb
-    elif isinstance(stb, stb_v2_0_1.StBridge):
-        return upgrade_v2_0_1_to_v2_0_2(stb, reporter=reporter)
-    else:
-        raise NotImplementedError()
+    elif not isinstance(stb, stb_v2_0_1.StBridge):
+        stb = upgrade_to_v2_0_1(stb, reporter=reporter)
+    return upgrade_v2_0_1_to_v2_0_2(stb, reporter=reporter)
 
 
 def upgrade_to_v2_1_0(stb: StBridgeRoot, *, reporter: Reporter) -> stb_v2_1_0.StBridge:
@@ -222,7 +221,7 @@ def upgrade_to_latest(
 
     Examples:
         >>> import stbkit.api
-        >>> stb = stbkit.api.upgrade_stb(stbkit.api.load("model_v2_0_1.stb"))
+        >>> stb = stbkit.api.upgrade_to_latest(stbkit.api.load("model_v2_0_1.stb"))
     """
     reporter = get_reporter(logger, reporter)
     return upgrade_to_v2_1_1(stb, reporter=reporter)

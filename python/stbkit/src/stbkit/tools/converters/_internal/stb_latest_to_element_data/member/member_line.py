@@ -381,7 +381,7 @@ def get_lengths(
                 except ReferenceElementNotFoundError:
                     raise SchemaError(
                         f"部材 {stb_pile._name_for_log()} の断面が見つかりません。",
-                    )
+                    ) from None
             else:
                 raise AssertionError("想定外の部材タイプです")
         case StbFoundationColumn() as foundation_column:
@@ -421,7 +421,7 @@ def check_lengths(
             stb_element=stb_element,
         )
         lengths = []
-        for i in range(len(shapes)):
+        for _i in range(len(shapes)):
             lengths.append(length / len(shapes))
     return lengths
 

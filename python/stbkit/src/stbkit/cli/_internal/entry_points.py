@@ -14,6 +14,8 @@ COMMAND_GROUP: Final = "stbkit.commands"
 BUILTIN_COMMANDS: Final[dict[str, str]] = {
     "convert": "stbkit.cli.commands.convert:register",
     "diff": "stbkit.cli.commands.diff:register",
+    "summary": "stbkit.cli.commands.summary:register",
+    "upgrade": "stbkit.cli.commands.upgrade:register",
     "validate": "stbkit.cli.commands.validate:register",
 }
 

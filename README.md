@@ -30,7 +30,7 @@ _For detailed warranty disclaimers and limitations of liability, including juris
 - **フォーマット変換**
   - IFC出力（ifcopenshellを利用）
   - PLY等の3Dオブジェクトファイル出力
-- **サマリー**（現在非公開）
+- **サマリー**
   - 入力データの概要表示
 - **バリデーション**
   - ST-Bridge仕様に基づく検証
@@ -62,7 +62,7 @@ _For detailed warranty disclaimers and limitations of liability, including juris
 
 ## 4. インストール
 
-STB-KITは現在アルファ版です。通常のインストールではアルファ版が選ばれない場合があるため、次の例のように`--pre`を指定します。利用するアルファ版の番号が分かっている場合は、`stbkit==バージョン番号`のようにバージョンを直接指定することもできます。
+STB-KITは現在ベータ版です。通常のインストールではベータ版が選ばれない場合があるため、次の例のように`--pre`を指定します。利用するベータ版の番号が分かっている場合は、`stbkit==バージョン番号`のようにバージョンを直接指定することもできます。
 
 ```bash
 python -m pip install --pre "stbkit[full]"
@@ -191,6 +191,7 @@ ST-Bridgeの仕様だけでなく、構造設計での実際の利用方法を�
 > [!IMPORTANT]
 > 現在コードを順次公開中のため、プルリクエストは受け付けていません。
 > IssueやDiscussionの投稿でのご貢献は歓迎いたします。
+
 本プロジェクトへのご貢献を歓迎いたします。
 本プロジェクトは一部でRustを利用していますが、Rust部分の知識がなくとも、Python部分(pythonディレクトリ内)のみのご提案・修正・機能追加等も受け付けております。
 また、ドキュメントの改善、誤記修正、テスト追加、テスト用サンプルの提供や、IssueやDiscussionの投稿のみでも歓迎しております。幅広いご協力をお待ちしております。

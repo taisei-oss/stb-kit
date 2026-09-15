@@ -154,7 +154,8 @@ def create_mesh(
             raise ValueError(f"外形の三角形分割に失敗しました: {error}") from error
 
         warnings.warn(
-            f"開口を含む三角形分割に失敗したため、開口を無視して外形のみ分割します。 {error}",
+            "開口を含む三角形分割に失敗したため、開口を無視して外形のみ分割します。"
+            f" {error}",
             MeshTriangulationWarning,
             stacklevel=2,
         )
@@ -1183,7 +1184,7 @@ def _unique(values: list[float], eps: float) -> list[float]:
 
 
 def _edge_pairs(ring: list[Vector2d]) -> list[tuple[Vector2d, Vector2d]]:
-    return list(zip(ring, ring[1:] + ring[:1]))
+    return list(zip(ring, ring[1:] + ring[:1], strict=False))
 
 
 def _distance_2(a: Vector2d, b: Vector2d) -> float:

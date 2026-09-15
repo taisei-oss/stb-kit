@@ -4,6 +4,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+import contextlib
+
 from stbkit.core.stb_exceptions import NoneAccessError
 from stbkit.core.stb_reporting import Reporter
 
@@ -32,10 +34,8 @@ def stb_to_building_geometry(
     )
 
     node_datas: dict[int, Node] | None = None
-    try:
+    with contextlib.suppress(NoneAccessError):
         node_datas = node_infos_from_stb_nodes(stb.stb_model.stb_nodes)
-    except NoneAccessError:
-        pass
     return element_data_to_building_geometry(
         elements,
         allow_polygons=False,

@@ -64,7 +64,7 @@ def post_sec_pile_s(v202: stb_v2_0_2.StBridge, v210: stb_v2_1_0.StBridge) -> Non
         )
     except NoneAccessError:
         return
-    for v202_sec_pile, v210_sec_pile in zip(v202_list, v210_list):
+    for v202_sec_pile, v210_sec_pile in zip(v202_list, v210_list, strict=False):
         convert_sec_pile_s(v202_sec_pile, v210_sec_pile)
 
 

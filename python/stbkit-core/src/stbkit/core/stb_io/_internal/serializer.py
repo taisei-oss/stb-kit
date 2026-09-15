@@ -74,11 +74,13 @@ def set_element_data(
         elif isinstance(value, StBridgeElement):
             child: ET.Element = ET.SubElement(xml_element, value._xml_name())
             set_element_data(child, value, reporter=reporter, _strict=_strict)
-            if (
+            is_empty: bool = (
                 len(child) == 0
                 and not child.attrib
                 and (child.text is None or child.text.strip() == "")
-            ):
+            )
+            is_required: bool = (field_.min_occurs or 0) > 0
+            if is_empty and not is_required:
                 xml_element.remove(child)
         elif isinstance(value, list):
             for item in value:

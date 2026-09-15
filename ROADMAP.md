@@ -56,9 +56,8 @@
 ## 最近完了した主要項目
 詳細は[CHANGELOG](CHANGELOG.md)を参照してください。
 
-### 0.1.0a9
+### 0.1.0b1
 
-- 最初の公開リリース
-- 基本のAPIの提供
+- CLIの`summary`・`upgrade`機能の公開
 
 Copyright 2026 TAISEI CORPORATION

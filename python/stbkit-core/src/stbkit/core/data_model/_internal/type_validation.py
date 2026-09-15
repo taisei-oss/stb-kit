@@ -309,7 +309,7 @@ def str_to_angle(
     except (TypeError, ValueError):
         raise SchemaError(
             f"angleに変換できない値です: {value}", element=element, attr_name=attr_name
-        )
+        ) from None
 
 
 def str_to_bool(
@@ -325,7 +325,7 @@ def str_to_bool(
                 f"boolに変換できない値です: {value}",
                 element=element,
                 attr_name=attr_name,
-            )
+            ) from None
 
 
 def str_to_enum(
@@ -346,7 +346,7 @@ def str_to_enum(
             f"{enum_type}に変換できない値です: {value}",
             element=element,
             attr_name=attr_name,
-        )
+        ) from None
 
 
 def str_to_float(
@@ -357,7 +357,7 @@ def str_to_float(
     except (TypeError, ValueError):
         raise SchemaError(
             f"floatに変換できない値です: {value}", element=element, attr_name=attr_name
-        )
+        ) from None
 
 
 def str_to_int(
@@ -368,7 +368,7 @@ def str_to_int(
     except (TypeError, ValueError):
         raise SchemaError(
             f"intに変換できない値です: {value}", element=element, attr_name=attr_name
-        )
+        ) from None
 
 
 def str_to_length(
@@ -381,7 +381,7 @@ def str_to_length(
     except (TypeError, ValueError):
         raise SchemaError(
             f"lengthに変換できない値です: {value}", element=element, attr_name=attr_name
-        )
+        ) from None
 
 
 def str_to_monolist(
@@ -397,7 +397,7 @@ def str_to_monolist(
             f"monolistに変換できない値です: {value}",
             element=element,
             attr_name=attr_name,
-        )
+        ) from None
 
 
 def str_to_monolist_id(
@@ -413,7 +413,7 @@ def str_to_monolist_id(
             f"monolist_idに変換できない値です: {value}",
             element=element,
             attr_name=attr_name,
-        )
+        ) from None
 
 
 def str_to_monolist_length(
@@ -429,7 +429,7 @@ def str_to_monolist_length(
             f"monolist_lengthに変換できない値です: {value}",
             element=element,
             attr_name=attr_name,
-        )
+        ) from None
 
 
 def str_to_non_negative_integer(
@@ -444,7 +444,7 @@ def str_to_non_negative_integer(
             f"non_negative_integerに変換できない値です: {value}",
             element=element,
             attr_name=attr_name,
-        )
+        ) from None
 
 
 def str_to_non_negative_length(
@@ -459,7 +459,7 @@ def str_to_non_negative_length(
             f"non_negative_lengthに変換できない値です: {value}",
             element=element,
             attr_name=attr_name,
-        )
+        ) from None
 
 
 def str_to_positive_integer(
@@ -474,7 +474,7 @@ def str_to_positive_integer(
             f"positive_integerに変換できない値です: {value}",
             element=element,
             attr_name=attr_name,
-        )
+        ) from None
 
 
 def str_to_positive_integer_list(
@@ -490,7 +490,7 @@ def str_to_positive_integer_list(
             f"positive_integer_listに変換できない値です: {value}",
             element=element,
             attr_name=attr_name,
-        )
+        ) from None
 
 
 def str_to_ratio(
@@ -503,7 +503,7 @@ def str_to_ratio(
     except (TypeError, ValueError):
         raise SchemaError(
             f"ratioに変換できない値です: {value}", element=element, attr_name=attr_name
-        )
+        ) from None
 
 
 def str_to_str(
@@ -526,7 +526,7 @@ def str_to_uuid(
     except (ValueError, AttributeError):
         raise SchemaError(
             f"UUIDに変換できない値です: {value}", element=element, attr_name=attr_name
-        )
+        ) from None
 
 
 def str_to_typed_value(

@@ -222,7 +222,8 @@ def _resolve_model_version(
         element_type = type(element_or_type)
         element = element_or_type
 
-    # 拡張子要素はcommonで定義されるため、親要素をたどって最初に見つかったVERSIONを使用する。
+    # 拡張子要素はcommonで定義されるため、
+    # 親要素をたどって最初に見つかったVERSIONを使用する。
     if issubclass(element_type, _StBridgeExtensionElement):
         if element is None:
             raise ValueError(

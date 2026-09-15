@@ -631,7 +631,7 @@ wheels = [
 
 [[package]]
 name = "stbkit"
-version = "0.1.0a9"
+version = "0.1.0b1"
 source = { editable = "python/stbkit" }
 dependencies = [
     { name = "stbkit-core" },
@@ -665,7 +665,7 @@ provides-extras = ["xsd", "ifc", "full"]
 
 [[package]]
 name = "stbkit-core"
-version = "0.1.0a9"
+version = "0.1.0b1"
 source = { editable = "python/stbkit-core" }
 
 [package.optional-dependencies]

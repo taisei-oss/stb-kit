@@ -28,7 +28,7 @@ def post_girder(
     v210_girders: list[stb_v2_1_0.StbGirder] = (
         v210.stb_model.stb_members.stb_girders.stb_girder
     )
-    for v202_girder, v210_girder in zip(v202_girders, v210_girders):
+    for v202_girder, v210_girder in zip(v202_girders, v210_girders, strict=False):
         girder_length_value: girder_utils.GirderLengthValue = (
             girder_utils.girder_length(v202_girder, v202)
         )

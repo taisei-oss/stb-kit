@@ -4,6 +4,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+import contextlib
 import copy
 import uuid
 from collections.abc import Callable, Sequence
@@ -161,14 +162,16 @@ def stb_sec_steel_figure_beam_s_to_v210[TShape: StBridgeElement, TSection: HasId
             != v202_taper_end.strength_main_or_none
         ):
             reporter.warning(
-                message=f"{figure.original_element._name_for_log()} 始端と終端の鉄骨強度（主）が異なります。",
+                message=f"{figure.original_element._name_for_log()} 始端と終端の"
+                "鉄骨強度（主）が異なります。",
                 code=Code.SCHEMA_VERSION_MISMATCH,
                 phase=Phase.UPGRADE,
                 stb_element=figure.original_element,
             )
         if v202_taper_start.strength_web_or_none != v202_taper_end.strength_web_or_none:
             reporter.warning(
-                message=f"{figure.original_element._name_for_log()} 始端と終端の鉄骨強度（ウェブ）が異なります。",
+                message=f"{figure.original_element._name_for_log()} 始端と終端の"
+                "鉄骨強度（ウェブ）が異なります。",
                 code=Code.SCHEMA_VERSION_MISMATCH,
                 phase=Phase.UPGRADE,
                 stb_element=figure.original_element,
@@ -185,7 +188,7 @@ def stb_sec_steel_figure_beam_s_to_v210[TShape: StBridgeElement, TSection: HasId
 
     if figure.joints:
         v202_joints: Sequence[HasShapeAndStrengthAndPos] = figure.joints
-        if len(v202_joints) < 2 or 3 < len(v202_joints):
+        if len(v202_joints) < 2 or len(v202_joints) > 3:
             reporter.warning(
                 message="Jointの回数がスキーマ違反のため変換できません",
                 code=Code.SCHEMA_ERROR,
@@ -195,15 +198,14 @@ def stb_sec_steel_figure_beam_s_to_v210[TShape: StBridgeElement, TSection: HasId
             return
         tmp_joints: dict[str, HasShapeAndStrengthAndPos] = {}
         for pos in ["START", "CENTER", "END"]:
-            try:
+            with contextlib.suppress(StopIteration):
                 tmp_joints[pos] = next(
                     joint for joint in v202_joints if joint.pos == pos
                 )
-            except StopIteration:
-                pass
         if "CENTER" not in tmp_joints:
             reporter.warning(
-                message=f"{figure.original_element._name_for_log()} Jointのpos=CENTERがありません",
+                message=f"{figure.original_element._name_for_log()} Jointの"
+                "pos=CENTERがありません",
                 code=Code.SCHEMA_ERROR,
                 phase=Phase.UPGRADE,
                 stb_element=figure.original_element,
@@ -211,7 +213,8 @@ def stb_sec_steel_figure_beam_s_to_v210[TShape: StBridgeElement, TSection: HasId
             return
         elif len(tmp_joints) < 2:
             reporter.warning(
-                message=f"{figure.original_element._name_for_log()} Jointのpos=STARTまたはENDがありません",
+                message=f"{figure.original_element._name_for_log()} Jointの"
+                "pos=STARTまたはENDがありません",
                 code=Code.SCHEMA_ERROR,
                 phase=Phase.UPGRADE,
                 stb_element=figure.original_element,
@@ -254,7 +257,9 @@ def stb_sec_steel_figure_beam_s_haunch_to_v210[
         return
 
     def _invalidate_target_beams() -> None:
-        for v202_beam, v210_beam in zip(v202_girders_and_beams, v210_girders_and_beams):
+        for v202_beam, v210_beam in zip(
+            v202_girders_and_beams, v210_girders_and_beams, strict=False
+        ):
             if v202_beam.id_section != id_section:
                 continue
             if isinstance(v210_beam, stb_v2_1_0.StbGirder):
@@ -273,7 +278,7 @@ def stb_sec_steel_figure_beam_s_haunch_to_v210[
     )
 
     v202_haunches: Sequence[HasShapeAndStrengthAndPos] = figure.haunches
-    if len(v202_haunches) < 2 or 3 < len(v202_haunches):
+    if len(v202_haunches) < 2 or len(v202_haunches) > 3:
         reporter.warning(
             message="haunchの回数がスキーマ違反のため変換できません",
             code=Code.SCHEMA_ERROR,
@@ -283,10 +288,8 @@ def stb_sec_steel_figure_beam_s_haunch_to_v210[
         _invalidate_target_beams()
         return
     haunch_start: HasShapeAndStrengthAndPos | None = None
-    try:
+    with contextlib.suppress(StopIteration):
         haunch_start = next(haunch for haunch in v202_haunches if haunch.pos == "START")
-    except StopIteration:
-        pass
     try:
         haunch_center: HasShapeAndStrengthAndPos = next(
             haunch for haunch in v202_haunches if haunch.pos == "CENTER"
@@ -301,10 +304,8 @@ def stb_sec_steel_figure_beam_s_haunch_to_v210[
         _invalidate_target_beams()
         return
     haunch_end: HasShapeAndStrengthAndPos | None = None
-    try:
+    with contextlib.suppress(StopIteration):
         haunch_end = next(haunch for haunch in v202_haunches if haunch.pos == "END")
-    except StopIteration:
-        pass
     if not haunch_start and not haunch_end:
         reporter.warning(
             message=f"{figure.original_element._name_for_log()}posがSTARTもENDも使われていません",
@@ -321,7 +322,9 @@ def stb_sec_steel_figure_beam_s_haunch_to_v210[
     v210_target_beams_dict: dict[
         tuple[str, str], list[stb_v2_1_0.StbGirder | stb_v2_1_0.StbBeam]
     ] = {}
-    for v202_beam, v210_beam in zip(v202_girders_and_beams, v210_girders_and_beams):
+    for v202_beam, v210_beam in zip(
+        v202_girders_and_beams, v210_girders_and_beams, strict=False
+    ):
         if v202_beam.id_section != id_section:
             continue
         key = (
@@ -337,9 +340,7 @@ def stb_sec_steel_figure_beam_s_haunch_to_v210[
         v202_target_beams.append(v202_beam)
         v210_target_beams.append(v210_beam)
 
-    for kind_index, (haunch_kind, v202_target_beams) in enumerate(
-        v202_target_beams_dict.items()
-    ):
+    for kind_index, haunch_kind in enumerate(v202_target_beams_dict):
         v210_shapes: list[TShape] = []
         v210_target_beams = v210_target_beams_dict[haunch_kind]
         order: int = 1
@@ -511,7 +512,9 @@ def stb_sec_steel_figure_beam_s_five_types_to_v210[
     )
 
     def _invalidate_target_beams() -> None:
-        for v202_beam, v210_beam in zip(v202_girders_and_beams, v210_girders_and_beams):
+        for v202_beam, v210_beam in zip(
+            v202_girders_and_beams, v210_girders_and_beams, strict=False
+        ):
             if v202_beam.id_section != id_section:
                 continue
             if isinstance(v210_beam, stb_v2_1_0.StbGirder):
@@ -523,7 +526,7 @@ def stb_sec_steel_figure_beam_s_five_types_to_v210[
             v210_beam.id_section_or_none = None
 
     v202_five_types_list: Sequence[HasShapeAndStrengthAndPos] = figure.five_types
-    if len(v202_five_types_list) < 3 or 5 < len(v202_five_types_list):
+    if len(v202_five_types_list) < 3 or len(v202_five_types_list) > 5:
         reporter.warning(
             message="StbSecSteelBeam_S_FiveTypesの回数がスキーマ違反のため変換できません",
             code=Code.SCHEMA_ERROR,
@@ -541,14 +544,12 @@ def stb_sec_steel_figure_beam_s_five_types_to_v210[
     )
     five_types_dict: dict[str, HasShapeAndStrengthAndPos] = {}
     for pos in pos_choices:
-        try:
+        with contextlib.suppress(StopIteration):
             five_types_dict[pos] = next(
                 five_types
                 for five_types in v202_five_types_list
                 if five_types.pos == pos
             )
-        except StopIteration:
-            pass
 
     five_types_start: HasShapeAndStrengthAndPos | None = five_types_dict.get("START")
     five_types_center: HasShapeAndStrengthAndPos | None = five_types_dict.get("CENTER")
@@ -577,7 +578,9 @@ def stb_sec_steel_figure_beam_s_five_types_to_v210[
         tuple[str, str, bool, bool, bool, bool, bool | None, bool | None],
         list[stb_v2_1_0.StbGirder | stb_v2_1_0.StbBeam],
     ] = {}
-    for v202_beam, v210_beam in zip(v202_girders_and_beams, v210_girders_and_beams):
+    for v202_beam, v210_beam in zip(
+        v202_girders_and_beams, v210_girders_and_beams, strict=False
+    ):
         if v202_beam.id_section != id_section:
             continue
         is_joint_inside_haunch_start: bool | None = None
@@ -619,7 +622,8 @@ def stb_sec_steel_figure_beam_s_five_types_to_v210[
         v210_target_beams.append(v210_beam)
 
     kind_index: int = 0
-    for beam_kind, v202_target_beams in v202_target_beams_dict.items():
+    for beam_kind in v202_target_beams_dict:
+        v202_target_beams = v202_target_beams_dict[beam_kind]
         (
             kind_hanuch_start,
             kind_hanuch_end,
@@ -945,7 +949,8 @@ def stb_sec_steel_figure_beam_s_five_types_to_v210[
             kind_index += 1
         except SchemaError as e:
             reporter.warning(
-                message=f"StbSecSteelBeam_S_FiveTypesの変換中にエラーが発生しました: {e}",
+                message="StbSecSteelBeam_S_FiveTypesの変換中に"
+                f"エラーが発生しました: {e}",
                 code=Code.UNEXPECTED_ERROR,
                 phase=Phase.UPGRADE,
                 stb_element=figure.original_element,

@@ -34,7 +34,10 @@ def _nested_stb(depth: int) -> str:
     closing: str = "".join(f"</Nested{index}>" for index in reversed(range(nest)))
 
     def def_tag(index: int) -> str:
-        return f'<StbExtElement object_name="Nested{index - 1}" element_name="Nested{index}"/>'
+        return (
+            f'<StbExtElement object_name="Nested{index - 1}" '
+            f'element_name="Nested{index}"/>'
+        )
 
     definition: str = "".join(def_tag(index) for index in range(1, nest))
 

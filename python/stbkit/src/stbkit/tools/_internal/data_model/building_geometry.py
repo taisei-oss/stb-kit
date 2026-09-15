@@ -42,7 +42,8 @@ def _new_u32_array() -> array[int]:
 
 
 def _new_offsets_array() -> array[int]:
-    # データの範囲をoffsets[i]:offsets[i + 1] で求めるため、要素が0個でも先頭の0を作っておく。
+    # データの範囲をoffsets[i]:offsets[i + 1] で求めるため、
+    # 要素が0個でも先頭の0を作っておく。
     return array("I", [0])
 
 
@@ -169,7 +170,7 @@ class PolygonMesh:
         repr=False,
     )
     """面の頂点。
-    
+
     例えば面が(0, 1, 2, 3),(4, 5, 6)なら、 [0, 1, 2, 3, 4, 5, 6]のように格納する"""
 
     face_offsets: array[int] = field(
@@ -325,7 +326,8 @@ class PlaneShape:
 @dataclass(slots=True)
 class PlaneShapeTable:
     points_xyz: array[float] = field(default_factory=_new_f64_array, repr=False)
-    """全ループの頂点。x, y, z の順で1点につき3値。ループの順序はplane_loop_offsetsで表す。"""
+    """全ループの頂点。x, y, z の順で1点につき3値。
+    ループの順序はplane_loop_offsetsで表す。"""
     loop_point_offsets: array[int] = field(
         default_factory=_new_offsets_array,
         repr=False,
@@ -1135,7 +1137,8 @@ class BuildingGeometry:
             else:
                 if not flags & ElementFlags.HAS_MESH:
                     raise ValueError(
-                        f"element {element_index} はmesh spanがありますがHAS_MESHではありません"
+                        f"element {element_index} はmesh spanがありますが"
+                        "HAS_MESHではありません"
                     )
                 if span.vertex_start + span.vertex_count > vertex_count:
                     raise ValueError(

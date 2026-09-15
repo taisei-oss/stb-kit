@@ -42,7 +42,7 @@ stbkit-testutils = { workspace = true }
 select = ["E", "F", "W", "B", "I", "UP", "SIM"]
 
 [tool.mypy]
-python_version = "3.14"
+python_version = "3.12"
 strict = true
 show_error_codes = true
 warn_unreachable = true

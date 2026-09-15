@@ -25,13 +25,15 @@ class ValidationContext:
             reporter: 出力するReporter
             stb: 検証するST-Bridgeのデータモデル
             xml: 検証するST-BridgeのXML文字列
-            report_load: XML文字列からモデルをloadするときに、エラーをreporterへ記録するかどうか。
+            report_load: XML文字列からモデルをloadするときに、
+                エラーをreporterへ記録するかどうか。
                 読み込み時の退避報告と同じエラーをvalidatorが別の根拠で報告する場合に、Falseを指定して二重記録を防ぐ。
         """
         if stb is None and xml is None:
             raise ValueError("stbまたはxmlのいずれかを指定する必要があります")
         if xml is not None:
-            # XSD検証はxmlschemaへXMLを直接渡すため、その前に危険な記述がないかチェックする。
+            # XSD検証はxmlschemaへXMLを直接渡すため、
+            # その前に危険な記述がないかチェックする。
             from ...stb_io._internal.stream_reader import check_no_doctype
 
             check_no_doctype(xml)

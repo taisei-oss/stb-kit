@@ -10,19 +10,19 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "stbkit"
-version = "0.1.0a9"
+version = "0.1.0b1"
 description = "ST-Bridgeを扱うライブラリSTB-KIT"
 authors = [
     { name = "STB-KIT Development Team (TAISEI CORPORATION)", email = "oss-dev@pub.taisei.co.jp" },
 ]
-dependencies = ["stbkit-core==0.1.0a9"]
+dependencies = ["stbkit-core==0.1.0b1"]
 readme = "README.md"
 requires-python = ">=3.12"
 license = "MPL-2.0"
 license-files = ["LICENSE"]
 keywords = ["ST-Bridge", "BIM", "IFC", "structural-engineering", "stbridge"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Environment :: Console",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
@@ -67,11 +67,10 @@ full = [
     "xmlschema>=4.3.2",
 ]
 
+[tool.ruff]
+extend = "../../pyproject.toml"
+
 [tool.ruff.lint.per-file-ignores]
-# 辞書形式の要素名が長いため1行になるのを許容
-"src/stbkit/tools/transform/versioning/_internal/upgrade_v202_to_v210/tables.py" = [
-    "E501",
-]
 # 社内用コードから公開用コードへ切り出す際に生じてしまうエラーの除外
 "src/stbkit/cli/_internal/diff.py" = ["F401", "I001"]
 

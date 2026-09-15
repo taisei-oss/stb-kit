@@ -211,7 +211,7 @@ class _AutoModel(type):
         def __init__(self: Any, **kwargs: dict[str, Any]) -> None:
             StBridgeElement.__init__(self)
             for field_name, field_info in fields.items():
-                value: Any = kwargs.get(field_name, None)
+                value: Any = kwargs.get(field_name)
                 if field_info.kind == _FieldKind.ELEMENT and field_info.max_occurs != 1:
                     if value is None:
                         value = _StBridgeElementList(parent=self)
@@ -472,7 +472,7 @@ class StBridgeElement(metaclass=_AutoModel):
         except KeyError:
             raise RuntimeError(
                 f"{self.__class__.__name__}に属性{attr_name}はありません"
-            )
+            ) from None
 
     @classmethod
     def _xml_class_name(cls) -> str:
@@ -728,7 +728,7 @@ class StBridgeElement(metaclass=_AutoModel):
             new_class: type[StBridgeElement] = getattr(module, class_name)
             return new_class()
         except AttributeError:
-            raise ValueError(f"{cls.__module__}に{class_name}はありません")
+            raise ValueError(f"{cls.__module__}に{class_name}はありません") from None
 
     @classmethod
     def _create_child_instance(cls, attr_name: str) -> StBridgeElement:
@@ -953,7 +953,8 @@ class _EnsureAccessorBase(_EnsureAccessorProtocol):
         self._owner = owner
 
     # not TYPE_CHECKINGにより__getattr__を型チェッカから隠す。
-    # 見えているとスタブで定義していない属性で方エラーが出ず、属性名のtypoの危険性がある。
+    # 見えているとスタブで定義していない属性で方エラーが出ず、
+    # 属性名のtypoの危険性がある。
     if not TYPE_CHECKING:
 
         def __getattr__(self, name: str) -> Any:

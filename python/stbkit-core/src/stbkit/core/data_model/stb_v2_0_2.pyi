@@ -23,8 +23,6 @@ from uuid import UUID
 
 from stbkit.core.data_model.common import StBridgeElement, StBridgeRoot
 from stbkit.core.data_model.common import _EnsureAccessorProtocol as _EAP
-
-VERSION: Literal["2.0.2"]
 from stbkit.core.stb_typing import (
     Angle,
     Length,
@@ -33,6 +31,8 @@ from stbkit.core.stb_typing import (
     NonNegativeLength,
     PositiveInteger,
 )
+
+VERSION: Literal["2.0.2"]
 
 class StbNodeKind(StrEnum):
     """StbNode.kind で使用できる値。"""

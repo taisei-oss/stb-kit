@@ -44,7 +44,8 @@ def get_repository(
     Examples:
         >>> import stbkit.api
         >>> import stbkit.api.experimental
-        >>> repo = stbkit.api.experimental.get_repository(stbkit.api.load_latest("model.stb"))
+        >>> stb = stbkit.api.load_latest("model.stb")
+        >>> repo = stbkit.api.experimental.get_repository(stb)
     """
     match stb:
         case stb_v2_0_2.StBridge():

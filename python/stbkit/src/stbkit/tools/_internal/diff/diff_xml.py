@@ -27,12 +27,15 @@ class XmlCompareOption(CompareOption):
 
     Attribute:
         ignore_order_children(bool): 同一タグの子要素の順序を無視するか
-        compare_tag_order(bool): 異なるタグを含む子要素のタグの並び順を差分として検出するか
+        compare_tag_order(bool): 異なるタグを含む子要素のタグの並び順を
+          差分として検出するか
         ignore_empty_attributes(bool): 値が空の属性を無視するか
         ignore_empty_elements(bool): 属性も子要素も内容もない要素を無視するか
         numeric_equivalent_attributes(bool): 数値として等価な属性値を同一とみなすか
-         (例: True の場合、"1" と "1.0" を同一とみなす。Falseの場合は文字列として異なるため、差分となる)
-        filter_option(FilterOption): 比較対象の要素や属性を絞り込むためのフィルターオプション
+         (例: True の場合、"1" と "1.0" を同一とみなす。
+           Falseの場合は文字列として異なるため、差分となる)
+        filter_option(FilterOption): 比較対象の要素や属性を絞り込むための
+          フィルターオプション
     """
 
     ignore_order_children: bool = True
@@ -125,11 +128,7 @@ def _is_empty_element(
         if not compare_option.ignore_empty_attributes or value.strip() != "":
             return False
 
-    for child in element:
-        if not _is_empty_element(child, compare_option):
-            return False
-
-    return True
+    return all(_is_empty_element(child, compare_option) for child in element)
 
 
 def _is_child_target(

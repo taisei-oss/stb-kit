@@ -179,7 +179,9 @@ def post_sec_beam_rc(
         v210_sections: list[stb_v2_1_0.StbSecBeamRc] = (
             v210.stb_model.stb_sections.stb_sec_beam_rc
         )
-        for v202_section, v210_section in zip(v202_sections, v210_sections):
+        for v202_section, v210_section in zip(
+            v202_sections, v210_sections, strict=False
+        ):
             v202_figure: stb_v2_0_2.StbSecFigureBeamRc | None = (
                 v202_section.stb_sec_figure_beam_rc_or_none
             )
@@ -208,7 +210,9 @@ def post_sec_beam_src_rc(
         v210_sections: list[stb_v2_1_0.StbSecBeamSrc] = (
             v210.stb_model.stb_sections.stb_sec_beam_src
         )
-        for v202_section, v210_section in zip(v202_sections, v210_sections):
+        for v202_section, v210_section in zip(
+            v202_sections, v210_sections, strict=False
+        ):
             v202_figure: stb_v2_0_2.StbSecFigureBeamSrc | None = (
                 v202_section.stb_sec_figure_beam_src_or_none
             )

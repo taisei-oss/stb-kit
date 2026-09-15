@@ -32,7 +32,8 @@ def load_text(
 
 def _read_limited(src: IO[str], *, max_size: int) -> str:
     """上限より1文字多く読み、超過したら例外を投げる"""
-    # readにmax_sizeをそのまま渡すと、実際のデータ量と無関係にその大きさのバッファを確保するため、分割して読みこむ。
+    # readにmax_sizeをそのまま渡すと、
+    # 実際のデータ量と無関係にその大きさのバッファを確保するため、分割して読みこむ。
     chunks: list[str] = []
     remaining: int = max_size + 1
     while remaining > 0:

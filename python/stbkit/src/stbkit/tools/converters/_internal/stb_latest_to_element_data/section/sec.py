@@ -174,7 +174,7 @@ def get_slab_depth(
         section = None
     if isinstance(section, stb_latest.StbSecSlabRc):
         try:
-            return section.stb_sec_slab_rc_conventional.stb_sec_figure_slab_rc_conventional.stb_sec_slab_rc_conventional_straight.depth
+            return section.stb_sec_slab_rc_conventional.stb_sec_figure_slab_rc_conventional.stb_sec_slab_rc_conventional_straight.depth  # noqa:E501
         except NoneAccessError:
             pass
     reporter.warning(

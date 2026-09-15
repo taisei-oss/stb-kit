@@ -6,8 +6,14 @@
 
 from typing import Final
 
-from stbkit.core.data_model.stb_v2_1_1 import VERSION, StbMembers, StbModel, StBridge
-from stbkit.core.stb_io import loads
+from stbkit.core.data_model.stb_v2_1_1 import (
+    VERSION,
+    StbCommon,
+    StbMembers,
+    StbModel,
+    StBridge,
+)
+from stbkit.core.stb_io import dumps, loads
 from stbkit.core.stb_reporting import NullReporter
 
 _EMPTY_STB_MODEL: Final = """<?xml version="1.0" encoding="UTF-8"?>
@@ -39,3 +45,20 @@ def test_load_empty_element() -> None:
     stb = loads(_EMPTY_STB_MEMBERS, version=VERSION, reporter=NullReporter())
     assert stb.stb_model.stb_members_or_none is not None
     assert isinstance(stb.stb_model.stb_members, StbMembers)
+
+
+def test_dump_empty_required_element() -> None:
+    stb: StBridge = StBridge(
+        version=VERSION,
+        stb_common=StbCommon(
+            project_name="empty", app_name="stbkit", app_version="0.0.0"
+        ),
+        stb_model=StbModel(),
+    )
+
+    xml: str = dumps(stb)
+    assert "<StbModel/>" in xml
+
+    loaded_stb: StBridge = loads(xml, version=VERSION, reporter=NullReporter())
+    assert loaded_stb.stb_model_or_none is not None
+    assert isinstance(loaded_stb.stb_model, StbModel)

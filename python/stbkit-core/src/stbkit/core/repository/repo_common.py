@@ -4,7 +4,6 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-from abc import ABC
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, ClassVar, Final
@@ -48,7 +47,7 @@ type _RefTarget = type[StBridgeElement] | tuple[type[StBridgeElement], ...] | _B
 type _RefMap = dict[type[StBridgeElement], dict[str, _RefTarget]]
 
 
-class RepositoryBase(ABC):
+class RepositoryBase:
     """リポジトリの基底クラス。
 
     作成後にモデルを変更した場合はrefresh()で索引を作り直す必要があります。
@@ -57,8 +56,10 @@ class RepositoryBase(ABC):
         stb: ST-Bridgeのルート。
     """
 
+    # 下記変数をサブクラスで継承させる
+    # ABCにしたいが、クラス変数の上書きはabstractmethodで強制できず、
+    # B024がでるので、普通のクラスとしている
     _key_field_names: ClassVar[dict[type[StBridgeElement], str]] = {}
-
     _ref_map: ClassVar[_RefMap] = {}
 
     def __init__(self, stb: StBridgeElement) -> None:
@@ -92,7 +93,8 @@ class RepositoryBase(ABC):
                 children: list[StBridgeElement] = getattr(element, field_name)
                 for child in children:
                     # 索引の対象は要素ごとに判定する。
-                    # 孫要素などもあるため、対象かどうかに関わらず全要素に対して探索する。
+                    # 孫要素などもあるため、対象かどうかに関わらず
+                    # 全要素に対して探索する。
                     self._set_key_index(child)
                     self._set_storage(child)
 
@@ -153,7 +155,8 @@ class RepositoryBase(ABC):
             )
         if not isinstance(item, ItemType):
             raise TypeError(
-                f"型が異なります。expect:{ItemType.__name__}, actual:{type(item).__name__}"
+                f"型が異なります。expect:{ItemType.__name__}, "
+                f"actual:{type(item).__name__}"
             )
         return item
 
@@ -231,7 +234,8 @@ class RepositoryBase(ABC):
 
         Args:
             instance (T): 比較対象要素。
-            exclude_fields (Iterable[str], optional): 比較から除外するフィールド名のリスト。デフォルトはNone。
+            exclude_fields (Iterable[str], optional): 比較から除外する
+                フィールド名のリスト。デフォルトはNone。
 
         Returns:
             T | None: 同等の要素が見つかった場合はその要素。見つからない場合はNone。
@@ -294,7 +298,7 @@ class RepositoryBase(ABC):
         except KeyError:
             raise KeyError(
                 f"{type(element).__name__}のフィールド名{id_field_name}は想定されない参照です"
-            )
+            ) from None
         RefTypes: type[StBridgeElement] | tuple[type[StBridgeElement], ...]
         if isinstance(ref_target, _ByKind):
             RefTypes = ref_target.resolve(element)
@@ -327,7 +331,8 @@ class _DerefAccessor:
 
     """
 
-    # deref()は基底クラスRepositoryBaseに置くと、スタブのオーバーロードで警告が出るため、各バージョンのリポジトリ側で定義する。
+    # deref()は基底クラスRepositoryBaseに置くと、
+    # スタブのオーバーロードで警告が出るため、各バージョンのリポジトリ側で定義する。
 
     __slots__ = ("_element", "_repo")
 
@@ -339,7 +344,8 @@ class _DerefAccessor:
         return f"{type(self).__name__}({self._element._name_for_log()})"
 
     # not TYPE_CHECKINGにより__getattr__を型チェッカから隠す。
-    # 見えているとスタブで定義していない属性で方エラーが出ず、属性名のtypoの危険性がある。
+    # 見えているとスタブで定義していない属性で方エラーが出ず、
+    # 属性名のtypoの危険性がある。
     if not TYPE_CHECKING:
 
         def __getattr__(self, name: str) -> StBridgeElement | None:

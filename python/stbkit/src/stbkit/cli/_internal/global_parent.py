@@ -16,7 +16,8 @@ DEFAULT_MAX_SIZE_MB: int = DEFAULT_MAX_XML_SIZE // BYTES_PER_MB
 
 
 def make_global_parent() -> argparse.ArgumentParser:
-    # 共通引数に既定値を持たせるとサブコマンドより前で指定した値がサブコマンドで上書きされてしまうため、
+    # 共通引数に既定値を持たせるとサブコマンドより前で指定した値が
+    # サブコマンドで上書きされてしまうため、
     # 共通引数は既定値を持たせず、下のget_xxxを用いる。
     parent = argparse.ArgumentParser(add_help=False)
     parent.add_argument(

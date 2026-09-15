@@ -11,7 +11,8 @@ from pathlib import Path
 from typing import IO, Literal
 
 # ST-Bridgeのスキーマ上の型のタイプエイリアス。
-# 見やすくしたもので、値の範囲を制限するものではなく、バリデーションはクラス側のFieldInfoで行う。
+# 見やすくしたもので、値の範囲を制限するものではなく、
+# バリデーションはクラス側のFieldInfoで行う。
 # コード補完などでわかりやすいように定義している
 
 Angle = float

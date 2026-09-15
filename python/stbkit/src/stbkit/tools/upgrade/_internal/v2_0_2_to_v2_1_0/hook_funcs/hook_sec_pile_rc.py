@@ -43,7 +43,7 @@ def convert_sec_pile_rc(
             v202_figure.stb_sec_pile_rc_extended_foot_or_none
         )
         if v202_extend_foot:
-            v210_extend_foot: stb_v2_1_0.StbSecPileRcConventionalExtendedFoot = stb_v2_1_0.StbSecPileRcConventionalExtendedFoot(
+            v210_extend_foot = stb_v2_1_0.StbSecPileRcConventionalExtendedFoot(
                 d_extended_foot=v202_extend_foot.d_extended_foot_or_none,
                 d_axial=v202_extend_foot.d_axial_or_none,
                 length_extended_foot=v202_extend_foot.length_extended_foot_or_none,
@@ -54,7 +54,7 @@ def convert_sec_pile_rc(
             v202_figure.stb_sec_pile_rc_extended_top_or_none
         )
         if v202_extend_top:
-            v210_extend_top: stb_v2_1_0.StbSecPileRcConventionalExtendedTop = stb_v2_1_0.StbSecPileRcConventionalExtendedTop(
+            v210_extend_top = stb_v2_1_0.StbSecPileRcConventionalExtendedTop(
                 d_extended_top=v202_extend_top.d_extended_top_or_none,
                 d_axial=v202_extend_top.d_axial_or_none,
                 angle_extended_top_taper=v202_extend_top.angle_extended_top_taper_or_none,
@@ -64,7 +64,7 @@ def convert_sec_pile_rc(
             v202_figure.stb_sec_pile_rc_extended_top_foot_or_none
         )
         if v202_extend_top_foot:
-            v210_extend_top_foot: stb_v2_1_0.StbSecPileRcConventionalExtendedTopFoot = stb_v2_1_0.StbSecPileRcConventionalExtendedTopFoot(
+            v210_extend_top_foot = stb_v2_1_0.StbSecPileRcConventionalExtendedTopFoot(
                 d_extended_top=v202_extend_top_foot.d_extended_top_or_none,
                 d_axial=v202_extend_top_foot.d_axial_or_none,
                 d_extended_foot=v202_extend_top_foot.d_extended_foot_or_none,
@@ -87,7 +87,7 @@ def post_sec_pile_rc(v202: stb_v2_0_2.StBridge, v210: stb_v2_1_0.StBridge) -> No
         )
     except NoneAccessError:
         return
-    for v202_sec_pile, v210_sec_pile in zip(v202_list, v210_list):
+    for v202_sec_pile, v210_sec_pile in zip(v202_list, v210_list, strict=False):
         convert_sec_pile_rc(v202_sec_pile, v210_sec_pile)
 
 

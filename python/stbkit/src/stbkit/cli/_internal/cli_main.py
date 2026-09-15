@@ -69,7 +69,8 @@ def _main() -> None:
             register(subparsers)
         except Exception as e:  # noqa: BLE001
             print(
-                f"不明なサブコマンドを登録しようとして失敗しました[{entry_point.name}]: {e}",
+                "不明なサブコマンドを登録しようとして失敗しました"
+                f"[{entry_point.name}]: {e}",
                 file=sys.stderr,
             )
 

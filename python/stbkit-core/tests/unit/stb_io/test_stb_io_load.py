@@ -13,7 +13,9 @@ from stbkit.core.stb_exceptions import UnsupportedStbVersionError
 from stbkit.core.stb_io import load, loads
 
 UNSUPPORTED_STB: Final = """<?xml version="1.0" encoding="UTF-8"?>
-<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://www.building-smart.or.jp/dl" version="99.9.9">
+<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="https://www.building-smart.or.jp/dl" version="99.9.9">
  <StbCommon project_name="unsupported_version" app_name="stbkit" app_version="0.0.0"/>
 </ST_BRIDGE>
 """
