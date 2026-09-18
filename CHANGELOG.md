@@ -28,7 +28,7 @@ STB-KITのバージョンについての考え方は[COMPATIBILITY](COMPATIBILIT
 
 ### Fixed
 
-- なし
+- IFC,PLY変換で壁・スラブの板厚が不明の際の既定値10mmに対し、mへの単位変換が二重にされてしまい、0.01mmになっていた問題を修正
 
 ### Security
 

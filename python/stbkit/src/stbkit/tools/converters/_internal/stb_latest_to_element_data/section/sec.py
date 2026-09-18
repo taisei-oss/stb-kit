@@ -44,7 +44,6 @@ from ....._internal.data_model.shape_data import (
     SHAPE_PAIRS_UNDEFINED,
     ShapePair,
 )
-from ....._internal.utils.unit_utils import mm_to_m
 from ....._internal.vectors import Vector2d
 from . import (
     sec_beam_rc,
@@ -183,11 +182,11 @@ def get_slab_depth(
             f"見つかりませんでした。d={UNKNOWN_ELEMENT_SIZE_MM}mmで代替します"
         ),
         code=Code.MISSING_ATTRIBUTE,
-        phase=Phase.CONVERT_IFC,
+        phase=Phase.CONVERT_GEOMETRY,
         stb_element=stb_slab,
         attr_name="id_section",
     )
-    return mm_to_m(UNKNOWN_ELEMENT_SIZE_MM)
+    return UNKNOWN_ELEMENT_SIZE_MM
 
 
 def get_wall_t(
@@ -207,8 +206,8 @@ def get_wall_t(
             f"見つかりませんでした。t={UNKNOWN_ELEMENT_SIZE_MM}mmで代替します"
         ),
         code=Code.MISSING_ATTRIBUTE,
-        phase=Phase.CONVERT_IFC,
+        phase=Phase.CONVERT_GEOMETRY,
         stb_element=stb_wall,
         attr_name="id_section",
     )
-    return mm_to_m(UNKNOWN_ELEMENT_SIZE_MM)
+    return UNKNOWN_ELEMENT_SIZE_MM

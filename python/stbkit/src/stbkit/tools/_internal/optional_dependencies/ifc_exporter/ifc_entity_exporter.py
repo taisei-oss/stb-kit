@@ -133,7 +133,7 @@ class IfcEntityExporter:
         if not plane_element.points:
             raise AssertionError(f"{plane_element.name}にpointsが設定されていません")
         if len(plane_element.points) < 3:
-            raise AssertionError(f"{plane_element.name}のpointsの数が3以下です")
+            raise AssertionError(f"{plane_element.name}のpointsの数が3未満です")
         if plane_element.element_type is None:
             raise AssertionError(
                 f"{plane_element.name}にelement_typeが設定されていません"

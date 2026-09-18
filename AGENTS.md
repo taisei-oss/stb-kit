@@ -38,6 +38,9 @@ STB-KITは建築構造設計の実務に基づくドメイン知識を重視し�
 4. cast / type:ignore / noqa を安易に使わない。
 5. --create-goldenの実行時は必ず人に確認をとり、実行した場合変更点を伝える
 
+## その他ルール
+- コードの実装を変更した場合、コード内のdocstringやdocs内のドキュメントに影響がないか確認し、必要な修正を提案する。
+
 ## パッケージ責務
 
 ### Python
@@ -64,6 +67,25 @@ path: python/stbkit-testutils
 - testを行うためのユーティリティ。
 - 最低限の依存を用いてよい。
 - PyPIには公開せず、開発環境での利用を想定。
+
+## 開発ガイド
+
+### ドキュメント
+
+ドキュメント生成は下記コマンドで行える
+
+~~~bash
+uv run --only-group docs scripts/docs.py build
+~~~
+
+デフォルトではデータモデルのドキュメントは省略する。フル版を生成する場合は下記コマンドを利用する。
+
+~~~bash
+uv run --only-group docs scripts/docs.py build --include-generated-api
+~~~
+
+docs/_generatedは自動生成したファイルが入る。
+
 
 ## 開発者向け補足
 

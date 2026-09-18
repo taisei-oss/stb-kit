@@ -10,7 +10,7 @@
 インストールされていない場合は、以下のコマンドでインストールしてください。
 pip install ifcopenshell
 または
-pip install stbkit[ifc]
+pip install "stbkit[ifc]"
 """
 
 import argparse

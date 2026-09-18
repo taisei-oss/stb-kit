@@ -13,6 +13,7 @@ from ....converters._internal import coord_converter
 from ....converters._internal.element_data_to_building_geometry import (
     create_local_line_meshes,
 )
+from ...constants import UNKNOWN_ELEMENT_SIZE_MM
 from ...data_model.shape_data import (
     ShapeArbitrary,
     ShapePair,
@@ -175,4 +176,8 @@ class IfcRepresentationExporter:
     def get_unknown_plate_representation(
         self, points: list[Vector3d]
     ) -> entity_instance:
-        return self.get_plate_representation(thickness=10, opens=None, points=points)
+        return self.get_plate_representation(
+            thickness=UNKNOWN_ELEMENT_SIZE_MM,
+            opens=None,
+            points=points,
+        )

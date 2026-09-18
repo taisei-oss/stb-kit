@@ -6,9 +6,9 @@
 
 """参照解決の実装"""
 
-from typing import overload
+from typing import TYPE_CHECKING, overload
 
-from ..data_model import stb_v2_0_2, stb_v2_1_0, stb_v2_1_1
+from .._internal.constants import VERSION_TO_MODULE_NAME
 from ..data_model.common import StBridgeRoot
 from .repo_common import Repository as Repository
 from .repo_common import RepositoryBase as RepositoryBase
@@ -16,13 +16,16 @@ from .repo_v2_0_2 import RepositoryV2_0_2 as RepositoryV2_0_2
 from .repo_v2_1_0 import RepositoryV2_1_0 as RepositoryV2_1_0
 from .repo_v2_1_1 import RepositoryV2_1_1 as RepositoryV2_1_1
 
+if TYPE_CHECKING:
+    from ..data_model import stb_v2_0_2, stb_v2_1_0, stb_v2_1_1
+
 
 @overload
-def get_repository(stb: stb_v2_1_1.StBridge) -> RepositoryV2_1_1: ...
+def get_repository(stb: "stb_v2_1_1.StBridge") -> RepositoryV2_1_1: ...
 @overload
-def get_repository(stb: stb_v2_1_0.StBridge) -> RepositoryV2_1_0: ...
+def get_repository(stb: "stb_v2_1_0.StBridge") -> RepositoryV2_1_0: ...
 @overload
-def get_repository(stb: stb_v2_0_2.StBridge) -> RepositoryV2_0_2: ...
+def get_repository(stb: "stb_v2_0_2.StBridge") -> RepositoryV2_0_2: ...
 @overload
 def get_repository(stb: StBridgeRoot) -> RepositoryBase: ...
 def get_repository(
@@ -47,15 +50,14 @@ def get_repository(
         >>> stb = stbkit.api.load_latest("model.stb")
         >>> repo = stbkit.api.experimental.get_repository(stb)
     """
-    match stb:
-        case stb_v2_0_2.StBridge():
-            return RepositoryV2_0_2(stb)
-        case stb_v2_1_0.StBridge():
-            return RepositoryV2_1_0(stb)
-        case stb_v2_1_1.StBridge():
-            return RepositoryV2_1_1(stb)
-        case _:
-            return Repository(stb)
+    module_name = type(stb).__module__.rsplit(".", 1)[-1]
+    if module_name == VERSION_TO_MODULE_NAME["2.0.2"]:
+        return RepositoryV2_0_2(stb)
+    if module_name == VERSION_TO_MODULE_NAME["2.1.0"]:
+        return RepositoryV2_1_0(stb)
+    if module_name == VERSION_TO_MODULE_NAME["2.1.1"]:
+        return RepositoryV2_1_1(stb)
+    return Repository(stb)
 
 
 __all__ = [

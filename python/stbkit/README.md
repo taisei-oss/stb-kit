@@ -10,6 +10,8 @@ _ST-Bridge is a structural data exchange format widely used in Japan._
 
 詳細はリポジトリの[README](https://github.com/taisei-oss/stb-kit)および[DISCLAIMER](https://github.com/taisei-oss/stb-kit/blob/main/DISCLAIMER.md)をご確認ください。
 
+![PyPI License](https://img.shields.io/pypi/l/stbkit)
+
 ## 概要
 
 stbkitはST-Bridgeを扱うためのツールキットSTB-KITの統合パッケージです。  
@@ -119,10 +121,7 @@ diffは入力が2つあるため対応していません。
 
 ## ドキュメント
 
-ドキュメントは現在準備中です。公開時にこちらへリンクを掲載します。
-
-- ユーザーガイド（準備中）
-- バージョンアップ、IFC変換の仕様（準備中）
+- [STB-KITドキュメント](https://github.com/taisei-oss/stb-kit/blob/main/docs/index.md)
 
 ## 依存ライブラリ・再配布に関する注意
 

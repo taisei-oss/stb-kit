@@ -7,7 +7,6 @@
 from typing import Any, get_args
 
 from stbkit.core._internal.name_converter import private_field_name
-from stbkit.core.data_model import stb_v2_0_2, stb_v2_1_0, stb_v2_1_1
 from stbkit.core.data_model._internal.stb_types import DataType
 from stbkit.core.data_model.common import (
     StBridgeElement,
@@ -186,6 +185,8 @@ def repair_stb(
     context: RepairContext = RepairContext(defaults=defaults, reporter=reporter)
     _repair_occurs(stb, context=context)
     _repair_required_length(stb, context=context)
+    from stbkit.core.data_model import stb_v2_0_2, stb_v2_1_0, stb_v2_1_1
+
     match stb:
         case stb_v2_1_1.StBridge():
             _stb_v2_1_1_repair.repair_stb(stb, context=context)

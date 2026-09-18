@@ -33,6 +33,12 @@ dev = [
     "xmlschema>=4.3.2",
 ]
 
+docs = [
+    "mkdocs>=1.6.1,<2",
+    "mkdocs-material==9.7.7",
+    "mkdocstrings[python]>=1.0.6",
+]
+
 [tool.uv.sources]
 stbkit-core = { workspace = true }
 stbkit = { workspace = true }

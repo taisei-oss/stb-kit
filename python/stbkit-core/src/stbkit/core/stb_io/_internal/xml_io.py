@@ -8,21 +8,15 @@ import codecs
 import os
 from collections.abc import Iterator
 from logging import Logger
-from typing import IO, Literal, TextIO, overload
+from typing import IO, TYPE_CHECKING, Literal, TextIO, overload
 
 from ..._internal.constants import (
     DEFAULT_MAX_XML_DEPTH,
     DEFAULT_MAX_XML_SIZE,
+    VERSION_TO_MODULE_NAME,
     XML_READ_CHUNK_SIZE,
 )
 from ..._internal.extension_utils import ExtensionInfoRepository
-from ...data_model import (
-    stb_v2_0_0,
-    stb_v2_0_1,
-    stb_v2_0_2,
-    stb_v2_1_0,
-    stb_v2_1_1,
-)
 from ...data_model.common import StBridgeRoot
 from ...stb_exceptions import (
     SchemaError,
@@ -34,6 +28,15 @@ from ...stb_typing import StbVersion, TextSource
 from ...validation import validate_schema
 from ...validation._internal.validator import _validate
 from . import loader, serializer, stream_reader
+
+if TYPE_CHECKING:
+    from ...data_model import (
+        stb_v2_0_0,
+        stb_v2_0_1,
+        stb_v2_0_2,
+        stb_v2_1_0,
+        stb_v2_1_1,
+    )
 
 
 def dumps(
@@ -140,7 +143,7 @@ def loads(
     max_depth: int = DEFAULT_MAX_XML_DEPTH,
     logger: Logger | None = None,
     reporter: Reporter | None = None,
-) -> stb_v2_0_0.StBridge: ...
+) -> "stb_v2_0_0.StBridge": ...
 
 
 @overload
@@ -152,7 +155,7 @@ def loads(
     max_depth: int = DEFAULT_MAX_XML_DEPTH,
     logger: Logger | None = None,
     reporter: Reporter | None = None,
-) -> stb_v2_0_1.StBridge: ...
+) -> "stb_v2_0_1.StBridge": ...
 
 
 @overload
@@ -164,7 +167,7 @@ def loads(
     max_depth: int = DEFAULT_MAX_XML_DEPTH,
     logger: Logger | None = None,
     reporter: Reporter | None = None,
-) -> stb_v2_0_2.StBridge: ...
+) -> "stb_v2_0_2.StBridge": ...
 
 
 @overload
@@ -176,7 +179,7 @@ def loads(
     max_depth: int = DEFAULT_MAX_XML_DEPTH,
     logger: Logger | None = None,
     reporter: Reporter | None = None,
-) -> stb_v2_1_0.StBridge: ...
+) -> "stb_v2_1_0.StBridge": ...
 
 
 @overload
@@ -188,7 +191,7 @@ def loads(
     max_depth: int = DEFAULT_MAX_XML_DEPTH,
     logger: Logger | None = None,
     reporter: Reporter | None = None,
-) -> stb_v2_1_1.StBridge: ...
+) -> "stb_v2_1_1.StBridge": ...
 
 
 @overload
@@ -262,7 +265,7 @@ def load(
     max_depth: int = DEFAULT_MAX_XML_DEPTH,
     logger: Logger | None = None,
     reporter: Reporter | None = None,
-) -> stb_v2_0_0.StBridge: ...
+) -> "stb_v2_0_0.StBridge": ...
 
 
 @overload
@@ -275,7 +278,7 @@ def load(
     max_depth: int = DEFAULT_MAX_XML_DEPTH,
     logger: Logger | None = None,
     reporter: Reporter | None = None,
-) -> stb_v2_0_1.StBridge: ...
+) -> "stb_v2_0_1.StBridge": ...
 
 
 @overload
@@ -288,7 +291,7 @@ def load(
     max_depth: int = DEFAULT_MAX_XML_DEPTH,
     logger: Logger | None = None,
     reporter: Reporter | None = None,
-) -> stb_v2_0_2.StBridge: ...
+) -> "stb_v2_0_2.StBridge": ...
 
 
 @overload
@@ -301,7 +304,7 @@ def load(
     max_depth: int = DEFAULT_MAX_XML_DEPTH,
     logger: Logger | None = None,
     reporter: Reporter | None = None,
-) -> stb_v2_1_0.StBridge: ...
+) -> "stb_v2_1_0.StBridge": ...
 
 
 @overload
@@ -314,7 +317,7 @@ def load(
     max_depth: int = DEFAULT_MAX_XML_DEPTH,
     logger: Logger | None = None,
     reporter: Reporter | None = None,
-) -> stb_v2_1_1.StBridge: ...
+) -> "stb_v2_1_1.StBridge": ...
 
 
 @overload
@@ -361,7 +364,7 @@ def load(
 
     Raises:
         OSError: ファイルを開けない場合。
-          存在しない場合はサブクラスのFileNotFoundErrorを投げます。
+            存在しない場合はサブクラスのFileNotFoundErrorを投げます。
         LookupError: encodingに未知のエンコーディング名を指定した場合。
         UnicodeDecodeError: デコードできない場合。
         UnsafeXmlError: DOCTYPE宣言が含まれる場合。
@@ -427,22 +430,15 @@ def _iter_chunks(src: IO[str]) -> Iterator[str]:
 
 
 def _expected_version(stb: StBridgeRoot) -> str:
+    stb_type: type[StBridgeRoot] = type(stb)
+    if stb_type.__name__ != "StBridge":
+        raise RuntimeError(f"{stb_type.__name__}はST-Bridgeのルート要素ではありません")
 
-    match stb:
-        case stb_v2_0_0.StBridge():
-            return stb_v2_0_0.VERSION
-        case stb_v2_0_1.StBridge():
-            return stb_v2_0_1.VERSION
-        case stb_v2_0_2.StBridge():
-            return stb_v2_0_2.VERSION
-        case stb_v2_1_0.StBridge():
-            return stb_v2_1_0.VERSION
-        case stb_v2_1_1.StBridge():
-            return stb_v2_1_1.VERSION
-        case _:
-            raise RuntimeError(
-                f"{type(stb).__name__}はST-Bridgeのルート要素ではありません"
-            )
+    for version, module_name in VERSION_TO_MODULE_NAME.items():
+        if stb_type.__module__.endswith(f".{module_name}"):
+            return version
+
+    raise RuntimeError(f"{stb_type.__name__}はST-Bridgeのルート要素ではありません")
 
 
 def _finish_load(

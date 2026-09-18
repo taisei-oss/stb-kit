@@ -46,7 +46,7 @@ def load_latest(
 
     Raises:
         OSError: ファイルを開けない場合。
-          存在しない場合はサブクラスのFileNotFoundErrorを投げます。
+            存在しない場合はサブクラスのFileNotFoundErrorを投げます。
         LookupError: encodingに未知のエンコーディング名を指定した場合。
         UnicodeDecodeError: デコードできない場合。
         UnsafeXmlError: DOCTYPE宣言が含まれる場合。

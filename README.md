@@ -4,6 +4,9 @@ STB-KIT(商標登録出願中) はST-Bridgeを扱うためのオープンソー�
 
 _An open-source toolkit for handling ST-Bridge._
 
+![GitHub License](https://img.shields.io/github/license/taisei-oss/stb-kit)
+[![ci](https://github.com/taisei-oss/stb-kit/actions/workflows/ci.yml/badge.svg)](https://github.com/taisei-oss/stb-kit/actions/workflows/ci.yml)
+
 ## 1. 概要 / Overview
 
 ST-Bridgeは、日本の建築構造分野で広く利用されている建築構造データ交換フォーマットです。
@@ -126,21 +129,19 @@ STB-KITをご利用いただいている方は、ぜひご回答ください。�
 [STB-KIT利用状況アンケートに回答する](https://forms.cloud.microsoft/r/z5cN8eTX4v)
 
 ## 7. マニュアル/ドキュメント
-ドキュメントは現在準備中です。公開時にこちらへリンクを掲載します。
 
-- ユーザーガイド（準備中）
-- APIリファレンス（準備中）
+- [STB-KITドキュメント](docs/index.md)
 
 ## 8. パッケージ一覧
 順次公開していくため、未公開のパッケージも記載しています。公開状況は「公開」列を参照してください。
 
-|パッケージ名|Github公開|PyPI公開|path|言語|概要|
-|----|----|----|----|----|----|
-|stbkit-core|済|済|python/stbkit-core|Python|コアライブラリ|
-|stbkit|済|済|python/stbkit|Python|ユーティリティ|
-|stbkit-native|未|未|rust/stbkit-native|Python+Rust|3D・GUI機能のRust拡張|
-|stbkit-core-rs|未|未|rust/stbkit-core-rs|Rust|Rust用のコアライブラリ|
-|stbkit-rs|未|未|rust/stbkit-rs|Rust|Rust用のユーティリティ|
+|パッケージ名|Github公開|PyPI|言語|概要|
+|----|----|----|----|----|
+|stbkit-core|python/stbkit-core|![PyPI Version](https://img.shields.io/pypi/v/stbkit-core)|[![Python](https://img.shields.io/pypi/pyversions/stbkit-core.svg)](https://pypi.org/project/stbkit-core/)|コアライブラリ|
+|stbkit|python/stbkit|![PyPI Version](https://img.shields.io/pypi/v/stbkit)|[![Python](https://img.shields.io/pypi/pyversions/stbkit.svg)](https://pypi.org/project/stbkit/)|ユーティリティ|
+|stbkit-native|未|未|Python+Rust|3D・GUI機能のRust拡張|
+|stbkit-core-rs|未|-|Rust|Rust用のコアライブラリ|
+|stbkit-rs|未|-|Rust|Rust用のユーティリティ|
 
 ## 9. ロードマップ
 現在の方向性と優先事項は[ROADMAP](ROADMAP.md)を参照してください。

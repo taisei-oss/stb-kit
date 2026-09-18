@@ -6,13 +6,6 @@
 
 from typing import Protocol
 
-from stbkit.core.data_model import (
-    stb_v2_0_0,
-    stb_v2_0_1,
-    stb_v2_0_2,
-    stb_v2_1_0,
-    stb_v2_1_1,
-)
 from stbkit.core.data_model.common import StBridgeRoot
 from stbkit.core.stb_exceptions import (
     ReferenceElementNotFoundError,
@@ -32,6 +25,14 @@ class HasXyz(Protocol):
 
 
 def get_node_coordinate(stb: StBridgeRoot, id: int) -> Vector3d:
+    from stbkit.core.data_model import (
+        stb_v2_0_0,
+        stb_v2_0_1,
+        stb_v2_0_2,
+        stb_v2_1_0,
+        stb_v2_1_1,
+    )
+
     if not isinstance(
         stb,
         (

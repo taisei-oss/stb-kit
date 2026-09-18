@@ -21,6 +21,18 @@ LATEST_STB_VERSION: Final = "2.1.1"
 SUPPORTED_STB_VERSIONS: Final = ("2.0.0", "2.0.1", "2.0.2", "2.1.0", "2.1.1")
 """stbkit-coreがサポートしているST-Bridgeのバージョン"""
 
+VERSION_TO_MODULE_NAME: Final[dict[str, str]] = {
+    "2.0.0": "stb_v2_0_0",
+    "2.0.1": "stb_v2_0_1",
+    "2.0.2": "stb_v2_0_2",
+    "2.1.0": "stb_v2_1_0",
+    "2.1.1": "stb_v2_1_1",
+}
+VERSION_TO_MODULE_IMPORT_PATH: Final[dict[str, str]] = {
+    key: f"stbkit.core.data_model.{module_name}"
+    for key, module_name in VERSION_TO_MODULE_NAME.items()
+}
+
 ENV_NAME_SCHEMA_PATH_STB_V2_0_0: Final = "STBKIT_SCHEMA_PATH_STB_V2_0_0"
 ENV_NAME_SCHEMA_PATH_STB_V2_0_1: Final = "STBKIT_SCHEMA_PATH_STB_V2_0_1"
 ENV_NAME_SCHEMA_PATH_STB_V2_0_2: Final = "STBKIT_SCHEMA_PATH_STB_V2_0_2"

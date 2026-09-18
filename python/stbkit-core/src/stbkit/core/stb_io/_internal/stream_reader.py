@@ -8,12 +8,14 @@ from __future__ import annotations
 
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
+from importlib import import_module
 from types import ModuleType
 from typing import TYPE_CHECKING, Any, Final
 
 from ..._internal.constants import (
     DEFAULT_MAX_XML_DEPTH,
     DEFAULT_MAX_XML_SIZE,
+    VERSION_TO_MODULE_IMPORT_PATH,
     XML_READ_HEADER_CHUNK_SIZE,
 )
 from ..._internal.name_converter import (
@@ -22,13 +24,6 @@ from ..._internal.name_converter import (
     xml_attribute_name_to_python_attribute_name,
     xml_element_name_to_key,
     xml_element_name_to_python_class_name,
-)
-from ...data_model import (
-    stb_v2_0_0,
-    stb_v2_0_1,
-    stb_v2_0_2,
-    stb_v2_1_0,
-    stb_v2_1_1,
 )
 from ...data_model.common import (
     StBridgeElement,
@@ -332,16 +327,7 @@ def _read_version(attrib: dict[str, str]) -> str:
 
 
 def _get_module(version: str) -> ModuleType:
-    match version:
-        case stb_v2_0_0.VERSION:
-            return stb_v2_0_0
-        case stb_v2_0_1.VERSION:
-            return stb_v2_0_1
-        case stb_v2_0_2.VERSION:
-            return stb_v2_0_2
-        case stb_v2_1_0.VERSION:
-            return stb_v2_1_0
-        case stb_v2_1_1.VERSION:
-            return stb_v2_1_1
-        case _:
-            raise UnsupportedStbVersionError(version)
+    module_import_path: str | None = VERSION_TO_MODULE_IMPORT_PATH.get(version)
+    if module_import_path is None:
+        raise UnsupportedStbVersionError(version)
+    return import_module(module_import_path)

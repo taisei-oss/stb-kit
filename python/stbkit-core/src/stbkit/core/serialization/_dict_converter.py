@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, Never, overload
 from uuid import UUID
 
+from .._internal.constants import SUPPORTED_STB_VERSIONS
 from .._internal.extension_utils import ExtensionInfoRepository
 from .._internal.name_converter import (
     private_field_name,
@@ -19,7 +20,6 @@ from .._internal.name_converter import (
     xml_element_name_to_key,
 )
 from .._internal.xml_value_converter import any_to_xml_str
-from ..data_model import stb_v2_0_1, stb_v2_0_2, stb_v2_1_0, stb_v2_1_1
 from ..data_model._internal.stb_types import DataType
 from ..data_model.common import (
     StBridgeElement,
@@ -30,16 +30,18 @@ from ..data_model.common import (
     _StBridgeExtensionElement,
 )
 from ..stb_exceptions import SchemaError, UnsupportedStbVersionError
+from ..stb_io._internal.stream_reader import _get_module
 from ..stb_reporting import Code, Phase, Reporter, get_reporter
 from .config import DictProfile, KeyStyle, ValueStyle
 from .profiles import _XMLTODICT_COMPAT, DEFAULT
 
-_ROOT_TYPE_BY_VERSION: dict[str, type[StBridgeRoot]] = {
-    stb_v2_0_1.VERSION: stb_v2_0_1.StBridge,
-    stb_v2_0_2.VERSION: stb_v2_0_2.StBridge,
-    stb_v2_1_0.VERSION: stb_v2_1_0.StBridge,
-    stb_v2_1_1.VERSION: stb_v2_1_1.StBridge,
-}
+
+def _root_type_by_version(version: str) -> type[StBridgeRoot]:
+    module = _get_module(version)
+    root_type = getattr(module, "StBridge", None)
+    if not isinstance(root_type, type) or not issubclass(root_type, StBridgeRoot):
+        raise UnsupportedStbVersionError(version)
+    return root_type
 
 
 def to_dict(
@@ -169,7 +171,7 @@ def from_dict(
             profile=_profile,
             reporter=reporter,
         )
-        stb = _ROOT_TYPE_BY_VERSION[selected_version]()
+        stb = _root_type_by_version(selected_version)()
     else:
         stb = explicit_root
 
@@ -797,7 +799,8 @@ def _version_keys(profile: DictProfile) -> tuple[str, ...]:
     """ルート型からversionの外部キー候補を取得する。"""
     result: set[str] = set()
     seen_root_types: set[type[StBridgeRoot]] = set()
-    for root_type in _ROOT_TYPE_BY_VERSION.values():
+    for version in SUPPORTED_STB_VERSIONS:
+        root_type = _root_type_by_version(version)
         if root_type in seen_root_types:
             continue
         seen_root_types.add(root_type)
@@ -892,7 +895,7 @@ def _read_version(
         raise SchemaError("versionの値が不正です")
 
     version = str(raw_version)
-    if version not in _ROOT_TYPE_BY_VERSION:
+    if version not in SUPPORTED_STB_VERSIONS:
         reporter.error(
             message=f"未対応のST-Bridgeバージョンです: {version}",
             code=Code.VERSION_UNSUPPORTED,

@@ -7,13 +7,6 @@
 from logging import Logger
 from typing import TYPE_CHECKING, Literal, overload
 
-from stbkit.core.data_model import (
-    stb_v2_0_0,
-    stb_v2_0_1,
-    stb_v2_0_2,
-    stb_v2_1_0,
-    stb_v2_1_1,
-)
 from stbkit.core.data_model.common import StBridgeRoot
 from stbkit.core.stb_exceptions import UnsupportedStbVersionError
 from stbkit.core.stb_reporting import Code, Phase, Reporter, get_reporter
@@ -24,16 +17,26 @@ from .v2_0_2_to_v2_1_0 import upgrade_v2_0_2_to_v2_1_0
 from .v2_1_0_to_v2_1_1 import upgrade_v2_1_0_to_v2_1_1
 
 if TYPE_CHECKING:
+    from stbkit.core.data_model import (
+        stb_v2_0_0,
+        stb_v2_0_1,
+        stb_v2_0_2,
+        stb_v2_1_0,
+        stb_v2_1_1,
+    )
+
     from stbkit.api import stb_latest
 
 __all__ = ["upgrade_v2_0_2_to_v2_1_0", "upgrade_v2_1_0_to_v2_1_1"]
 
 
 def upgrade_v2_0_0_to_v2_0_1(
-    stb: stb_v2_0_0.StBridge,
+    stb: "stb_v2_0_0.StBridge",
     *,
     reporter: Reporter,
-) -> stb_v2_0_1.StBridge:
+) -> "stb_v2_0_1.StBridge":
+    from stbkit.core.data_model import stb_v2_0_1
+
     reporter.info(
         "---v2.0.0->v2.0.1変換処理開始---",
         code=Code.PROGRESS_INFO,
@@ -68,10 +71,12 @@ def upgrade_v2_0_0_to_v2_0_1(
 
 
 def upgrade_v2_0_1_to_v2_0_2(
-    stb: stb_v2_0_1.StBridge,
+    stb: "stb_v2_0_1.StBridge",
     *,
     reporter: Reporter,
-) -> stb_v2_0_2.StBridge:
+) -> "stb_v2_0_2.StBridge":
+    from stbkit.core.data_model import stb_v2_0_2
+
     reporter.info(
         "---v2.0.1->v2.0.2変換処理開始---",
         code=Code.PROGRESS_INFO,
@@ -105,7 +110,11 @@ def upgrade_v2_0_1_to_v2_0_2(
         raise TypeError("ST-Bridgeのバージョン変換に失敗しました")
 
 
-def upgrade_to_v2_0_1(stb: StBridgeRoot, *, reporter: Reporter) -> stb_v2_0_1.StBridge:
+def upgrade_to_v2_0_1(
+    stb: StBridgeRoot, *, reporter: Reporter
+) -> "stb_v2_0_1.StBridge":
+    from stbkit.core.data_model import stb_v2_0_0, stb_v2_0_1
+
     if isinstance(stb, stb_v2_0_1.StBridge):
         return stb
     elif isinstance(stb, stb_v2_0_0.StBridge):
@@ -114,7 +123,11 @@ def upgrade_to_v2_0_1(stb: StBridgeRoot, *, reporter: Reporter) -> stb_v2_0_1.St
         raise NotImplementedError("対応していないバージョン変換です")
 
 
-def upgrade_to_v2_0_2(stb: StBridgeRoot, *, reporter: Reporter) -> stb_v2_0_2.StBridge:
+def upgrade_to_v2_0_2(
+    stb: StBridgeRoot, *, reporter: Reporter
+) -> "stb_v2_0_2.StBridge":
+    from stbkit.core.data_model import stb_v2_0_1, stb_v2_0_2
+
     if isinstance(stb, stb_v2_0_2.StBridge):
         return stb
     elif not isinstance(stb, stb_v2_0_1.StBridge):
@@ -122,7 +135,11 @@ def upgrade_to_v2_0_2(stb: StBridgeRoot, *, reporter: Reporter) -> stb_v2_0_2.St
     return upgrade_v2_0_1_to_v2_0_2(stb, reporter=reporter)
 
 
-def upgrade_to_v2_1_0(stb: StBridgeRoot, *, reporter: Reporter) -> stb_v2_1_0.StBridge:
+def upgrade_to_v2_1_0(
+    stb: StBridgeRoot, *, reporter: Reporter
+) -> "stb_v2_1_0.StBridge":
+    from stbkit.core.data_model import stb_v2_0_2, stb_v2_1_0
+
     if isinstance(stb, stb_v2_1_0.StBridge):
         return stb
     elif not isinstance(stb, stb_v2_0_2.StBridge):
@@ -130,7 +147,11 @@ def upgrade_to_v2_1_0(stb: StBridgeRoot, *, reporter: Reporter) -> stb_v2_1_0.St
     return upgrade_v2_0_2_to_v2_1_0(stb, reporter=reporter)
 
 
-def upgrade_to_v2_1_1(stb: StBridgeRoot, *, reporter: Reporter) -> stb_v2_1_1.StBridge:
+def upgrade_to_v2_1_1(
+    stb: StBridgeRoot, *, reporter: Reporter
+) -> "stb_v2_1_1.StBridge":
+    from stbkit.core.data_model import stb_v2_1_0, stb_v2_1_1
+
     if isinstance(stb, stb_v2_1_1.StBridge):
         return stb
     elif not isinstance(stb, stb_v2_1_0.StBridge):
@@ -145,7 +166,7 @@ def upgrade_to(
     *,
     logger: Logger | None = None,
     reporter: Reporter | None = None,
-) -> stb_v2_0_1.StBridge: ...
+) -> "stb_v2_0_1.StBridge": ...
 @overload
 def upgrade_to(
     stb: StBridgeRoot,
@@ -153,7 +174,7 @@ def upgrade_to(
     *,
     logger: Logger | None = None,
     reporter: Reporter | None = None,
-) -> stb_v2_0_2.StBridge: ...
+) -> "stb_v2_0_2.StBridge": ...
 @overload
 def upgrade_to(
     stb: StBridgeRoot,
@@ -161,7 +182,7 @@ def upgrade_to(
     *,
     logger: Logger | None = None,
     reporter: Reporter | None = None,
-) -> stb_v2_1_0.StBridge: ...
+) -> "stb_v2_1_0.StBridge": ...
 @overload
 def upgrade_to(
     stb: StBridgeRoot,
@@ -169,7 +190,7 @@ def upgrade_to(
     *,
     logger: Logger | None = None,
     reporter: Reporter | None = None,
-) -> stb_v2_1_1.StBridge: ...
+) -> "stb_v2_1_1.StBridge": ...
 def upgrade_to(
     stb: StBridgeRoot,
     to_version: Literal["2.0.1", "2.0.2", "2.1.0", "2.1.1", "latest"] = "latest",
