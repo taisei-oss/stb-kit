@@ -50,14 +50,18 @@ nav:
       - 設計思想 ↗: https://github.com/taisei-oss/stb-kit/blob/main/ARCHITECTURE.md
   - ドキュメントサイトについて:
       - サードパーティライセンス: third-party-licenses.md
+      - アクセス解析について: access-analysis.md
 
 exclude_docs: |
   _templates/
 
 theme:
   name: material
+  custom_dir: docs/_overrides
   language: ja
   font: false
+  favicon: img/favicon.ico
+  logo: img/favicon.ico
   features:
     - navigation.indexes
     - navigation.sections
@@ -75,6 +79,10 @@ watch:
 
 use_directory_urls: true
 strict: true
+
+extra:
+  stbkit_ga4:
+    measurement_id: !ENV [STBKIT_GA4_MEASUREMENT_ID, ""]
 
 markdown_extensions:
   - admonition

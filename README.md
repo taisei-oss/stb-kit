@@ -130,15 +130,15 @@ STB-KITをご利用いただいている方は、ぜひご回答ください。�
 
 ## 7. マニュアル/ドキュメント
 
-- [STB-KITドキュメント](docs/index.md)
+- [STB-KITドキュメント](https://taisei-oss.github.io/stb-kit/)
 
 ## 8. パッケージ一覧
 順次公開していくため、未公開のパッケージも記載しています。公開状況は「公開」列を参照してください。
 
 |パッケージ名|Github公開|PyPI|言語|概要|
 |----|----|----|----|----|
-|stbkit-core|python/stbkit-core|![PyPI Version](https://img.shields.io/pypi/v/stbkit-core)|[![Python](https://img.shields.io/pypi/pyversions/stbkit-core.svg)](https://pypi.org/project/stbkit-core/)|コアライブラリ|
-|stbkit|python/stbkit|![PyPI Version](https://img.shields.io/pypi/v/stbkit)|[![Python](https://img.shields.io/pypi/pyversions/stbkit.svg)](https://pypi.org/project/stbkit/)|ユーティリティ|
+|stbkit-core|python/stbkit-core|[![PyPI Version](https://img.shields.io/pypi/v/stbkit-core)](https://pypi.org/project/stbkit-core/)|[![Python](https://img.shields.io/pypi/pyversions/stbkit-core.svg)](https://pypi.org/project/stbkit-core/)|コアライブラリ|
+|stbkit|python/stbkit|[![PyPI Version](https://img.shields.io/pypi/v/stbkit)](https://pypi.org/project/stbkit/)|[![Python](https://img.shields.io/pypi/pyversions/stbkit.svg)](https://pypi.org/project/stbkit/)|ユーティリティ|
 |stbkit-native|未|未|Python+Rust|3D・GUI機能のRust拡張|
 |stbkit-core-rs|未|-|Rust|Rust用のコアライブラリ|
 |stbkit-rs|未|-|Rust|Rust用のユーティリティ|

@@ -1,0 +1,31 @@
+{#
+Copyright 2026 TAISEI CORPORATION
+SPDX-License-Identifier: MPL-2.0
+#}
+
+{% if config.extra.stbkit_ga4 and config.extra.stbkit_ga4.measurement_id %}
+<!---------- Google Analytics start ---------->
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ config.extra.stbkit_ga4.measurement_id }}"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+
+    gtag("consent", "default", {
+        analytics_storage: "denied",
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied",
+        functionality_storage: "denied",
+        personalization_storage: "denied",
+        security_storage: "granted"
+    });
+
+    gtag("js", new Date());
+
+    gtag("config", "{{ config.extra.stbkit_ga4.measurement_id }}", {
+        allow_google_signals: false,
+        allow_ad_personalization_signals: false
+    }); 
+</script>
+<!---------- Google Analytics end ---------->
+{% endif %}

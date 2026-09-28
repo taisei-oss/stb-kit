@@ -54,7 +54,7 @@ for node in stb.stb_model.stb_nodes.stb_node:
 
 ## ドキュメント
 
-- [STB-KITドキュメント](https://github.com/taisei-oss/stb-kit/blob/main/docs/index.md)
+- [STB-KITドキュメント](https://taisei-oss.github.io/stb-kit/)
 
 ## バリデーション
 

@@ -20,3 +20,4 @@ Material for MkDocsのテーマCSS、JavaScript等がドキュメントサイト
 
 これらはドキュメントサイトの生成時に使用します。再配布は致しません。
 
+Copyright 2026 TAISEI CORPORATION

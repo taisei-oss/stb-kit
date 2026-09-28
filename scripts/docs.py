@@ -135,7 +135,7 @@ def _serve_docs(*, logger: Logger, port: int, include_generated_api: bool) -> No
         [
             "mkdocs",
             "serve",
-            f"--dev-addr=0.0.0.0:{port}",
+            f"--dev-addr=127.0.0.1:{port}",
         ],
         check=True,
     )

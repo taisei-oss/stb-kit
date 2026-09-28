@@ -121,7 +121,7 @@ diffは入力が2つあるため対応していません。
 
 ## ドキュメント
 
-- [STB-KITドキュメント](https://github.com/taisei-oss/stb-kit/blob/main/docs/index.md)
+- [STB-KITドキュメント](https://taisei-oss.github.io/stb-kit/)
 
 ## 依存ライブラリ・再配布に関する注意
 
