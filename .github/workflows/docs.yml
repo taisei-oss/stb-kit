@@ -29,6 +29,9 @@ jobs:
           enable-cache: true
           cache-dependency-glob: uv.lock
 
+      - name: Ensure stbkit version is published on PyPI
+        run: python .github/scripts/check_pypi_release.py
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
 

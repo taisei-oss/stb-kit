@@ -51,6 +51,7 @@ SRC,CFTについては、親をIfcElementAssemblyとし、子部材をIfcRelAggr
 guidは一意である必要があることから、IfcColumnなどの子部材のGlobalIdは新規生成します。
 
 下記要素は変換非対応のため、IFCのエンティティが作られません。
+
 - StbIsolatingDevice
 - StbDampingDevice 
 - StbFrameDampingDevice
@@ -88,6 +89,7 @@ guidは一意である必要があることから、IfcColumnなどの子部材�
 
 
 対応していない断面
+
 - StbSecBuild-HAsymmetric
 - StbSecRoll-2C
 - StbSecRoll-2L

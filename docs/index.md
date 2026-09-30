@@ -45,7 +45,7 @@ ST-BridgeをPythonオブジェクトとして読み込み、プログラミン�
 
 ## ブラウザで試す
 
-※準備中
+[ブラウザで試す](playground/index.md){ .md-button .md-button--primary }
 
 ## STB-KITの開発に参加する
 

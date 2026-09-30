@@ -24,6 +24,9 @@ nav:
       - フォーマット変換: cli/convert.md
       - バージョン更新: cli/upgrade.md
       - バリデーション: cli/validate.md
+  - ブラウザで試す:
+      - お試しアプリ: playground/index.md
+      - 変換お試しページ: playground/converter/to_ifc.html
   - サンプル:
       - サンプルデータ: examples/data.md
   - テクニカルマニュアル:

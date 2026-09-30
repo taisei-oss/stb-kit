@@ -1,0 +1,69 @@
+<!-- Copyright 2026 TAISEI CORPORATION -->
+<!-- SPDX-License-Identifier: MPL-2.0 -->
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'wasm-unsafe-eval'; worker-src 'self' blob:; connect-src 'self' https://cdn.jsdelivr.net https://ifcopenshell.github.io https://pypi.org https://files.pythonhosted.org; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'none'" />
+    <title>STB-KIT ST-Bridge -> IFC 変換お試しページ</title>
+    <style>
+        textarea {
+            width: 100%;
+            min-height: 24rem;
+            box-sizing: border-box;
+            white-space: pre;
+            overflow: auto;
+        }
+    </style>
+    <script defer src="./convert.js"></script>
+</head>
+
+<body>
+    <h1>STB-KIT ST-Bridge -> IFC 変換お試しページ</h1>
+    <p>ST-Bridge形式(v2.0.0-2.1.1)のデータをIFC形式(IFC4)に変換するお試しページです。</p>
+    <h2>注意事項</h2>
+    <ul>
+        <li><strong>本機能は、主にST-Bridge v2.0.2の外形情報が対象の試験的な変換機能です。
+                配筋、細かな属性、ST-Bridge v2.1.0以降で追加された一部要素等はIFCへ変換されません。</strong></li>
+        <li><strong>変換完了と表示された場合でも、警告が出力されている場合があります。出力ログと生成されたIFCの内容を確認してください。</strong></li>
+        <li><strong>本機能は安全性検証、法令適合性判定または設計判断を行うものではありません。</strong></li>
+        <li>起動時にPython実行環境、利用ライブラリ等をインターネットから取得します。</li>
+        <li>ST-Bridgeファイルや変換後の内容は外部サーバーへ送信されません。ファイルはブラウザ内のみで取り扱います。
+            「初期化が完了しました。」と表示された後は、そのページを閉じない限り、インターネット接続を切断して変換できます。</li>
+        <li>機密情報を含むファイルを扱う場合は、利用する組織の情報管理ルールを確認してください。</li>
+        <li>関連リンク
+            <ul>
+                <li><a href="../../technical/stb-ifc-conversion/" target="_blank"
+                        rel="noopener noreferrer">ST-BridgeからIFCへの変換仕様</a></li>
+                <li><a href="https://github.com/taisei-oss/stb-kit/blob/main/DISCLAIMER.md" target="_blank"
+                        rel="noopener noreferrer">免責事項</a></li>
+                <li><a href="../../examples/data/" target="_blank" rel="noopener noreferrer">サンプルデータ</a></li>
+            </ul>
+        </li>
+    </ul>
+    <h2>変換アプリケーション</h2>
+    <p>使用しているstbkitのバージョン: <span id="stbkit-version"></span><br>
+        ※GitHub等で公開されている最新のstbkitとは異なる場合があります。</p>
+    <p>大規模モデルでは変換に数分かかる場合があります。<br>
+        変換中はページを閉じないでください。</p>
+    <p><a href="../">お試しアプリ一覧へ戻る</a></p>
+    <p id="loading-message">初期化中です。しばらくお待ちください...</p>
+    <p id="input-area" hidden>
+        <label for="input-file">ファイル:</label>
+        <input id="input-file" type="file" accept=".stb,.xml" />
+        <br>
+        <button id="convert-ifc" type="button">変換</button>
+    </p>
+    <p><a id="download" hidden>変換結果のダウンロード</a></p>
+    <label for="logTextArea">出力ログ</label><br>
+    <textarea id="logTextArea" rows="30" wrap="off" readonly></textarea>
+    <p>Copyright 2026 TAISEI CORPORATION</p>
+</body>
+
+</html>

@@ -71,8 +71,18 @@ STB-KITは現在ベータ版です。通常のインストールではベータ�
 python -m pip install --pre "stbkit[full]"
 ```
 
-
 ## 5. クイックスタート
+
+詳細な利用方法や実践的な例については、[ユーザードキュメント](https://taisei-oss.github.io/stb-kit/)を参照してください。
+
+### ブラウザで試す
+
+下記ページからブラウザ上でST-BridgeからIFCへの変換を試してみることができます。
+
+ブラウザで試す場合はPythonのインストールは不要です。
+
+[ST-Bridge -> IFC 変換お試しページ](https://taisei-oss.github.io/stb-kit/playground/converter/to_ifc.html)
+
 
 ### ST-Bridgeのバリデーション
 
@@ -110,13 +120,12 @@ stbkit convert model.stb -o model.ifc
 
 IFC出力には依存パッケージのifcopenshellが必要です。インストール時に`stbkit[full]`、または`stbkit[ifc]`としてインストールしてください。
 
+
 対応しているフォーマットと変換の対応は、次コマンドで確認できます。
 
 ```bash
 stbkit convert --list-formats
 ```
-
-詳細な利用方法や実践的な例については、ドキュメント及び各パッケージのREADMEを参照してください。
 
 ## 6. 利用状況アンケート
 
