@@ -4,7 +4,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-const STBKIT_VERSION = "0.1.0b2";
+const STBKIT_VERSION = "0.1.0b3";
 const WORKER_SCRIPT_PATH = "./convert.worker.js";
 
 let worker = null;

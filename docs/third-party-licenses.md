@@ -19,7 +19,7 @@ Material for MkDocsのテーマCSS、JavaScript等がドキュメントサイト
 | --- | --- | --- | --- |
 | Pyodide | 0.29.5 | MPL-2.0 | https://cdn.jsdelivr.net/pyodide/v0.29.5/full/pyodide.js |
 | IfcOpenShell（WebAssembly版wheel） | 0.8.5 | LGPL-3.0-or-later | https://ifcopenshell.github.io/wasm-wheels/ |
-| STB-KIT | 0.1.0b2 | MPL-2.0 | https://pypi.org/project/stbkit/ |
+| STB-KIT | 0.1.0b3 | MPL-2.0 | https://pypi.org/project/stbkit/ |
 
 上記の取得時には、パッケージ解決とダウンロードのためPyPI（pypi.org / files.pythonhosted.org）への接続が発生する場合があります。
 また、間接依存パッケージのダウンロードも発生する場合があります。

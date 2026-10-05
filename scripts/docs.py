@@ -81,6 +81,7 @@ def _generate_python_reference(*, include_generated_api: bool) -> None:
       show_attribute_values: true
       show_source: false
       signature_crossrefs: false
+      members_order: alphabetical
 """
         else:
             body = f"""::: {module}

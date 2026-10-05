@@ -16,7 +16,7 @@ import logging
 from abc import ABC, abstractmethod
 from collections.abc import Generator
 from contextlib import contextmanager
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from enum import IntEnum, StrEnum
 from logging import Logger
@@ -267,6 +267,13 @@ def _compose_message(
 
 class ReportingResult(list[_ReportItem]):
     """メッセージリスト"""
+
+    def to_dict(self) -> list[dict[str, object]]:
+        """記録されたメッセージをdictに変換します。
+        Returns:
+            list[dict[str, object]]: 記録されたメッセージをdictのリスト形式で返します。
+        """
+        return [asdict(item) for item in self]
 
     def to_text(
         self,

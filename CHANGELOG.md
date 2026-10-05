@@ -34,6 +34,12 @@ STB-KITのバージョンについての考え方は[COMPATIBILITY](COMPATIBILIT
 
 - なし
 
+## [0.1.0b3]
+
+### Added
+
+- `stbkit.api.experimental` に `Reporter`, `CollectingReporter`, `ReportingResult`, `ReferenceElementNotFoundError` を公開
+
 ## [0.1.0b2]
 
 ### Fixed

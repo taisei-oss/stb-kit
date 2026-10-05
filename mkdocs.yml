@@ -27,8 +27,15 @@ nav:
   - ブラウザで試す:
       - お試しアプリ: playground/index.md
       - 変換お試しページ: playground/converter/to_ifc.html
+  - Pythonから利用する:
+      - インデックス: python/index.md
+      - 読み込みと書き出し: python/io.md
+      - データモデルの使い方: python/data-model.md
+      - 要素の検索と参照解決: python/repository.md
   - サンプル:
+      - インデックス: examples/index.md
       - サンプルデータ: examples/data.md
+      - サンプルコード(python): examples/python.md
   - テクニカルマニュアル:
       - ST-BridgeからIFCへの変換仕様: technical/stb-ifc-conversion.md
       - バリデーション仕様: technical/schema-validation.md

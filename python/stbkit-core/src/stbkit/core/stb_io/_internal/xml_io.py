@@ -49,7 +49,14 @@ def dumps(
 ) -> str:
     """ST-BridgeのデータモデルをXML文字列へ出力します。
 
-    出力前にスキーマ検証を行い、スキーマ違反がある場合は例外を投げます。
+    注意:
+        - 文字列へ書き出す前に、ST-Bridgeのデータモデルが
+            仕様に準拠しているか検証します。
+            スキーマ違反がある場合はSchemaErrorが発生します。
+        - 出力時にversionフィールドおよびStbCommonのapp_name, app_versionフィールドが、
+            stbのインスタンスに自動的に設定されます。
+            app_nameやapp_versionを指定した場合はStbCommonの
+            convert_app_name, convert_app_versionフィールドも自動的に設定されます。
 
     Args:
         stb: 出力するST-Bridgeのルート要素
@@ -100,6 +107,15 @@ def dump(
 
     dumpsのファイル書き込み版です。
     ファイルへ保存する場合は、utf-8で開いたストリームを渡してください。
+
+    注意:
+        - ファイルへ書き出す前に、ST-Bridgeのデータモデルが
+            仕様に準拠しているか検証します。
+            スキーマ違反がある場合はSchemaErrorが発生します。
+        - 出力時にversionフィールドおよびStbCommonのapp_name, app_versionフィールドが、
+            stbのインスタンスに自動的に設定されます。
+            app_nameやapp_versionを指定した場合はStbCommonの
+            convert_app_name, convert_app_versionフィールドも自動的に設定されます。
 
     Args:
         stb: 出力するST-Bridgeのルート要素

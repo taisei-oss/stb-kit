@@ -15,5 +15,19 @@
 from stbkit.core.repository import get_repository as get_repository
 from stbkit.core.serialization import from_dict as from_dict
 from stbkit.core.serialization import to_dict as to_dict
+from stbkit.core.stb_exceptions import (
+    ReferenceElementNotFoundError as ReferenceElementNotFoundError,
+)
+from stbkit.core.stb_reporting import CollectingReporter as CollectingReporter
+from stbkit.core.stb_reporting import Reporter as Reporter
+from stbkit.core.stb_reporting import ReportingResult as ReportingResult
 
-__all__ = ["from_dict", "get_repository", "to_dict"]
+__all__ = [
+    "CollectingReporter",
+    "ReferenceElementNotFoundError",
+    "Reporter",
+    "ReportingResult",
+    "from_dict",
+    "get_repository",
+    "to_dict",
+]

@@ -15,20 +15,24 @@ from stbkit.api.stb_latest import StbNode, StbNodeKind, StBridge
 
 
 def main(stb_path: Path) -> None:
-    # load_latestを使うことで、型ヒントが使えるようになる
+    # load_latestを使うことで、最新版の属性名が利用できます
+    # 型ヒントも有効です。
+    # バージョン更新は外形形状が中心であるため、配筋などは扱えない場合があります。
+    # 読み込み後のレポートを参照ください
     stb: StBridge = stbkit.api.load_latest(stb_path)
     # try-exceptでNoneAccessErrorをキャッチすることで、
-    # 途中のstb_modelやstb_nodesがNoneの場合のエラーを回避できる
+    # 途中のstb_modelやstb_nodesがNoneの場合のエラーを回避できます。
     try:
+        # 複数ある子要素はリストとして扱える。
         node_list: list[StbNode] = stb.stb_model.stb_nodes.stb_node
     except NoneAccessError as e:
         print(e)
         return
     # 値が限られている属性は列挙型を使うことで、補完や型チェックが効くようになります。
-    # StrEnum等であるため、文字列で比較することも可能です。
+    # StrEnum等であるため、`node.kind=="ON_GRID"`のように
+    # 文字列で比較することも可能です。
     node_list = [node for node in node_list if node.kind is StbNodeKind.ON_GRID]
     print(f"グリッド上の節点数: {len(node_list)}")
-    # 複数要素はリストであるため、for文で回せます。
     for node in node_list:
         print(f"id: {node.id}  x: {node.x}  y: {node.y}  z: {node.z}")
 

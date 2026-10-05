@@ -41,7 +41,7 @@ STB-KITの機能をコマンドから実行します。Pythonの知識がなく�
 
 ST-BridgeをPythonオブジェクトとして読み込み、プログラミングからST-Bridgeを利用します。
 
-※準備中
+[Pythonから利用する](python/index.md)
 
 ## ブラウザで試す
 

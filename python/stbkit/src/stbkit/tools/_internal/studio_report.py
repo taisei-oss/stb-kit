@@ -7,7 +7,6 @@
 """StudioAppへ渡すReporter結果文字列を生成するモジュール"""
 
 import json
-from dataclasses import asdict
 from pathlib import Path
 
 from stbkit.core.data_model.common import StBridgeRoot
@@ -45,5 +44,5 @@ def validation_report_json(source: str, is_path: bool) -> str:
 
 
 def _report_to_json(report: ReportingResult) -> str:
-    payload = [asdict(item) for item in report]
+    payload = report.to_dict()
     return json.dumps(payload, ensure_ascii=False)
