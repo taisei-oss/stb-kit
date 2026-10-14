@@ -47,7 +47,8 @@ EXIT_EXECUTION_ERROR: Final[int] = 3
 EXIT_OPTIONAL_DEPENDENCY_MISSING: Final[int] = 4
 """オプション依存パッケージがなく、処理を実行できなかった。
 
-ifcopenshellやxmlschemaを必要とする処理を指定したのにインストールされていない場合。
+ifcopenshell、xmlschema、stbkit-nativeを必要とする処理を指定したのに
+インストールされていない場合。
 利用者の環境によって結果が変わるため、EXIT_EXECUTION_ERRORとは分ける。
 """
 

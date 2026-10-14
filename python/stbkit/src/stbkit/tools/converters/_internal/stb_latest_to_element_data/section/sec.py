@@ -4,6 +4,10 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from stbkit.core.data_model.common import StBridgeElement
 from stbkit.core.stb_exceptions import (
     NoneAccessError,
@@ -13,7 +17,6 @@ from stbkit.core.stb_exceptions import (
 from stbkit.core.stb_reporting import Code, Phase, Reporter
 
 from stbkit.api import stb_latest
-from stbkit.api.experimental.repository import RepositoryLatest
 from stbkit.api.stb_latest import (
     StbBeam,
     StbBrace,
@@ -59,6 +62,9 @@ from . import (
     sec_pile_rc,
     sec_pile_s,
 )
+
+if TYPE_CHECKING:
+    from stbkit.api.experimental.repository import RepositoryLatest
 
 
 def get_shapes_element_line(

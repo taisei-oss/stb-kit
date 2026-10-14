@@ -7,9 +7,9 @@
 
 ## 現在、優先的に取り組んでいる項目
 
-### 非公開コードのレビュー、公開
+### 非公開コードの調整・公開
 
-- stbkit-core-rs, stbkit-rs, stbkit-nativeの公開
+- studio, editor, diff geometry機能の公開
 
 ### ST-Bridgeジオメトリ変換
 
@@ -21,25 +21,21 @@
 - 通り心情報の付加
 - 部材を階ごとに所属させる
 
-### ドキュメントの作成
-
-- ユーザーリファレンス
-- APIリファレンス
-- テクニカルマニュアル
-
 ## 現在の優先項目が完了した後に取り組む予定の項目
 
 - STL,OBJへの変換
 - 参照対応表の充実
 - upgradeのみ対応事項の解決
-- python環境がなくても気軽利用できるランチャーの公開
+- python環境がなくても気軽に利用できるランチャーの公開
 - v1.0.0に向けたAPIの安定化
+- ドキュメントの拡充
 
 ## 将来的に検討する項目
 
 - コードジェネレーターstbkit-codegenの公開
-- Rustの機能充実、クレート公開
+- Rustの公開API設計、クレート公開
 - C#, TypeScriptへの展開
+- ビルダーAPIの整備
 
 ## 実施を確定していない検討項目
 
@@ -54,10 +50,7 @@
 - `_` で始まる要素の互換性保証
 
 ## 最近完了した主要項目
-詳細は[CHANGELOG](CHANGELOG.md)を参照してください。
 
-### 0.1.0b1
-
-- CLIの`summary`・`upgrade`機能の公開
+- [CHANGELOG](CHANGELOG.md)を参照してください。
 
 Copyright 2026 TAISEI CORPORATION

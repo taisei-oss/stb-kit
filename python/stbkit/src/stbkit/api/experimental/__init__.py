@@ -22,6 +22,8 @@ from stbkit.core.stb_reporting import CollectingReporter as CollectingReporter
 from stbkit.core.stb_reporting import Reporter as Reporter
 from stbkit.core.stb_reporting import ReportingResult as ReportingResult
 
+from stbkit.native import view as view
+
 __all__ = [
     "CollectingReporter",
     "ReferenceElementNotFoundError",
@@ -30,4 +32,5 @@ __all__ = [
     "from_dict",
     "get_repository",
     "to_dict",
+    "view",
 ]

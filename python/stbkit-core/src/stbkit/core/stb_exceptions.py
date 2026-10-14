@@ -26,6 +26,23 @@ class StbError(Exception):
         return None
 
 
+class MissingOptionalDependencyError(StbError, RuntimeError):
+    """必要な任意依存パッケージがインストールされていない時に発生させる例外
+
+    Args:
+        package_name: 必要なパッケージ名
+        install_command: パッケージを追加するためのインストールコマンド
+    """
+
+    def __init__(self, *, package_name: str, install_command: str) -> None:
+        self.package_name: str | list[str] = package_name
+        self.install_command: str | list[str] = install_command
+        super().__init__(
+            f"この機能を利用するにはパッケージ{package_name}が必要です。\n"
+            f"{install_command} でインストールしてください。"
+        )
+
+
 class NoneAccessError(StbError, AttributeError):
     """アクセスした属性がNoneである例外
 

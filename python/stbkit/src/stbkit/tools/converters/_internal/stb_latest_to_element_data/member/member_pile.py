@@ -4,11 +4,13 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+from __future__ import annotations
+
 import math
+from typing import TYPE_CHECKING
 
 from stbkit.core.stb_exceptions import NoneAccessError
 
-from stbkit.api.experimental.repository import RepositoryLatest
 from stbkit.api.stb_latest import (
     StbPile,
     StbSecFigurePileRcConventional,
@@ -19,6 +21,9 @@ from stbkit.api.stb_latest import (
 )
 
 from ....._internal.utils.unit_utils import degree_to_radian
+
+if TYPE_CHECKING:
+    from stbkit.api.experimental.repository import RepositoryLatest
 
 
 def stb_pile_get_length_rc(repo: RepositoryLatest, stb_pile: StbPile) -> list[float]:

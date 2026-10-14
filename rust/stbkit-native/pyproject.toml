@@ -1,0 +1,65 @@
+# Copyright 2025-2026 TAISEI CORPORATION
+# SPDX-License-Identifier: MPL-2.0
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+[build-system]
+requires = ["maturin>=1.10,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "stbkit-native"
+# dynamicを使うと、Pythonのみ開発したい場合のuv syncでcargoが必要になってしまうので、静的に記載する
+version = "0.1.0b4"
+description = "STB-KITのグラフィック機能を提供するネイティブ（Rust）拡張"
+authors = [
+    { name = "STB-KIT Development Team (TAISEI CORPORATION)", email = "oss-dev@pub.taisei.co.jp" },
+]
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MPL-2.0"
+license-files = ["LICENSE"]
+keywords = ["ST-Bridge", "BIM", "building", "structural-engineering", "stbridge"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Natural Language :: Japanese",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Topic :: Multimedia :: Graphics :: 3D Modeling",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+
+[project.urls]
+Homepage = "https://taisei-oss.github.io/stb-kit/"
+Repository = "https://github.com/taisei-oss/stb-kit"
+Issues = "https://github.com/taisei-oss/stb-kit/issues"
+Changelog = "https://github.com/taisei-oss/stb-kit/blob/main/CHANGELOG.md"
+
+[tool.maturin]
+python-source = "python"
+module-name = "stbkit._native.stbkit_native_rs"
+compatibility = "off"
+include = [
+    { path = "stbkit/_native/py.typed", format = "wheel" },
+    { path = "stbkit/_native/THIRD_PARTY_LICENSES.html", format = "wheel" },
+    { path = "stbkit/_native/THIRD_PARTY_NOTICES.html", format = "wheel" },
+]
+
+[tool.ruff]
+extend = "../../pyproject.toml"
+
+[tool.ruff.format]
+# 社内用コードから公開用コードへ切り出す際に生じてしまうフォーマットエラーの除外
+exclude = [
+    "python/stbkit/_native/stbkit_native_rs.pyi",
+]

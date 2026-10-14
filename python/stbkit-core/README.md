@@ -67,6 +67,7 @@ python -m pip install --pre "stbkit-core[full]"
 依存パッケージがない場合でも、型、必須項目等の簡易的な確認は行えます。
 
 ## ライセンス
+
 本プロジェクトのソースコードは **Mozilla Public License 2.0 (MPL-2.0)** のもとで提供されます。
 
 - MPL-2.0 はファイル単位のコピーレフトライセンスです。

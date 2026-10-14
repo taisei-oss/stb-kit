@@ -147,7 +147,7 @@ def to_text(
         from ...._internal.optional_dependencies import ifc_pipeline
 
         if isinstance(data, ifc_pipeline.IfcData):
-            return data.value.to_string()
+            return data.value.to_string()  # type:ignore[no-untyped-call,no-any-return]
     raise ValueError(f"テキスト化できないデータ形式です: {type(data)}")
 
 

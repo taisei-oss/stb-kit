@@ -34,6 +34,25 @@ STB-KITのバージョンについての考え方は[COMPATIBILITY](COMPATIBILIT
 
 - なし
 
+## [0.1.0b4]
+
+### Added
+
+- ネイティブ拡張パッケージ`stbkit-native`を公開
+- stbkitのオプション依存`stbkit[native]`を追加
+- CLIに`view`コマンドを公開
+- `stbkit.api.experimental`に`view`を公開
+- 対応バージョンにPython 3.15を追加
+
+### Changed
+
+- stbkitのオプション依存`stbkit[full]`に`stbkit-native`を追加
+
+### Fixed
+
+- メッシュの三角形分割の不具合を修正(既存のIFC,PLY変換には影響なし)
+- ifcopenshellのバージョン0.9に更新した際にIFCからPLYへの変換でエラーが出る問題を修正
+
 ## [0.1.0b3]
 
 ### Added

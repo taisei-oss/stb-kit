@@ -12,10 +12,13 @@ from argparse import ArgumentParser, Namespace, _SubParsersAction
 from importlib import metadata
 from typing import Any, Never
 
+from stbkit.core.stb_exceptions import MissingOptionalDependencyError
+
 from .constants_exit_code import (
     EXIT_EXECUTION_ERROR,
     EXIT_INTERRUPTED,
     EXIT_INVALID_ARGUMENT,
+    EXIT_OPTIONAL_DEPENDENCY_MISSING,
 )
 from .entry_points import load_command_entry_points
 from .global_parent import make_global_parent
@@ -50,6 +53,9 @@ def main() -> None:
     except KeyboardInterrupt:
         # Ctrl+Cによる中断。
         raise SystemExit(EXIT_INTERRUPTED) from None
+    except MissingOptionalDependencyError as error:
+        print(str(error), file=sys.stderr)
+        raise SystemExit(EXIT_OPTIONAL_DEPENDENCY_MISSING) from None
     except Exception:  # noqa: BLE001
         # 終了コードを変更するための最後の受け皿なので種類を問わずキャッチする。
         traceback.print_exc()

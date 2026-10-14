@@ -1,7 +1,7 @@
 ISO-10303-21;
 HEADER;
 FILE_DESCRIPTION(('ViewDefinition[DesignTransferView]'),'2;1');
-FILE_NAME('/dev/null','2026-09-11T12:00:00+00:00',(''),(''),'IfcOpenShell 0.8.5','IfcOpenShell 0.8.5','Nobody');
+FILE_NAME('/dev/null','2026-09-11T12:00:00+00:00',(''),(''),'IfcOpenShell 0.9.0','IfcOpenShell 0.9.0','Nobody');
 FILE_SCHEMA(('IFC4'));
 ENDSEC;
 DATA;
@@ -14,7 +14,7 @@ DATA;
 #7=IFCDIRECTION((0.,0.,1.));
 #8=IFCDIRECTION((1.,0.,0.));
 #9=IFCAXIS2PLACEMENT3D(#6,#7,#8);
-#10=IFCGEOMETRICREPRESENTATIONCONTEXT($,'Model',3,1.0000000000000001E-05,#9,$);
+#10=IFCGEOMETRICREPRESENTATIONCONTEXT($,'Model',3,1.E-05,#9,$);
 #11=IFCGEOMETRICREPRESENTATIONSUBCONTEXT('Body','Model',*,*,*,*,#10,$,.MODEL_VIEW.,$);
 #12=IFCSITE('000000000000000000000n',$,'Site',$,$,$,$,$,$,$,$,$,$,$);
 #13=IFCBUILDING('0000000000000000000001',$,'Building',$,$,$,$,$,$,$,$,$);

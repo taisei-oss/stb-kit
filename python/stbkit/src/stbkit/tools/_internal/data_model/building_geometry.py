@@ -17,6 +17,8 @@ UINT32_NONE = 0xFFFF_FFFF
 """u32列で参照なし表す値。Rustのu32::MAXと一致させる。"""
 
 _GUID_SIZE = 16
+_UUID_NONE: UUID = UUID(int=(1 << 128) - 1)
+"""UUIDが未設定であることを表す特殊値。すべてF"""
 
 # 処理系依存対策
 if array("f").itemsize != 4:
@@ -39,6 +41,10 @@ def _new_f64_array() -> array[float]:
 def _new_u32_array() -> array[int]:
     # id用
     return array("I")
+
+
+def _new_uuid_array() -> array[int]:
+    return array("B")
 
 
 def _new_offsets_array() -> array[int]:
@@ -105,48 +111,27 @@ class SurfaceLoopType(IntEnum):
     HOLE = 1
 
 
-@dataclass(slots=True)
-class OptionalUuidColumn:
-    """UUID | Noneを、固定長bytearrayと有効フラグで保持する"""
+def _uuid_to_bytes(value: UUID | str | None) -> bytes:
+    if value is None:
+        return _UUID_NONE.bytes
+    uuid_value: UUID = value if isinstance(value, UUID) else UUID(value)
+    return uuid_value.bytes
 
-    data: bytearray = field(default_factory=bytearray, repr=False)
-    """要素[i]のUUIDをdata[i * 16:(i + 1) * 16]に格納"""
-    valid: bytearray = field(default_factory=bytearray, repr=False)
-    """0:None, 1:UUIDあり"""
 
-    def __len__(self) -> int:
-        return len(self.valid)
+def _uuid_at(column: array[int], index: int) -> UUID | None:
+    if not 0 <= index < len(column) // _GUID_SIZE:
+        raise IndexError(index)
+    start: int = index * _GUID_SIZE
+    value: UUID = UUID(bytes=bytes(column[start : start + _GUID_SIZE]))
+    return None if value == _UUID_NONE else value
 
-    def append(self, value: UUID | str | None) -> None:
-        if value is None:
-            # 固定長を維持するため、Noneでもメモリを確保する
-            self.data.extend(b"\x00" * _GUID_SIZE)
-            self.valid.append(0)
-            return
-        uuid_value: UUID = value if isinstance(value, UUID) else UUID(value)
-        self.data.extend(uuid_value.bytes)
-        self.valid.append(1)
 
-    def get(self, index: int) -> UUID | None:
-        if not 0 <= index < len(self):
-            raise IndexError(index)
-        if self.valid[index] == 0:
-            return None
-        start: int = index * _GUID_SIZE
-        return UUID(bytes=bytes(self.data[start : start + _GUID_SIZE]))
-
-    def validate(self, expected_count: int | None = None) -> None:
-        if len(self.data) != len(self.valid) * _GUID_SIZE:
-            raise ValueError(
-                "UUIDを格納推している配列サイズが不正です: "
-                f"{len(self.data)} != {len(self.valid) * _GUID_SIZE}"
-            )
-        if expected_count is not None and len(self) != expected_count:
-            raise ValueError(
-                f"UUIDの数が不正です: expect={expected_count}, actual={len(self)}"
-            )
-        if any(value not in (0, 1) for value in self.valid):
-            raise ValueError("UUID valid フラグは0か1でなければなりません")
+def _validate_uuid_array(column: array[int], expected_count: int) -> None:
+    if column.typecode != "B" or len(column) != expected_count * _GUID_SIZE:
+        raise ValueError(
+            "UUID列はarray('B')で、長さはUUID数 * 16である必要があります: "
+            f"expect={expected_count * _GUID_SIZE}, actual={len(column)}"
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -469,7 +454,7 @@ class Node:
 class NodeTable:
     positions_xyz: array[float] = field(default_factory=_new_f64_array, repr=False)
     source_id: list[str] = field(default_factory=list, repr=False)
-    guid: OptionalUuidColumn = field(default_factory=OptionalUuidColumn)
+    guid: array[int] = field(default_factory=_new_uuid_array, repr=False)
     story_index: array[int] = field(default_factory=_new_u32_array, repr=False)
     xpath: list[str | None] = field(default_factory=list, repr=False)
 
@@ -488,7 +473,7 @@ class NodeTable:
         index: int = len(self)
         self.positions_xyz.extend(_vector3(position, name="node position"))
         self.source_id.append(source_id)
-        self.guid.append(guid)
+        self.guid.extend(_uuid_to_bytes(guid))
         # u32列ではNone直接保持できないため、UINT32_NONEとして持たせる。
         self.story_index.append(
             UINT32_NONE if story_index is None else int(story_index)
@@ -508,7 +493,7 @@ class NodeTable:
                 float(self.positions_xyz[offset + 2]),
             ),
             source_id=self.source_id[index],
-            guid=self.guid.get(index),
+            guid=_uuid_at(self.guid, index),
             story_index=None if raw_story == UINT32_NONE else int(raw_story),
             xpath=self.xpath[index],
         )
@@ -517,7 +502,7 @@ class NodeTable:
         count: int = len(self)
         if len(self.positions_xyz) != count * 3:
             raise ValueError("node positionsの長さはnode数 * 3と一致する必要があります")
-        self.guid.validate(count)
+        _validate_uuid_array(self.guid, count)
         if len(self.story_index) != count:
             raise ValueError("node story_index数はnode数と一致する必要があります")
         if len(self.xpath) != count:
@@ -673,7 +658,7 @@ class ElementTable:
     story_start: array[int] = field(default_factory=_new_u32_array, repr=False)
     story_count: array[int] = field(default_factory=_new_u32_array, repr=False)
 
-    guid: OptionalUuidColumn = field(default_factory=OptionalUuidColumn)
+    guid: array[int] = field(default_factory=_new_uuid_array, repr=False)
     xpath: list[str | None] = field(default_factory=list, repr=False)
     name: list[str | None] = field(default_factory=list, repr=False)
     source_type: list[str] = field(default_factory=list, repr=False)
@@ -713,7 +698,7 @@ class ElementTable:
         self.story_start.append(UINT32_NONE)
         self.story_count.append(0)
 
-        self.guid.append(guid)
+        self.guid.extend(_uuid_to_bytes(guid))
         self.xpath.append(xpath)
         self.name.append(name)
         self.source_type.append(source_type)
@@ -758,7 +743,7 @@ class ElementTable:
                     f"element列 {name!r} の長さは {count} である必要があります: "
                     f"actual={len(column)}"
                 )
-        self.guid.validate(count)
+        _validate_uuid_array(self.guid, count)
         for value in self.kind:
             ElementKind(value)
 

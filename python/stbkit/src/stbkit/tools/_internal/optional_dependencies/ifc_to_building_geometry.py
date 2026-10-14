@@ -5,7 +5,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 from collections.abc import Sequence
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, get_args
 from uuid import UUID
 
 from ..data_model.building_geometry import BuildingGeometry
@@ -21,11 +21,9 @@ def ifc_to_building_geometry(ifc_file: "ifcopenshell.file") -> BuildingGeometry:
     import ifcopenshell
     import ifcopenshell.geom
     import ifcopenshell.util.shape
-    from ifcopenshell.ifcopenshell_wrapper import (
-        BRep,
-        Serialization,
-        Triangulation,
-    )
+
+    # 0.8系と0.9系で形状クラス名が異なるため型定義から取得する。
+    shape_types = get_args(ifcopenshell.geom.ShapeType)
 
     # ジオメトリの設定
     settings = ifcopenshell.geom.settings()  # type: ignore
@@ -33,7 +31,7 @@ def ifc_to_building_geometry(ifc_file: "ifcopenshell.file") -> BuildingGeometry:
     building_geometry: BuildingGeometry = BuildingGeometry()
 
     for element in ifc_file.by_type("IfcProduct"):
-        if element.is_a("IfcOpeningElement"):
+        if element.is_a("IfcOpeningElement"):  # type:ignore[no-untyped-call]
             continue
         try:
             shape = ifcopenshell.geom.create_shape(settings, element)
@@ -44,21 +42,20 @@ def ifc_to_building_geometry(ifc_file: "ifcopenshell.file") -> BuildingGeometry:
         geometry = shape.geometry
         vertices: list[Sequence[float]] = []
 
-        if isinstance(geometry, (BRep, Triangulation, Serialization)):
+        if isinstance(geometry, shape_types):
             global_id: str | None = (
                 element.GlobalId if hasattr(element, "GlobalId") else None
             )
             guid: UUID | None = from_ifc_guid(global_id) if global_id else None
             index: int = building_geometry.add_element(
                 guid=guid,
-                source_type=str(element.is_a()),
+                source_type=element.is_a(),  # type:ignore[no-untyped-call]
                 source_id=str(element.id()),
                 name=getattr(element, "Name", None),
             )
-            vertices.extend(ifcopenshell.util.shape.get_vertices(geometry))  # type:ignore
+            vertices.extend(ifcopenshell.util.shape.get_vertices(geometry))
             tmp_faces: list[Sequence[int]] = [
-                item
-                for item in ifcopenshell.util.shape.get_faces(geometry)  # type: ignore
+                item for item in ifcopenshell.util.shape.get_faces(geometry)
             ]
             building_geometry.add_element_mesh(index, vertices, tmp_faces)
     return building_geometry

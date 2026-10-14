@@ -5,12 +5,12 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 import contextlib
+from typing import TYPE_CHECKING
 
 from stbkit.core.repository import get_repository
 from stbkit.core.stb_exceptions import NoneAccessError
 from stbkit.core.stb_reporting import Code, Phase, Reporter
 
-from stbkit.api.experimental.repository import RepositoryLatest
 from stbkit.api.stb_latest import (
     StbBeam,
     StbBrace,
@@ -40,6 +40,9 @@ from .member.member_plane import (
     stb_slab_to_ifc_data,
     stb_wall_to_ifc_data,
 )
+
+if TYPE_CHECKING:
+    from stbkit.api.experimental.repository import RepositoryLatest
 
 
 def node_coords_from_stb_nodes(stb_nodes: StbNodes) -> dict[int, Vector3d]:

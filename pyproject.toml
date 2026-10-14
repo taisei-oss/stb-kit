@@ -7,6 +7,7 @@
 [tool.uv.workspace]
 members = [
     "python/*",
+    "rust/stbkit-native/"
 ]
 exclude = [
     "python/tests"
@@ -31,6 +32,7 @@ dev = [
     "mypy>=2.3.1",
     "ruff>=0.16.5",
     "xmlschema>=4.3.2",
+    "maturin>=1.15.0",
 ]
 
 docs = [
@@ -39,10 +41,14 @@ docs = [
     "mkdocstrings[python]>=1.0.6",
 ]
 
+rust = [
+    "stbkit-native"
+]
 [tool.uv.sources]
 stbkit-core = { workspace = true }
 stbkit = { workspace = true }
 stbkit-testutils = { workspace = true }
+stbkit-native = { workspace = true }
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "B", "I", "UP", "SIM"]
@@ -60,8 +66,8 @@ disallow_incomplete_defs = true
 warn_unused_ignores = true
 warn_redundant_casts = true
 exclude = [
-    '^build/',
-    '^dist/',
+    '(^|/)build/',
+    '(^|/)dist/',
     '(^|/)\.venv/',
     '(^|/)\.mypy_cache/',
     '(^|/)tests?/fixtures?/',
@@ -71,4 +77,5 @@ mypy_path = [
     "$MYPY_CONFIG_FILE_DIR/python/stbkit/src",
     "$MYPY_CONFIG_FILE_DIR/python/stbkit-core/src",
     "$MYPY_CONFIG_FILE_DIR/python/stbkit-testutils/src",
+    "$MYPY_CONFIG_FILE_DIR/rust/stbkit-native/python",
 ]

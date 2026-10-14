@@ -4,7 +4,9 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-from typing import Literal
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Literal
 
 from stbkit.core.stb_exceptions import (
     ReferenceElementNotFoundError,
@@ -12,7 +14,6 @@ from stbkit.core.stb_exceptions import (
 )
 from stbkit.core.stb_reporting import Code, Phase, Reporter
 
-from stbkit.api.experimental.repository import RepositoryLatest
 from stbkit.api.stb_latest import (
     StbBeam,
     StbBeamConcreteSwitch,
@@ -41,6 +42,9 @@ from ....._internal.vectors import Vector3d
 from ... import coord_converter, name_converter
 from ..section import sec, sec_pile_s
 from . import member_pile
+
+if TYPE_CHECKING:
+    from stbkit.api.experimental.repository import RepositoryLatest
 
 
 def get_axis_position(

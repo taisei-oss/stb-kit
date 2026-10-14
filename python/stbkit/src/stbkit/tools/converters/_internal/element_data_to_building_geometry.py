@@ -156,23 +156,33 @@ def create_local_line_meshes(
 
 
 def _triangulate_faces(mesh: _LocalMesh) -> _LocalMesh:
-    result_vertices: list[Vector3d] = list(mesh.vertices)
-    result_faces: list[Sequence[int]] = []
-
+    tmp_mesh: _LocalMesh = _LocalMesh(vertices=list(mesh.vertices))
     for face in mesh.faces:
         match len(face):
             case 0 | 1 | 2:
                 raise ValueError("頂点数が3未満の面は三角形分割できません")
             case 3:
-                result_faces.append(list(face))
+                tmp_mesh.faces.append(list(face))
             case _:
                 face_vertices: list[Vector3d] = [mesh.vertices[index] for index in face]
                 face_vertices_element: list[Vector2d] = [
                     Vector2d(v.x, v.y) for v in to_plate_element_coord(face_vertices)
                 ]
-                _, new_faces, _, _ = create_mesh(face_vertices_element)
-                result_faces.extend(new_faces)
-    return _LocalMesh(vertices=result_vertices, faces=result_faces)
+                new_vertices, new_faces, _, _ = create_mesh(face_vertices_element)
+                global_vertices = to_global_coord_plate(
+                    [point.to_vector3d(0.0) for point in new_vertices], face_vertices
+                )
+                tmp_mesh.add_vertices_and_faces(global_vertices, new_faces)
+    used_indices: list[int] = sorted(
+        {index for face in tmp_mesh.faces for index in face}
+    )
+    index_map: dict[int, int] = {
+        old_index: new_index for new_index, old_index in enumerate(used_indices)
+    }
+    return _LocalMesh(
+        vertices=[tmp_mesh.vertices[index] for index in used_indices],
+        faces=[[index_map[index] for index in face] for face in tmp_mesh.faces],
+    )
 
 
 def element_line_to_element_mesh(

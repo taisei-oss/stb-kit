@@ -4,10 +4,13 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from stbkit.core.stb_exceptions import NoneAccessError
 from stbkit.core.stb_reporting import Code, Phase, Reporter
 
-from stbkit.api.experimental.repository import RepositoryLatest
 from stbkit.api.stb_latest import (
     StbSecColumnCft,
     StbSecSteelColumnCftNotSame,
@@ -27,6 +30,9 @@ from ....._internal.data_model.shape_data import (
     ShapeUnknown,
 )
 from . import sec_steel
+
+if TYPE_CHECKING:
+    from stbkit.api.experimental.repository import RepositoryLatest
 
 
 def _filled_concrete_shape(shape: Shape, report: Reporter) -> Shape:

@@ -4,6 +4,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+from array import array
+
 from stbkit.core.data_model.common import StBridgeRoot
 from stbkit.core.stb_io import loads
 from stbkit.core.stb_reporting import Reporter, get_reporter
@@ -14,15 +16,15 @@ from stbkit.tools.converters._internal.stb_to_building_geometry import (
     stb_to_building_geometry,
 )
 
-from .building_geometry import BuildingGeometry, OptionalUuidColumn
+from .building_geometry import _GUID_SIZE, BuildingGeometry, _uuid_at
 
 
-def _uuid_strings(column: OptionalUuidColumn) -> list[str | None]:
+def _uuid_strings(column: array[int]) -> list[str | None]:
     def _get_string(index: int) -> str | None:
-        value = column.get(index)
+        value = _uuid_at(column, index)
         return None if value is None else str(value)
 
-    return [_get_string(index) for index in range(len(column))]
+    return [_get_string(index) for index in range(len(column) // _GUID_SIZE)]
 
 
 def building_geometry_to_web_payload(

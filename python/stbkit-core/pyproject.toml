@@ -10,7 +10,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "stbkit-core"
-version = "0.1.0b3"
+version = "0.1.0b4"
 description = "ST-Bridgeを扱うツールキットSTB-KITのコアパッケージ"
 authors = [
     { name = "STB-KIT Development Team (TAISEI CORPORATION)", email = "oss-dev@pub.taisei.co.jp" },
@@ -31,6 +31,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Topic :: Scientific/Engineering",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Text Processing :: Markup :: XML",
@@ -38,7 +39,7 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/taisei-oss/stb-kit"
+Homepage = "https://taisei-oss.github.io/stb-kit/"
 Repository = "https://github.com/taisei-oss/stb-kit"
 Issues = "https://github.com/taisei-oss/stb-kit/issues"
 Changelog = "https://github.com/taisei-oss/stb-kit/blob/main/CHANGELOG.md"

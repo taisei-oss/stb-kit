@@ -4,7 +4,10 @@ STB-KITは、Pythonパッケージのstbkitをインストールすることに�
 
 Python環境が無い方はPython環境を用意してください。(Microsoft Store等で入手できます)
 
-対応するPythonバージョンは3.12-3.14です。
+対応するPythonバージョンは3.12-3.15です。
+
+!!! note "Python 3.15でのIFC"
+    Python 3.15では、IFC関連の依存ライブラリの関係で、IFC関連機能が動作しない可能性があります。利用環境で動作をご確認ください。
 
 次のようにインストールします。
 2つ目のコマンドでバージョン番号が表示されればインストール成功です。
@@ -22,9 +25,9 @@ python -m stbkit --version
 
 ## 利用する機能に応じた追加パッケージ
 
-stbkit[full]のインストールは、依存にifcopenshellがあるため、数百MBのディスク容量が必要となります。
+stbkit[full]は、xsd（公式XSDを利用したスキーマ検証）、ifc（IFC変換）、native（3Dビュー機能）を含みます。依存にifcopenshellがあるため、数百MBのディスク容量が必要となります。
 
-公式スキーマファイルを利用したスキーマチェック、IFCへの変換等の利用が不要でディスク容量を節約したい場合は、下記のように追加機能を指定します。
+必要な機能だけを利用したい場合やディスク容量を節約したい場合は、下記のように追加機能を指定します。
 
 ```bash
 # 依存なしの最小構成でインストールする場合
@@ -33,6 +36,8 @@ python -m pip install --pre stbkit
 python -m pip install --pre "stbkit[xsd]"
 # IFC変換機能を使いたい場合
 python -m pip install --pre "stbkit[ifc]"
+# 3Dビュー機能を使いたい場合
+python -m pip install --pre "stbkit[native]"
 # すべての機能を利用したい場合
 python -m pip install --pre "stbkit[full]"
 ```

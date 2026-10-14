@@ -1,0 +1,40 @@
+# Copyright 2025-2026 TAISEI CORPORATION
+# SPDX-License-Identifier: MPL-2.0
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+[package]
+name = "stbkit-rs"
+version = "0.1.0-alpha.9"
+edition = "2024"
+license.workspace = true
+
+[features]
+default = []
+serde = [
+    "dep:serde", 
+]
+
+[dependencies]
+serde = { version = "1.0.229", features = ["derive"], optional = true }
+uuid = { version = "1.27.0", features = ["v4", "v7"] }
+
+[dev-dependencies]
+regex = "1"
+strum = { version = "0.28", features = ["derive"] }
+
+# wasm用設定
+# Webではデスクトップ用window/X11/Wayland依存を有効にしない。
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+eframe = { version = "0.36.2", default-features = false, features = ["default_fonts", "glow"] }
+three-d = { version = "0.19.0", default-features = false }
+# webではjsが必要
+uuid = { version = "1.27.0", features = ["js"] }
+wasm-bindgen-futures = "0.4.79"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+eframe = { version = "0.36.2", default-features = false, features = ["accesskit", "default_fonts", "glow", "wayland", "x11"] }
+three-d = { version = "0.19.0", default-features = false, features = ["window"] }
+image = { version = "0.25.10", default-features = false, features = ["png"] }
+

@@ -77,7 +77,7 @@ class _HasGuid(Protocol):
 
 def _unit_sort_key(unit: entity_instance) -> tuple[str, str]:
     """単位を固定順序へ並べるためのkey"""
-    return (unit.is_a(), str(getattr(unit, "UnitType", "")))
+    return (unit.is_a(), str(getattr(unit, "UnitType", "")))  # type:ignore[no-untyped-call]
 
 
 def _set_guid(ifc_entity: entity_instance, obj: _HasGuid) -> None:

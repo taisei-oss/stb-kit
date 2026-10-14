@@ -48,7 +48,12 @@ python -m pip install --pre stbkit
   ```bash
   python -m pip install --pre "stbkit[xsd]"
   ```
-- `full` : 全機能を利用する場合に必要です（xsd, ifc を含む）。
+- `native` : 3Dビュー機能を利用する場合に必要です。
+  インストール方法：
+  ```bash
+  python -m pip install --pre "stbkit[native]"
+  ```
+- `full` : 全機能を利用する場合に必要です（xsd, ifc, native を含む）。
   インストール方法：
   ```bash
   python -m pip install --pre "stbkit[full]"

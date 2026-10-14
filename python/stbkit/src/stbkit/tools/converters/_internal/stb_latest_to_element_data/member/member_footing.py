@@ -4,15 +4,21 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from stbkit.core.stb_reporting import Reporter
 
-from stbkit.api.experimental.repository import RepositoryLatest
 from stbkit.api.stb_latest import StbFooting, StbSecFoundationRc
 
 from ....._internal.data_model.element_data import ElementLine, ElementType
 from ....._internal.data_model.shape_data import ShapePosition
 from ....._internal.vectors import Vector3d
 from ..section.sec_foundation import stb_sec_foundation_rc_to_shapes_and_depth
+
+if TYPE_CHECKING:
+    from stbkit.api.experimental.repository import RepositoryLatest
 
 
 def stb_footing_to_line_element(

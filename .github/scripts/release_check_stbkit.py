@@ -162,10 +162,11 @@ if core_v != expected:
         f'{CORE_PACKAGE_NAME}のバージョンが一致しません: {{core_v}} != {{expected}}'
     )
 proc = subprocess.run(
-    [sys.executable, '-m', '{PACKAGE_NAME}', '--help'],
+    [sys.executable, '-X', 'utf8', '-m', '{PACKAGE_NAME}', '--help'],
     check=True,
     capture_output=True,
     text=True,
+    encoding='utf-8',
 )
 if ('usage' not in proc.stdout.lower()
     and 'usage' not in proc.stderr.lower()):

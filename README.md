@@ -23,7 +23,7 @@ _This software is a “tool” that processes data based on user input and judgm
 _For detailed warranty disclaimers and limitations of liability, including jurisdictional considerations, please refer to DISCLAIMER.md._
 
 > [!IMPORTANT]
-> 現在社内レビュー中のため、まだ全ての機能が公開されていません。順次公開していく予定です。
+> 現在コードを順次公開中のため、全ての機能が公開されていません。
 
 ## 2. 主な機能
 
@@ -37,8 +37,12 @@ _For detailed warranty disclaimers and limitations of liability, including juris
   - 入力データの概要表示
 - **バリデーション**
   - ST-Bridge仕様に基づく検証
-- **3DビューおよびGUIによる簡易編集（現在非公開）**
+- **3DビューおよびGUIによる簡易編集（編集機能は現在非公開）**
   - 軽微な可視化・編集・確認を補助する機能（目的は利便性であり、正統性・適合性を保証しません）
+- **XML差分**
+  - ST-BridgeファイルのXML構造としての差分を比較する機能
+  - ST-Bridgeツール開発者の利用を想定しており、モデルがどう変わったか等の意味的な差分検出を目的としたものではありません。
+  - 構造設計の意味的な比較を行いたい場合は[STB-DiffChecker](https://github.com/NS-NS/STB-DiffChecker)という非常に有用なツールがあります。
 
 ## 3. ST-BridgeおよびIFCとの関係
 
@@ -148,9 +152,12 @@ STB-KITをご利用いただいている方は、ぜひご回答ください。�
 |----|----|----|----|----|
 |stbkit-core|python/stbkit-core|[![PyPI Version](https://img.shields.io/pypi/v/stbkit-core)](https://pypi.org/project/stbkit-core/)|[![Python](https://img.shields.io/pypi/pyversions/stbkit-core.svg)](https://pypi.org/project/stbkit-core/)|コアライブラリ|
 |stbkit|python/stbkit|[![PyPI Version](https://img.shields.io/pypi/v/stbkit)](https://pypi.org/project/stbkit/)|[![Python](https://img.shields.io/pypi/pyversions/stbkit.svg)](https://pypi.org/project/stbkit/)|ユーティリティ|
-|stbkit-native|未|未|Python+Rust|3D・GUI機能のRust拡張|
+|stbkit-native|rust/stbkit-native|未|Python+Rust|3D・GUI機能のRust拡張|
 |stbkit-core-rs|未|-|Rust|Rust用のコアライブラリ|
-|stbkit-rs|未|-|Rust|Rust用のユーティリティ|
+|stbkit-rs|rust/stbkit-rs|-|Rust|Rust用のユーティリティ|
+
+※現在RustパッケージはPythonの内部処理の位置づけのため、crates.ioへの公開は行っていません。
+将来的に公開APIを整備した時点で公開を検討します。
 
 ## 9. ロードマップ
 現在の方向性と優先事項は[ROADMAP](ROADMAP.md)を参照してください。

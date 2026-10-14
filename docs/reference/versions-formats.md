@@ -1,5 +1,11 @@
 # 対応バージョン・形式
 
+## stbkit-nativeの対応環境
+
+stbkit-nativeはPython 3.12以降の環境で動作します。
+
+また、対応OSはLinuxおよびWindowsです。
+
 ## ST-Bridge
 
 | バージョン | 読み込み | 書き出し | 最新版への変換 |

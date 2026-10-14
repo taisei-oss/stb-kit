@@ -1,0 +1,119 @@
+name: Release stbkit-native
+
+on:
+  push:
+    tags:
+      - stbkit-native-v*
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "確認用リリースタグ 例: stbkit-native-v0.1.0b4"
+        required: true
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  stbkit-native-release-check:
+    name: stbkit-nativeのチェック ${{ matrix.platform.target }}
+    runs-on: ${{ matrix.platform.os }}
+    container: ${{ matrix.platform.container }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            container: quay.io/pypa/manylinux_2_28_x86_64
+            compatibility: manylinux_2_28
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            container: null
+            compatibility: "off"
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        if: runner.os != 'Linux'
+        with:
+          python-version: "3.14"
+      - uses: astral-sh/setup-uv@v10.0.1
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - run: uv python install 3.12 3.13 3.14 3.15
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform.target }}
+      - run: cargo install cargo-about --version 0.9.2 --locked --features cli
+
+      - name: タグ名の取得
+        shell: bash
+        env:
+          DISPATCH_TAG: ${{ inputs.tag }}
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then
+            printf 'TAG_NAME=%s\n' "$DISPATCH_TAG" >> "$GITHUB_ENV"
+          else
+            printf 'TAG_NAME=%s\n' "$GITHUB_REF_NAME" >> "$GITHUB_ENV"
+          fi
+
+      - name: ビルドとチェック 
+        shell: bash
+        env:
+          PYTHONIOENCODING: "utf-8"
+          RELEASE_TARGET: ${{ matrix.platform.target }}
+          RELEASE_PYTHON: "3.12"
+          RELEASE_COMPATIBILITY: ${{ matrix.platform.compatibility }}
+        run: |
+          args=()
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            args+=(--sdist)
+          fi
+          uv run --no-project --python "$RELEASE_PYTHON" --no-python-downloads \
+            python .github/scripts/release_check_stbkit_native.py \
+            --tag "$TAG_NAME" \
+            --target "$RELEASE_TARGET" \
+            --python-version "$RELEASE_PYTHON" \
+            --test-python-versions 3.12 3.13 3.14 3.15 \
+            --compatibility "$RELEASE_COMPATIBILITY" \
+            "${args[@]}"
+
+      - name: wheelの保存
+        uses: actions/upload-artifact@v7
+        with:
+          name: dist-stbkit-native-${{ matrix.platform.target }}-abi3
+          path: dist/
+          if-no-files-found: error
+
+  stbkit-native-publish:
+    name: stbkit-nativeの公開
+    if: github.event_name != 'workflow_dispatch'
+    needs: stbkit-native-release-check
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ vars.STBKIT_PYPI_ENVIRONMENT_NAME != '' && vars.STBKIT_PYPI_ENVIRONMENT_NAME || 'testpypi' }}
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Download distributions
+        uses: actions/download-artifact@v8
+        with:
+          pattern: dist-stbkit-native-*
+          merge-multiple: true
+          path: dist/
+
+      - name: PyPIへの公開
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist
+          repository-url: ${{ vars.STBKIT_PYPI_REPOSITORY_URL != '' && vars.STBKIT_PYPI_REPOSITORY_URL || 'https://test.pypi.org/legacy/' }}

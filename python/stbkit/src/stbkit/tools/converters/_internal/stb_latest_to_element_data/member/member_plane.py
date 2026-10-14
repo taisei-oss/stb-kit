@@ -4,15 +4,21 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from stbkit.core.stb_reporting import Reporter
 
 from stbkit.api import stb_latest
-from stbkit.api.experimental.repository import RepositoryLatest
 
 from ....._internal.data_model.element_data import ElementPlane, ElementType
 from ....._internal.vectors import Vector3d
 from ... import coord_converter
 from ..section import sec
+
+if TYPE_CHECKING:
+    from stbkit.api.experimental.repository import RepositoryLatest
 
 
 def stb_wall_to_ifc_data(

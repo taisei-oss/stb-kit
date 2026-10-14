@@ -17,6 +17,7 @@ BUILTIN_COMMANDS: Final[dict[str, str]] = {
     "summary": "stbkit.cli.commands.summary:register",
     "upgrade": "stbkit.cli.commands.upgrade:register",
     "validate": "stbkit.cli.commands.validate:register",
+    "view": "stbkit.cli.commands.view:register",
 }
 
 

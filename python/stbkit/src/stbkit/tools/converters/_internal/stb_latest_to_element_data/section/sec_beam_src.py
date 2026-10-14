@@ -4,9 +4,12 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from stbkit.core.stb_reporting import Reporter
 
-from stbkit.api.experimental.repository import RepositoryLatest
 from stbkit.api.stb_latest import StbSecBeamSrc
 
 from ....._internal.data_model.shape_data import ShapePair
@@ -14,6 +17,9 @@ from ...stb_latest_to_element_data.section import (
     sec_beam_rc,
     sec_beam_s,
 )
+
+if TYPE_CHECKING:
+    from stbkit.api.experimental.repository import RepositoryLatest
 
 
 def stb_sec_beam_src_to_shapes(
