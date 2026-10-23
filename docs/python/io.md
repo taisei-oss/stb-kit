@@ -67,6 +67,7 @@ def read_model(path: Path) -> StBridge:
 `loads`版の`loads_latest`もあります。
 
 ただし下記の注意点があります。
+
 - すべての要素が正しくバージョンアップされない場合があります。特にv2.0からv2.1へのバージョンアップは外形情報が中心で、配筋や細かい属性は変換されない場合があります。
 - stbkitのstb_latestが新しいバージョンのデータモデルに変更されると、破壊的変更となります。短期的な用途で使うか、stbkitのバージョンを固定して利用してください。
 
@@ -89,6 +90,7 @@ def write_model(model: StBridgeRoot, path: Path) -> None:
 ```
 
 書き出す際に下記の値が設定されます。そのため、インスタンスが変更されるため注意してください。なお、app_nameとapp_versionは両方指定するか、両方省略する必要があります。
+
 - `stb.version`:対象のST-Bridgeバージョン
 - `stb.stb_common.app_name`:引数でapp_nameを指定した場合はその値、指定しない場合は"stbkit-core"
 - `stb.stb_common.app_version`:引数でapp_versionを指定した場合はその値、指定しない場合はstbkit-coreのバージョン

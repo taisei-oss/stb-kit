@@ -10,12 +10,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "stbkit"
-version = "0.1.0b4"
+version = "0.1.0b5"
 description = "ST-Bridgeを扱うライブラリSTB-KIT"
 authors = [
     { name = "STB-KIT Development Team (TAISEI CORPORATION)", email = "oss-dev@pub.taisei.co.jp" },
 ]
-dependencies = ["stbkit-core==0.1.0b4"]
+dependencies = ["stbkit-core==0.1.0b5"]
 readme = "README.md"
 requires-python = ">=3.12"
 license = "MPL-2.0"
@@ -63,13 +63,13 @@ ifc = [
     "numpy"
 ]
 native = [
-    "stbkit-native==0.1.0b4"
+    "stbkit-native==0.1.0b5"
 ]
 full = [
     "ifcopenshell>=0.8.5",
     "numpy",
     "xmlschema>=4.3.2",
-    "stbkit-native==0.1.0b4"
+    "stbkit-native==0.1.0b5"
 ]
 
 [tool.ruff]

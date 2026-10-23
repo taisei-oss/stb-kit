@@ -24,7 +24,7 @@ from stbkit.tools.upgrade._internal.upgrade import (
 
 def test_upgrade_monolist_id() -> None:
     reporter: CollectingReporter = CollectingReporter()
-    v210: stb_v2_1_0.StBridge = data_model_sample.v2_1_0_has_monolist_id()
+    v210: stb_v2_1_0.StBridge = data_model_sample.v2_1_0.v2_1_0_has_monolist_id()
     v211: stb_v2_1_1.StBridge = upgrade_v2_1_0_to_v2_1_1(v210, reporter=reporter)
     assert v211.stb_model.stb_members.stb_walls.stb_wall[
         0
@@ -62,7 +62,7 @@ def _extension_children(element: StBridgeElement) -> list[StBridgeElement]:
 
 
 def test_convert_element_extension_attribute() -> None:
-    stb: stb_v2_0_2.StBridge = data_model_sample.v2_0_2_has_node()
+    stb: stb_v2_0_2.StBridge = data_model_sample.v2_0_2.v2_0_2_has_node()
     stb.stb_model.stb_nodes.stb_node[0]._ensure_extension._set_attribute(
         "ext_attr_1", "attr1"
     )
@@ -73,7 +73,7 @@ def test_convert_element_extension_attribute() -> None:
 
 
 def test_convert_element_extension_child() -> None:
-    stb: stb_v2_0_2.StBridge = data_model_sample.v2_0_2_has_node()
+    stb: stb_v2_0_2.StBridge = data_model_sample.v2_0_2.v2_0_2_has_node()
     _add_extension_child(stb.stb_model, "ExtElement1", {"id": "1"})
     _add_extension_child(stb.stb_model, "ExtElement1", {"id": "2"})
 
@@ -88,7 +88,7 @@ def test_convert_element_extension_child() -> None:
 
 
 def test_convert_element_nested_extension_child() -> None:
-    stb: stb_v2_0_2.StBridge = data_model_sample.v2_0_2_has_node()
+    stb: stb_v2_0_2.StBridge = data_model_sample.v2_0_2.v2_0_2_has_node()
     parent: _StBridgeExtensionElement = _add_extension_child(
         stb.stb_model, "ExtElement2", {"id": "2"}
     )
@@ -104,7 +104,7 @@ def test_convert_element_nested_extension_child() -> None:
 
 
 def test_convert_element_clones_extension_child() -> None:
-    stb: stb_v2_0_2.StBridge = data_model_sample.v2_0_2_has_node()
+    stb: stb_v2_0_2.StBridge = data_model_sample.v2_0_2.v2_0_2_has_node()
 
     original_child: _StBridgeExtensionElement = _add_extension_child(
         stb.stb_model, "ExtElement1", {"id": "1"}
@@ -119,7 +119,9 @@ def test_convert_element_clones_extension_child() -> None:
 
 
 def test_convert_element_has_no_extension() -> None:
-    converted: stb_v2_1_0.StBridge = _convert(data_model_sample.v2_0_2_has_node())
+    converted: stb_v2_1_0.StBridge = _convert(
+        data_model_sample.v2_0_2.v2_0_2_has_node()
+    )
 
     assert converted._extension is None
     assert converted.stb_model._extension is None
@@ -127,7 +129,7 @@ def test_convert_element_has_no_extension() -> None:
 
 
 def test_upgrade_to_v2_1_0_extensions() -> None:
-    stb: stb_v2_0_2.StBridge = data_model_sample.v2_0_2_has_node()
+    stb: stb_v2_0_2.StBridge = data_model_sample.v2_0_2.v2_0_2_has_node()
     stb.stb_model.stb_nodes.stb_node[0]._ensure_extension._set_attribute(
         "ext_attr_1", "attr1"
     )
@@ -147,7 +149,7 @@ def test_upgrade_to_v2_1_0_extensions() -> None:
 
 
 def test_convert_element_has_parent() -> None:
-    stb: stb_v2_0_2.StBridge = data_model_sample.v2_0_2_has_node()
+    stb: stb_v2_0_2.StBridge = data_model_sample.v2_0_2.v2_0_2_has_node()
     stb.stb_model.stb_nodes.stb_node.append(
         stb_v2_0_2.StbNode(
             id=2, x=1000.0, y=0.0, z=0.0, kind=stb_v2_0_2.StbNodeKind.ON_GRID
@@ -167,7 +169,7 @@ def test_convert_element_has_parent() -> None:
 
 
 def test_convert_element_children_has_parent() -> None:
-    stb: stb_v2_0_2.StBridge = data_model_sample.v2_0_2_has_node()
+    stb: stb_v2_0_2.StBridge = data_model_sample.v2_0_2.v2_0_2_has_node()
 
     converted: stb_v2_1_0.StBridge = _convert(stb)
 

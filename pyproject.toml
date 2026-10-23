@@ -29,8 +29,8 @@ classifiers = [
 [dependency-groups]
 dev = [
     "ifcopenshell>=0.8.5",
-    "mypy>=2.3.1",
-    "ruff>=0.16.5",
+    "mypy>=2.4.0",
+    "ruff>=0.17.1",
     "xmlschema>=4.3.2",
     "maturin>=1.15.0",
 ]
@@ -38,7 +38,7 @@ dev = [
 docs = [
     "mkdocs>=1.6.1,<2",
     "mkdocs-material==9.7.7",
-    "mkdocstrings[python]>=1.0.6",
+    "mkdocstrings[python]>=1.0.8",
 ]
 
 rust = [

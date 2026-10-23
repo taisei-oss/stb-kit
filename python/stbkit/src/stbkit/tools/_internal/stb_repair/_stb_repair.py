@@ -18,7 +18,8 @@ from stbkit.core.stb_reporting import Code, Phase, Reporter, get_reporter
 
 from ..constants import REPAIR_DEFAULT_LENGTH_MM
 from . import _stb_v2_0_2_repair, _stb_v2_1_0_repair, _stb_v2_1_1_repair
-from ._common import Defaults, RepairContext
+from ._common import Defaults, ElementRepairHook, RepairContext
+from ._repair_node import _repair_node
 
 
 def _repair_required_length(
@@ -170,6 +171,9 @@ def _repair_occurs(element: StBridgeElement, *, context: RepairContext) -> None:
                     _repair_occurs(item, context=context)
 
 
+_ELEMENT_HOOKS: tuple[ElementRepairHook, ...] = (_repair_node,)
+
+
 def repair_stb(
     stb: StBridgeRoot,
     *,
@@ -185,6 +189,9 @@ def repair_stb(
     context: RepairContext = RepairContext(defaults=defaults, reporter=reporter)
     _repair_occurs(stb, context=context)
     _repair_required_length(stb, context=context)
+    for element in stb.iter_descendants():
+        for hook in _ELEMENT_HOOKS:
+            hook(element, reporter=reporter)
     from stbkit.core.data_model import stb_v2_0_2, stb_v2_1_0, stb_v2_1_1
 
     match stb:

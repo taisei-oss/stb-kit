@@ -20,10 +20,10 @@ classifiers = [
 ]
 dependencies = [
     "pyyaml>=6.0.3",
-    "types-PyYAML>=6.0.12.20260815",
+    "types-PyYAML>=6.0.12.20260906",
     "pytest>=9.1.1",
-    "pytest-env>=1.7.0",
-    "trimesh>=5.1.0",
+    "pytest-env>=1.8.1",
+    "trimesh>=5.1.1",
     "freezegun>=1.5.5",
 ]
 

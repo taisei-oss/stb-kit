@@ -98,13 +98,11 @@ def test_schema_check(
     run_schema_check_spec(spec, context=run_context, use_xsd=True)
 
 
-@pytest.mark.ai_generated
 def test_schema_check_no_xsd(
     spec: RoundTripSpec, run_context: RunContext, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     run_schema_check_spec(spec, context=run_context, use_xsd=False)
 
 
-@pytest.mark.ai_generated
 def test_schema_check_line_count(spec: RoundTripSpec) -> None:
     run_schema_check_line_count_spec(spec)

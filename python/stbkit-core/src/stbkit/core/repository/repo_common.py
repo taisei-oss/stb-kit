@@ -4,6 +4,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+from __future__ import annotations
+
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, ClassVar, Final
@@ -23,28 +25,39 @@ _OR_NONE_SUFFIX: Final[str] = "_or_none"
 @dataclass(frozen=True, slots=True)
 class _ByKind:
     """
-    kind_structureの値によって解決先の型が変わる参照
+    属性の値によって解決先の型が変わる参照
     """
 
     discriminator: str
     """判別に使う属性名。"""
 
-    targets: Mapping[str, type[StBridgeElement]]
-    """判別属性の値と参照先の型の辞書"""
+    targets: Mapping[str, _RefTarget]
+    """判別属性の値と参照先の定義の辞書。"""
 
-    def resolve(self, element: StBridgeElement) -> type[StBridgeElement]:
+    default: str | None = None
+    """デフォルト値。仕様書で省略時の値が定義されている場合に指定する。"""
+
+    def resolve(
+        self, element: StBridgeElement
+    ) -> type[StBridgeElement] | tuple[type[StBridgeElement], ...]:
         value = getattr(element, private_field_name(self.discriminator), None)
+        if value is None:
+            value = self.default
         target = self.targets.get(value) if isinstance(value, str) else None
         if target is None:
             raise SchemaError(
                 f"{self.discriminator}={value}は不正です。", element=element
             )
-        return target
+        return target.resolve(element) if isinstance(target, _ByKind) else target
 
 
 type _RefTarget = type[StBridgeElement] | tuple[type[StBridgeElement], ...] | _ByKind
 
-type _RefMap = dict[type[StBridgeElement], dict[str, _RefTarget]]
+
+@dataclass(frozen=True, slots=True)
+class _RefMap:
+    references: Mapping[type[StBridgeElement], Mapping[str, _RefTarget]]
+    unique_key_groups: tuple[frozenset[type[StBridgeElement]], ...] = ()
 
 
 class RepositoryBase:
@@ -60,7 +73,7 @@ class RepositoryBase:
     # ABCにしたいが、クラス変数の上書きはabstractmethodで強制できず、
     # B024がでるので、普通のクラスとしている
     _key_field_names: ClassVar[dict[type[StBridgeElement], str]] = {}
-    _ref_map: ClassVar[_RefMap] = {}
+    _ref_map: ClassVar[_RefMap] = _RefMap(references={})
 
     def __init__(self, stb: StBridgeElement) -> None:
         self._stb: StBridgeElement = stb
@@ -288,13 +301,15 @@ class RepositoryBase:
         return self._guid_storage.get(guid)
 
     def _reference_field_names(self, element: StBridgeElement) -> tuple[str, ...]:
-        return tuple(self._ref_map.get(type(element), {}))
+        return tuple(self._ref_map.references.get(type(element), {}))
 
     def _deref_field(
         self, element: StBridgeElement, id_field_name: str
     ) -> StBridgeElement:
         try:
-            ref_target: _RefTarget = self._ref_map[type(element)][id_field_name]
+            ref_target: _RefTarget = self._ref_map.references[type(element)][
+                id_field_name
+            ]
         except KeyError:
             raise KeyError(
                 f"{type(element).__name__}のフィールド名{id_field_name}は想定されない参照です"
@@ -366,4 +381,7 @@ class _DerefAccessor:
 
 
 class Repository(RepositoryBase):
-    """バージョンに依存しない汎用リポジトリ。"""
+    """バージョンに依存しない汎用リポジトリ。
+
+    guid検索のみ可能です。参照解決はできません。
+    """

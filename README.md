@@ -152,7 +152,7 @@ STB-KITをご利用いただいている方は、ぜひご回答ください。�
 |----|----|----|----|----|
 |stbkit-core|python/stbkit-core|[![PyPI Version](https://img.shields.io/pypi/v/stbkit-core)](https://pypi.org/project/stbkit-core/)|[![Python](https://img.shields.io/pypi/pyversions/stbkit-core.svg)](https://pypi.org/project/stbkit-core/)|コアライブラリ|
 |stbkit|python/stbkit|[![PyPI Version](https://img.shields.io/pypi/v/stbkit)](https://pypi.org/project/stbkit/)|[![Python](https://img.shields.io/pypi/pyversions/stbkit.svg)](https://pypi.org/project/stbkit/)|ユーティリティ|
-|stbkit-native|rust/stbkit-native|未|Python+Rust|3D・GUI機能のRust拡張|
+|stbkit-native|rust/stbkit-native|[![PyPI Version](https://img.shields.io/pypi/v/stbkit-native)](https://pypi.org/project/stbkit-native/)|[![Python](https://img.shields.io/pypi/pyversions/stbkit-native.svg)](https://pypi.org/project/stbkit-native/)+Rust|3D・GUI機能のRust拡張|
 |stbkit-core-rs|未|-|Rust|Rust用のコアライブラリ|
 |stbkit-rs|rust/stbkit-rs|-|Rust|Rust用のユーティリティ|
 

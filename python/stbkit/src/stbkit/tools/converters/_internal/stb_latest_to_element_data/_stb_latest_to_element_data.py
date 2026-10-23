@@ -20,6 +20,7 @@ from stbkit.api.stb_latest import (
     StbMembers,
     StbModel,
     StbNodes,
+    StbOpenArrangementKindMember,
     StbParapet,
     StbPile,
     StbPost,
@@ -37,8 +38,8 @@ from . import open
 from .member.member_footing import stb_footing_to_line_element
 from .member.member_line import stb_element_to_element_line
 from .member.member_plane import (
-    stb_slab_to_ifc_data,
-    stb_wall_to_ifc_data,
+    stb_slab_to_element_plane,
+    stb_wall_to_element_plane,
 )
 
 if TYPE_CHECKING:
@@ -139,22 +140,22 @@ def stb_to_element_data(
             for ele in stb_member_lines
         ]
     )
-    stb_id_to_planes: dict[int, ElementPlane] = {}
+    stb_id_to_planes: dict[tuple[StbOpenArrangementKindMember, int], ElementPlane] = {}
     if stb_members.stb_slabs_or_none:
         for stb_slab in stb_members.stb_slabs.stb_slab:
-            result.append(
-                stb_slab_to_ifc_data(
-                    stb_slab,
-                    node_coords,
-                    repo,
-                    stb_id_to_planes,
-                    reporter,
-                )
+            slab_element_plane: ElementPlane | None = stb_slab_to_element_plane(
+                stb_slab,
+                node_coords,
+                repo,
+                stb_id_to_planes,
+                reporter,
             )
+            if slab_element_plane is not None:
+                result.append(slab_element_plane)
     if stb_members.stb_walls_or_none:
         for stb_wall in stb_members.stb_walls.stb_wall:
             result.append(
-                stb_wall_to_ifc_data(
+                stb_wall_to_element_plane(
                     stb_wall,
                     node_coords,
                     repo,

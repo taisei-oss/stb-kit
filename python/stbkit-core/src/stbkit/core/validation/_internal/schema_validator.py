@@ -5,6 +5,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 import os
+from collections.abc import Iterator
 from pathlib import Path
 from typing import Any, ClassVar
 
@@ -13,7 +14,9 @@ from ..._internal.name_converter import private_field_name
 from ..._internal.optional_dependencies.xmlschema_validator import (
     validate_by_xsd,
 )
-from ...data_model.common import StBridgeElement, _FieldKind
+from ...data_model.common import StBridgeElement, StBridgeRoot, _FieldKind
+from ...repository import get_repository
+from ...stb_exceptions import ReferenceElementNotFoundError, SchemaError
 from ...stb_reporting import Code, Phase, Reporter
 from .common import BaseValidator, CompositeValidator, ValidationContext
 
@@ -130,6 +133,99 @@ class FieldValidator(BaseValidator):
                                         f"{obj.__class__.__name__}の[{field_name}]の要素がStBridgeElementではありません"
                                     )
         return is_valid
+
+
+class ReferenceValidator(BaseValidator):
+    """キーの一意性と参照先の存在をチェックする。"""
+
+    def validate(self, ctx: ValidationContext) -> bool:
+        stb: StBridgeRoot = ctx.obj()
+        repository = get_repository(stb)
+        elements: list[StBridgeElement] = list(self._iter_elements(stb))
+        is_valid: bool = True
+
+        seen_keys: dict[
+            tuple[frozenset[type[StBridgeElement]], int | str],
+            StBridgeElement,
+        ] = {}
+        for element in elements:
+            key_field_name: str | None = repository._key_field_names.get(type(element))
+            if key_field_name is not None:
+                key_value: Any = getattr(element, private_field_name(key_field_name))
+                if isinstance(key_value, (int, str)):
+                    key_types: frozenset[type[StBridgeElement]] = frozenset(
+                        (type(element),)
+                    )
+                    for group in repository._ref_map.unique_key_groups:
+                        if type(element) in group:
+                            key_types = group
+                            break
+                    key = (key_types, key_value)
+                    ref_element: StBridgeElement | None = seen_keys.get(key)
+                    if ref_element is not None:
+                        ctx.reporter.warning(
+                            message=(
+                                f"キー属性[{key_field_name}]の値[{key_value}]が重複しています"
+                            ),
+                            code=Code.SCHEMA_ERROR,
+                            phase=Phase.VALIDATE,
+                            stb_element=element,
+                            attr_name=key_field_name,
+                            value=str(key_value),
+                            ref_stb_element=ref_element,
+                            ref_attr_name=key_field_name,
+                            ref_value=str(key_value),
+                        )
+                        is_valid = False
+                    else:
+                        seen_keys[key] = element
+
+            for ref_field_name in repository._reference_field_names(element):
+                ref_value: Any = getattr(element, private_field_name(ref_field_name))
+                if ref_value is None:
+                    continue
+                try:
+                    repository._deref_field(element, ref_field_name)
+                except ReferenceElementNotFoundError as e:
+                    ctx.reporter.warning(
+                        message=(
+                            f"{type(element).__name__}.{ref_field_name}の参照先が"
+                            f"見つかりません: {e}"
+                        ),
+                        # 仕様違反なのでスキーマエラーとして扱う
+                        code=Code.SCHEMA_ERROR,
+                        phase=Phase.VALIDATE,
+                        stb_element=element,
+                        attr_name=ref_field_name,
+                        value=str(ref_value),
+                    )
+                    is_valid = False
+                except SchemaError as e:
+                    ctx.reporter.warning(
+                        message=e.message,
+                        code=Code.SCHEMA_ERROR,
+                        phase=Phase.VALIDATE,
+                        stb_element=element,
+                        attr_name=ref_field_name,
+                        value=str(ref_value),
+                    )
+                    is_valid = False
+
+        return is_valid
+
+    @classmethod
+    def _iter_elements(cls, element: StBridgeElement) -> Iterator[StBridgeElement]:
+        yield element
+        for field_name, field_info in element._fields.items():
+            if field_info.kind is not _FieldKind.ELEMENT:
+                continue
+            value: Any = getattr(element, private_field_name(field_name))
+            if isinstance(value, StBridgeElement):
+                yield from cls._iter_elements(value)
+            elif isinstance(value, list):
+                for item in value:
+                    if isinstance(item, StBridgeElement):
+                        yield from cls._iter_elements(item)
 
 
 class EmptyValueValidator(BaseValidator):
@@ -291,4 +387,5 @@ class SchemaValidator(CompositeValidator):
             validators.append(FieldValidator())
         # XSDチェックとかぶらないバリデーター
         validators.append(EmptyValueValidator())
+        validators.append(ReferenceValidator())
         super().__init__(validators)

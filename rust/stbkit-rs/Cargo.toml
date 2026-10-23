@@ -6,7 +6,7 @@
 
 [package]
 name = "stbkit-rs"
-version = "0.1.0-alpha.9"
+version = "0.1.0-beta.5"
 edition = "2024"
 license.workspace = true
 
@@ -18,7 +18,7 @@ serde = [
 
 [dependencies]
 serde = { version = "1.0.229", features = ["derive"], optional = true }
-uuid = { version = "1.27.0", features = ["v4", "v7"] }
+uuid = { version = "1.28.0", features = ["v4", "v7"] }
 
 [dev-dependencies]
 regex = "1"
@@ -27,14 +27,14 @@ strum = { version = "0.28", features = ["derive"] }
 # wasm用設定
 # Webではデスクトップ用window/X11/Wayland依存を有効にしない。
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-eframe = { version = "0.36.2", default-features = false, features = ["default_fonts", "glow"] }
+eframe = { version = "0.37.0", default-features = false, features = ["default_fonts", "glow"] }
 three-d = { version = "0.19.0", default-features = false }
 # webではjsが必要
-uuid = { version = "1.27.0", features = ["js"] }
+uuid = { version = "1.28.0", features = ["js"] }
 wasm-bindgen-futures = "0.4.79"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-eframe = { version = "0.36.2", default-features = false, features = ["accesskit", "default_fonts", "glow", "wayland", "x11"] }
+eframe = { version = "0.37.0", default-features = false, features = ["accesskit", "default_fonts", "glow", "wayland", "x11"] }
 three-d = { version = "0.19.0", default-features = false, features = ["window"] }
 image = { version = "0.25.10", default-features = false, features = ["png"] }
 

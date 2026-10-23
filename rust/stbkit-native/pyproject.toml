@@ -11,7 +11,7 @@ build-backend = "maturin"
 [project]
 name = "stbkit-native"
 # dynamicを使うと、Pythonのみ開発したい場合のuv syncでcargoが必要になってしまうので、静的に記載する
-version = "0.1.0b4"
+version = "0.1.0b5"
 description = "STB-KITのグラフィック機能を提供するネイティブ（Rust）拡張"
 authors = [
     { name = "STB-KIT Development Team (TAISEI CORPORATION)", email = "oss-dev@pub.taisei.co.jp" },

@@ -1,3 +1,9 @@
+# Copyright 2026 TAISEI CORPORATION
+# SPDX-License-Identifier: MPL-2.0
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 from __future__ import annotations
 
 import argparse
@@ -24,6 +30,8 @@ from release_check_stbkit import check_core_dependency
 PACKAGE_NAME: Final = "stbkit-native"
 CORE_PACKAGE_NAME: Final = "stbkit-core"
 STBKIT_PACKAGE_NAME: Final = "stbkit"
+STBKIT_NATIVE_RS_CRATE_NAME: Final = "stbkit-native-rs"
+STBKIT_RS_CRATE_NAME: Final = "stbkit-rs"
 TAG_PREFIX: Final = "stbkit-native-v"
 FIXTURE_PATH: Final = (
     Path.cwd()
@@ -103,12 +111,14 @@ def check_versions(
     tag: str,
     package_data: dict[str, Any],
     cargo_data: dict[str, Any],
+    stbkit_rs_cargo_data: dict[str, Any],
     core_data: dict[str, Any],
     stbkit_data: dict[str, Any],
 ) -> str:
     tag_version: str = get_tag_version(tag, TAG_PREFIX)
     package_version: str = str(package_data["project"]["version"])
     cargo_version: str = str(cargo_data["package"]["version"])
+    stbkit_rs_version: str = str(stbkit_rs_cargo_data["package"]["version"])
     core_version: str = str(core_data["project"]["version"])
     stbkit_version: str = str(stbkit_data["project"]["version"])
 
@@ -116,6 +126,13 @@ def check_versions(
         raise RuntimeError(
             "tagのバージョンとpyprojectのバージョンが一致しません: "
             f"tag={tag_version}, pyproject={package_version}"
+        )
+    if cargo_version != stbkit_rs_version:
+        raise RuntimeError(
+            f"{STBKIT_NATIVE_RS_CRATE_NAME}と{STBKIT_RS_CRATE_NAME}の"
+            "バージョンが一致しません: "
+            f"{STBKIT_NATIVE_RS_CRATE_NAME}={cargo_version}, "
+            f"{STBKIT_RS_CRATE_NAME}={stbkit_rs_version}"
         )
     cargo_version_match: re.Match[str] | None = re.fullmatch(
         r"(?P<release>\d+\.\d+\.\d+)"
@@ -174,6 +191,9 @@ def main() -> int:
     package_dir: Path = root_path / "rust" / PACKAGE_NAME
     pyproject_path: Path = package_dir / "pyproject.toml"
     manifest_path: Path = package_dir / "Cargo.toml"
+    stbkit_rs_manifest_path: Path = (
+        root_path / "rust" / STBKIT_RS_CRATE_NAME / "Cargo.toml"
+    )
     core_pyproject: Path = root_path / "python" / CORE_PACKAGE_NAME / "pyproject.toml"
     stbkit_pyproject: Path = (
         root_path / "python" / STBKIT_PACKAGE_NAME / "pyproject.toml"
@@ -187,10 +207,16 @@ def main() -> int:
 
     package_data: dict[str, Any] = get_pyproject_dict(pyproject_path)
     cargo_data: dict[str, Any] = get_pyproject_dict(manifest_path)
+    stbkit_rs_cargo_data: dict[str, Any] = get_pyproject_dict(stbkit_rs_manifest_path)
     core_data: dict[str, Any] = get_pyproject_dict(core_pyproject)
     stbkit_data: dict[str, Any] = get_pyproject_dict(stbkit_pyproject)
     package_version: str = check_versions(
-        args.tag, package_data, cargo_data, core_data, stbkit_data
+        args.tag,
+        package_data,
+        cargo_data,
+        stbkit_rs_cargo_data,
+        core_data,
+        stbkit_data,
     )
 
     for directory in (dist_dir, core_dist_dir, stbkit_dist_dir, smoke_venv_wheel_dir):

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import sys
 import weakref
-from collections.abc import Callable, Iterable, Sequence
+from collections.abc import Callable, Collection, Iterable, Iterator, Sequence
 from dataclasses import dataclass
 from enum import Enum
 from types import ModuleType
@@ -22,6 +22,7 @@ from typing import (
     cast,
     get_args,
     get_origin,
+    overload,
 )
 
 from .._internal.name_converter import private_field_name, property_name
@@ -311,6 +312,170 @@ class StBridgeElement(metaclass=_AutoModel):
     def __init__(self) -> None:
         self._parent_ref: weakref.ref[StBridgeElement] | None = None
         self._extension: _ExtensionData | None = None
+
+    @overload
+    def iter_descendants[TElement: StBridgeElement](
+        self,
+        element_types: type[TElement],
+        *,
+        class_names: _ElementNames | None = None,
+        xml_names: _ElementNames | None = None,
+        include_self: bool = False,
+        max_depth: int | None = None,
+        include_extensions: bool = False,
+    ) -> Iterator[TElement]: ...
+
+    @overload
+    def iter_descendants(
+        self,
+        element_types: Collection[type[StBridgeElement]] | None = None,
+        *,
+        class_names: _ElementNames | None = None,
+        xml_names: _ElementNames | None = None,
+        include_self: bool = False,
+        max_depth: int | None = None,
+        include_extensions: bool = False,
+    ) -> Iterator[StBridgeElement]: ...
+
+    def iter_descendants(
+        self,
+        element_types: _ElementTypes | None = None,
+        *,
+        class_names: _ElementNames | None = None,
+        xml_names: _ElementNames | None = None,
+        include_self: bool = False,
+        max_depth: int | None = None,
+        include_extensions: bool = False,
+    ) -> Iterator[StBridgeElement]:
+        """子孫要素を列挙します。
+
+        Args:
+            element_types: 列挙する要素クラス、またはクラスのコレクション。
+            class_names: 列挙するクラスのPythonクラス名、または名前のコレクション。
+            xml_names: 列挙するクラスのXML要素名、または名前のコレクション。
+            include_self: Trueの場合、結果に自身も含めます（フィルターは適用されます）。
+            max_depth: 自身を深さ0とする探索上限。Noneの場合は制限しません。
+            include_extensions: Trueの場合、拡張子要素も探索します。
+
+        Returns:
+            Iterator[StBridgeElement]: 条件に一致した要素を返します。
+
+        Raises:
+            ValueError: 負の深さが指定された場合。
+        """
+
+        def walk() -> Iterator[StBridgeElement]:
+            if (
+                include_self
+                and (normalized_types is None or isinstance(self, normalized_types))
+                and (
+                    normalized_class_names is None
+                    or type(self).__name__ in normalized_class_names
+                )
+                and (
+                    normalized_xml_names is None
+                    or self._xml_name() in normalized_xml_names
+                )
+            ):
+                yield self
+
+            if max_depth == 0:
+                return
+
+            stack: list[tuple[StBridgeElement, int, Iterator[StBridgeElement]]] = [
+                (self, 0, self._iter_children(include_extensions=include_extensions))
+            ]
+            while stack:
+                try:
+                    child = next(stack[-1][2])
+                except StopIteration:
+                    stack.pop()
+                    continue
+
+                child_depth: int = stack[-1][1] + 1
+
+                if (
+                    (normalized_types is None or isinstance(child, normalized_types))
+                    and (
+                        normalized_class_names is None
+                        or type(child).__name__ in normalized_class_names
+                    )
+                    and (
+                        normalized_xml_names is None
+                        or child._xml_name() in normalized_xml_names
+                    )
+                ):
+                    yield child
+                if max_depth is None or child_depth < max_depth:
+                    stack.append(
+                        (
+                            child,
+                            child_depth,
+                            child._iter_children(include_extensions=include_extensions),
+                        )
+                    )
+
+        normalized_types: tuple[type, ...] | None = (
+            (element_types,)
+            if isinstance(element_types, type)
+            else tuple(element_types)
+            if element_types is not None
+            else None
+        )
+        normalized_class_names: tuple[str, ...] | None = (
+            (class_names,)
+            if isinstance(class_names, str)
+            else tuple(class_names)
+            if class_names is not None
+            else None
+        )
+        normalized_xml_names: tuple[str, ...] | None = (
+            (xml_names,)
+            if isinstance(xml_names, str)
+            else tuple(xml_names)
+            if xml_names is not None
+            else None
+        )
+
+        if max_depth is not None and max_depth < 0:
+            raise ValueError("max_depthに負数は指定できません")
+
+        if any(
+            values is not None and not values
+            for values in (
+                normalized_types,
+                normalized_class_names,
+                normalized_xml_names,
+            )
+        ):
+            return iter(())
+
+        return walk()
+
+    def _iter_children(
+        self,
+        *,
+        include_extensions: bool,
+    ) -> Iterator[StBridgeElement]:
+        for key, field in self._fields.items():
+            if field.kind is not _FieldKind.ELEMENT:
+                continue
+            value: object = getattr(self, private_field_name(key), None)
+            if field.max_occurs == 1:
+                if isinstance(value, StBridgeElement):
+                    yield value
+            elif isinstance(value, list):
+                for child in value:
+                    if isinstance(child, StBridgeElement):
+                        yield child
+
+        if include_extensions:
+            extension: _ExtensionData | None = self._extension
+            children = extension._children if extension is not None else None
+            if children is not None:
+                for child in children:
+                    if isinstance(child, StBridgeElement):
+                        yield child
 
     @property
     def ensure(self) -> _EnsureAccessorProtocol:
@@ -966,3 +1131,7 @@ class _EnsureAccessorBase(_EnsureAccessorProtocol):
                     raise AttributeError(
                         f"{self._owner.__class__.__name__}.{name}は子要素ではありません"
                     )
+
+
+type _ElementTypes = type[StBridgeElement] | Collection[type[StBridgeElement]]
+type _ElementNames = str | Collection[str]

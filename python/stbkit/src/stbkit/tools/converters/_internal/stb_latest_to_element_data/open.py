@@ -7,7 +7,12 @@
 from stbkit.core.stb_exceptions import NoneAccessError
 from stbkit.core.stb_reporting import Code, Phase, Reporter
 
-from stbkit.api.stb_latest import StbModel, StbOpenArrangement, StbSecOpenRc
+from stbkit.api.stb_latest import (
+    StbModel,
+    StbOpenArrangement,
+    StbOpenArrangementKindMember,
+    StbSecOpenRc,
+)
 
 from ...._internal.data_model.element_data import ElementPlane
 from ...._internal.vectors import Vector2d
@@ -15,7 +20,7 @@ from ...._internal.vectors import Vector2d
 
 def add_open(
     stb_model: StbModel,
-    stb_id_to_planes: dict[int, ElementPlane],
+    stb_id_to_planes: dict[tuple[StbOpenArrangementKindMember, int], ElementPlane],
     *,
     reporter: Reporter,
 ) -> None:
@@ -46,7 +51,18 @@ def add_open(
         )
         if not stb_sec_open:
             continue
-        plane: ElementPlane = stb_id_to_planes[stb_open.id_member]
+        plane: ElementPlane | None = stb_id_to_planes.get(
+            (stb_open.kind_member, stb_open.id_member)
+        )
+        if plane is None:
+            reporter.error(
+                "開口のある部材が変換に失敗しているため、開口を変換できません",
+                code=Code.REFERENCE_NOT_FOUND,
+                phase=Phase.CONVERT_GEOMETRY,
+                stb_element=stb_open,
+                attr_name="id_member",
+            )
+            continue
         if not plane.thickness:
             continue
         opens: list[list[Vector2d]] = plane.opens

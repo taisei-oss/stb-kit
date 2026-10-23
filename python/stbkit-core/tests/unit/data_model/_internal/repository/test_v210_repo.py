@@ -186,7 +186,7 @@ def test_repository_v210_deref_unknown_field() -> None:
 
 
 def test_repository_v210_deref_covers_ref_map() -> None:
-    for owner_type, fields in RepositoryV2_1_0._ref_map.items():
+    for owner_type, fields in RepositoryV2_1_0._ref_map.references.items():
         accessor_fields = {name for name in fields if not name.startswith("_")}
         assert accessor_fields, f"{owner_type.__name__}の参照が空です"
         for field_name in accessor_fields:

@@ -5,7 +5,9 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 from dataclasses import dataclass
+from typing import Protocol
 
+from stbkit.core.data_model.common import StBridgeElement
 from stbkit.core.stb_reporting import Reporter
 
 
@@ -22,3 +24,7 @@ class RepairContext:
     defaults: Defaults
     reporter: Reporter
     unknown_section_id: int | None = None
+
+
+class ElementRepairHook(Protocol):
+    def __call__(self, element: StBridgeElement, /, *, reporter: Reporter) -> None: ...

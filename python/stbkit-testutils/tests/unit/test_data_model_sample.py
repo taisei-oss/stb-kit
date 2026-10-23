@@ -6,16 +6,23 @@
 
 from stbkit.core.stb_reporting import CollectingReporter
 from stbkit.core.validation import validate_schema
-from stbkit.testutils import data_model_sample
+from stbkit.testutils.data_model_sample.v2_0_2 import v2_0_2_has_node, v2_0_2_minimum
+from stbkit.testutils.data_model_sample.v2_1_0 import (
+    v2_1_0_has_monolist_id,
+    v2_1_0_minimum,
+)
+from stbkit.testutils.data_model_sample.v2_1_1 import v2_1_1_minimum, v2_1_1_rc_column
 
 
 def test_sample_validate() -> None:
     reporter: CollectingReporter = CollectingReporter()
     stbs = [
-        data_model_sample.v2_1_0_minimum(),
-        data_model_sample.v2_1_0_has_monolist_id(),
-        data_model_sample.v2_0_2_minimum(),
-        data_model_sample.v2_0_2_has_node(),
+        v2_1_1_minimum(),
+        v2_1_1_rc_column(),
+        v2_1_0_minimum(),
+        v2_1_0_has_monolist_id(),
+        v2_0_2_minimum(),
+        v2_0_2_has_node(),
     ]
     for stb in stbs:
         assert validate_schema(stb, reporter=reporter), reporter.report.to_text()

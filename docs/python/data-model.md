@@ -119,6 +119,47 @@ except NoneAccessError:
 
 コンストラクタは各属性を初期化することができます。
 
+### 子要素の探索
+
+ある条件の要素を取得するなど、子要素を複数要素や複数階層にわたってforで利用したい場合は、`iter_descendants()`を使用できます。
+場所がわかっている指定した要素のリストを処理するときは、通常のリスト属性を直接利用してください。
+
+```python
+from stbkit.api import stb_v2_1_1
+
+stb = stb_v2_1_1.StBridge()
+
+# 子孫要素を列挙
+for element in stb.iter_descendants():
+    ...
+
+# クラス指定で,そのクラスのみを列挙します
+for column in stb.iter_descendants(stb_v2_1_1.StbColumn):
+    print(column.name_or_none)
+
+# 直下の子要素だけの場合はmax_depth=1を指定します
+for child in stb.iter_descendants(max_depth=1):
+    ...
+
+# Pythonクラス名またはXML要素名をstrで指定することもできます
+columns = stb.iter_descendants(class_names="StbSecColumnRc")
+rc_sections = stb.iter_descendants(xml_names="StbSecColumn_RC")
+```
+
+クラス名・XML要素名による絞り込みは列挙する対象に適用され、中間要素は絞り込みにかかわらず全てたどります。strで絞り込んだ場合の戻り値型は`StBridgeElement`です。
+for文内で子要素の追加・削除・差し替えを行う場合は、走査中の構造変更を避けるため、先に`list(stb.iter_descendants())`で列挙を完了してください。
+
+`include_extensions=True`を指定すると、StbExtensionで定義された拡張子要素も探索します。
+
+既知のリスト属性を処理する例:
+
+```python
+columns = stb.stb_model.stb_members.stb_columns
+for column in columns.stb_column:
+    ...
+```
+
+
 ## 主要要素構成
 
 ```text

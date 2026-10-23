@@ -299,7 +299,7 @@ impl ModelViewer {
         xpath: Option<&str>,
         guid: Option<&str>,
     ) -> Result<bool, String> {
-        let Some(element_index) = find_element_index_by_reference(
+        let Some(element_index) = find_index_by_reference(
             &self.building_geometry.elements.guid,
             &self.building_geometry.elements.xpath,
             guid,
@@ -313,6 +313,32 @@ impl ModelViewer {
         }
 
         self.select_element(element_index)?;
+        Ok(true)
+    }
+
+    /// 参照情報から節点を選択する。
+    // 呼び出すコードが現在未公開のため、未使用を許容
+    #[allow(dead_code)]
+    pub(crate) fn select_node_by_reference(
+        &self,
+        xpath: Option<&str>,
+        guid: Option<&str>,
+    ) -> Result<bool, String> {
+        if self.display_mode != DisplayMode::Line {
+            return Ok(false);
+        }
+
+        let Some(node_index) = find_index_by_reference(
+            &self.building_geometry.nodes.guid,
+            &self.building_geometry.nodes.xpath,
+            guid,
+            xpath,
+        )?
+        else {
+            return Ok(false);
+        };
+
+        self.select_node(node_index);
         Ok(true)
     }
 
@@ -397,7 +423,7 @@ impl ModelViewer {
         // マテリアルの差し替えは&mut selfが要るため、UI内では値だけを更新し、ui処理を出た後に反映する。
         let mut translucent_composite_concrete = self.translucent_composite_concrete;
 
-        let response = egui::Area::new(ui.id().with("draw_options"))
+        let response = egui::Area::new(ui.scope_id().with("draw_options"))
             .order(egui::Order::Foreground)
             .fixed_pos(rect.min + margin)
             .constrain_to(rect)
@@ -814,7 +840,7 @@ fn find_element_index_by_guid(guids: &[Option<Uuid>], guid: &str) -> Result<Opti
 }
 
 /// GUIDを優先して検索する
-fn find_element_index_by_reference(
+fn find_index_by_reference(
     guids: &[Option<Uuid>],
     xpaths: &[Option<String>],
     guid: Option<&str>,
@@ -921,7 +947,7 @@ fn create_physical_material(ctx: &three_d::Context, style: RenderStyle) -> Physi
 
 #[cfg(test)]
 mod tests {
-    use super::find_element_index_by_reference;
+    use super::find_index_by_reference;
     use super::{NODE_PICK_TOLERANCE_PX, fitted_camera, nearest_node};
     use crate::data_model::building_geometry::Aabb;
     use three_d::{Camera, Vector3, Vector4, Viewport, degrees, vec3};
@@ -934,7 +960,7 @@ mod tests {
         let guids = vec![Some(first_guid), Some(second_guid)];
         let xpaths = vec![Some("/first".to_owned()), Some("/second".to_owned())];
 
-        let index = find_element_index_by_reference(
+        let index = find_index_by_reference(
             &guids,
             &xpaths,
             Some("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"),
@@ -951,7 +977,7 @@ mod tests {
         let guids = vec![None, None];
         let xpaths = vec![Some("/first".to_owned()), Some("/second".to_owned())];
 
-        let index = find_element_index_by_reference(
+        let index = find_index_by_reference(
             &guids,
             &xpaths,
             Some("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
@@ -968,7 +994,7 @@ mod tests {
         let guids = vec![Some(guid)];
         let xpaths = vec![Some("/first".to_owned())];
 
-        let index = find_element_index_by_reference(
+        let index = find_index_by_reference(
             &guids,
             &xpaths,
             Some("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"),
@@ -985,8 +1011,7 @@ mod tests {
         let xpaths = vec![Some("/first".to_owned())];
 
         let index =
-            find_element_index_by_reference(&guids, &xpaths, Some("invalid-guid"), Some("/first"))
-                .unwrap();
+            find_index_by_reference(&guids, &xpaths, Some("invalid-guid"), Some("/first")).unwrap();
         // 無効なguidは無視されxpathで検索
         assert_eq!(index, Some(0));
     }

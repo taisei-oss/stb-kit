@@ -114,7 +114,7 @@ def axis_vector_plate(
     points: list[Vector3d],
 ) -> tuple[Vector3d, Vector3d, Vector3d]:
     if len(points) < 3:
-        raise AssertionError("pointsの数が3以下です")
+        raise ValueError("pointsの数が3以下です")
     vx: Vector3d = (points[1] - points[0]).normalize()
     vy: Vector3d = vx.perpendicular_vector_on_plane(points[-1] - points[0]).normalize()
     vz = vx.cross(vy)

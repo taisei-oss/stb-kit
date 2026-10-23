@@ -7,7 +7,7 @@
 import re
 from typing import Final
 
-RESERVED_WORDS: Final[set[str]] = {"as", "ensure"}
+RESERVED_WORDS: Final[set[str]] = {"as", "ensure", "iter_descendants"}
 """Pythonの予約語及び、基底クラスで利用している属性名。かぶったら末尾にアンダーバーを付ける。"""
 
 
