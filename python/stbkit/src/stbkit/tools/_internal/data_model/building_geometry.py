@@ -569,11 +569,11 @@ class Axis:
 @dataclass(slots=True)
 class AxisTable:
     points_xyz: array[float] = field(default_factory=_new_f64_array, repr=False)
-    """全通り芯の点をx, y, zで連続格納する。"""
+    """全通り心の点をx, y, zで連続格納する。"""
     point_start: array[int] = field(default_factory=_new_u32_array, repr=False)
-    """各通り芯がpoints_xyz中で使用する点単位の開始位置。"""
+    """各通り心がpoints_xyz中で使用する点単位の開始位置。"""
     point_count: array[int] = field(default_factory=_new_u32_array, repr=False)
-    """各通り芯がpoints_xyz中で使用する点単位の長さ。"""
+    """各通り心がpoints_xyz中で使用する点単位の長さ。"""
     source_id: list[str] = field(default_factory=list, repr=False)
     name: list[str | None] = field(default_factory=list, repr=False)
 

@@ -1210,7 +1210,7 @@ wheels = [
 
 [[package]]
 name = "stbkit"
-version = "0.1.0b5"
+version = "0.1.0b6"
 source = { editable = "python/stbkit" }
 dependencies = [
     { name = "stbkit-core" },
@@ -1250,7 +1250,7 @@ provides-extras = ["xsd", "ifc", "native", "full"]
 
 [[package]]
 name = "stbkit-core"
-version = "0.1.0b5"
+version = "0.1.0b6"
 source = { editable = "python/stbkit-core" }
 
 [package.optional-dependencies]
@@ -1319,7 +1319,7 @@ rust = [{ name = "stbkit-native", editable = "rust/stbkit-native" }]
 
 [[package]]
 name = "stbkit-native"
-version = "0.1.0b5"
+version = "0.1.0b6"
 source = { editable = "rust/stbkit-native" }
 
 [[package]]

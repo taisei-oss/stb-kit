@@ -34,6 +34,26 @@ STB-KITのバージョンについての考え方は[COMPATIBILITY](COMPATIBILIT
 
 - なし
 
+## [0.1.0b6]
+
+### Breaking
+
+- `StBridgeElement.iter_descendants()`の`include_self`が`min_depth`で対応可能であるため、廃止しました。`include_self=True`を指定していた箇所は、`min_depth=0`に置き換えることで同じ挙動になります。デフォルト（指定していない場合）の挙動は変わりません。
+
+### Added
+
+- `StBridgeElement.iter_descendants()`に深さの下限を指定する`min_depth`を追加
+- CLIのconvertのオプションに`--looking-up`オプションを追加
+- ST-BridgeからIFCへの変換で通り心を出力
+
+### Changed
+
+- IFC変換時に、部材がST-Bridgeで定義された階に所属するように修正
+
+### Fixed
+
+- 組立角型鋼管の大梁の表示不具合を修正
+
 ## [0.1.0b5]
 
 ### Added

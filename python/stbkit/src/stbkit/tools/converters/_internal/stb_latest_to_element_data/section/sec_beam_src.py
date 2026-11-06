@@ -26,9 +26,16 @@ def stb_sec_beam_src_to_shapes(
     repo: RepositoryLatest,
     sec_b_s: StbSecBeamSrc,
     reporter: Reporter,
+    *,
+    include_concrete: bool = True,
+    include_steel: bool = True,
 ) -> tuple[list[ShapePair], list[ShapePair]]:
-    result_rc: list[ShapePair] = sec_beam_rc.stb_sec_beam_src_to_shapes_rc(sec_b_s)
-    result_s: list[ShapePair] = sec_beam_s.stb_sec_beam_s_to_shapes(
-        repo, sec_b_s, reporter
+    result_rc: list[ShapePair] = (
+        sec_beam_rc.stb_sec_beam_src_to_shapes_rc(sec_b_s) if include_concrete else []
+    )
+    result_s: list[ShapePair] = (
+        sec_beam_s.stb_sec_beam_s_to_shapes(repo, sec_b_s, reporter)
+        if include_steel
+        else []
     )
     return result_rc, result_s

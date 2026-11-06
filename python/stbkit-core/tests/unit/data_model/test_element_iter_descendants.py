@@ -1,3 +1,9 @@
+# Copyright 2026 TAISEI CORPORATION
+# SPDX-License-Identifier: MPL-2.0
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 from stbkit.testutils.data_model_sample.v2_1_1 import v2_1_1_rc_column
 
 from stbkit.core.data_model.common import StBridgeElement, _StBridgeExtensionElement
@@ -35,7 +41,7 @@ def test_iter_descendants() -> None:
         rect,
     ]
 
-    descendants = list(stb.iter_descendants(include_self=True))
+    descendants = list(stb.iter_descendants(min_depth=0))
     assert descendants == [
         stb,
         common,
@@ -103,6 +109,20 @@ def test_iter_descendants() -> None:
         nodes,
         members,
         sections,
+    ]
+
+    descendants = list(stb.iter_descendants(min_depth=2))
+    assert descendants == [
+        nodes,
+        node1,
+        node2,
+        members,
+        columns,
+        column,
+        sections,
+        sec_column,
+        figure,
+        rect,
     ]
 
 

@@ -41,7 +41,7 @@ STB-KITの機能をコマンドから実行します。Pythonの知識がなく�
 
 ST-BridgeをPythonオブジェクトとして読み込み、プログラミングからST-Bridgeを利用します。
 
-[Pythonから利用する](python/index.md)
+[Pythonから利用する](python/index.md){ .md-button .md-button--primary }
 
 ## ブラウザで試す
 

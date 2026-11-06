@@ -62,6 +62,8 @@ def stb_wall_to_element_plane(
         path=stb_wall._path_xml(),
         node_ids=node_ids,
         node_points=node_points,
+        source_type=type(stb_wall),
+        source_id=stb_wall.id_or_none,
     )
     stb_id_to_planes[(stb_latest.StbOpenArrangementKindMember.WALL, stb_wall.id)] = (
         plate
@@ -116,6 +118,8 @@ def stb_slab_to_element_plane(
             path=stb_slab._path_xml(),
             node_ids=node_ids,
             node_points=node_points,
+            source_type=type(stb_slab),
+            source_id=stb_slab.id_or_none,
         )
         stb_id_to_planes[
             (stb_latest.StbOpenArrangementKindMember.SLAB, stb_slab.id)

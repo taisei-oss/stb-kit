@@ -100,3 +100,10 @@ def pytest_generate_tests(metafunc: pytest.Metafunc) -> None:
             spec_roundtrips,
             ids=lambda s: f"{s.case_id}:{s.format.value}:{s.source_path.name}",
         )
+    elif metafunc.function.__name__ == "test_ifc_validate":
+        spec_roundtrips = repo.iter_roundtrip_specs(fmt=FixtureFormat.IFC4)
+        metafunc.parametrize(
+            "spec",
+            spec_roundtrips,
+            ids=lambda s: f"{s.case_id}:{s.format.value}:{s.source_path.name}",
+        )

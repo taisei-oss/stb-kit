@@ -320,7 +320,7 @@ class StBridgeElement(metaclass=_AutoModel):
         *,
         class_names: _ElementNames | None = None,
         xml_names: _ElementNames | None = None,
-        include_self: bool = False,
+        min_depth: int = 1,
         max_depth: int | None = None,
         include_extensions: bool = False,
     ) -> Iterator[TElement]: ...
@@ -332,7 +332,7 @@ class StBridgeElement(metaclass=_AutoModel):
         *,
         class_names: _ElementNames | None = None,
         xml_names: _ElementNames | None = None,
-        include_self: bool = False,
+        min_depth: int = 1,
         max_depth: int | None = None,
         include_extensions: bool = False,
     ) -> Iterator[StBridgeElement]: ...
@@ -343,7 +343,7 @@ class StBridgeElement(metaclass=_AutoModel):
         *,
         class_names: _ElementNames | None = None,
         xml_names: _ElementNames | None = None,
-        include_self: bool = False,
+        min_depth: int = 1,
         max_depth: int | None = None,
         include_extensions: bool = False,
     ) -> Iterator[StBridgeElement]:
@@ -353,7 +353,8 @@ class StBridgeElement(metaclass=_AutoModel):
             element_types: 列挙する要素クラス、またはクラスのコレクション。
             class_names: 列挙するクラスのPythonクラス名、または名前のコレクション。
             xml_names: 列挙するクラスのXML要素名、または名前のコレクション。
-            include_self: Trueの場合、結果に自身も含めます（フィルターは適用されます）。
+            min_depth: 自身を深さ0とする探索下限。
+                0の場合、結果に自身も含めます（フィルターは適用されます）。
             max_depth: 自身を深さ0とする探索上限。Noneの場合は制限しません。
             include_extensions: Trueの場合、拡張子要素も探索します。
 
@@ -366,7 +367,7 @@ class StBridgeElement(metaclass=_AutoModel):
 
         def walk() -> Iterator[StBridgeElement]:
             if (
-                include_self
+                min_depth == 0
                 and (normalized_types is None or isinstance(self, normalized_types))
                 and (
                     normalized_class_names is None
@@ -394,7 +395,7 @@ class StBridgeElement(metaclass=_AutoModel):
 
                 child_depth: int = stack[-1][1] + 1
 
-                if (
+                if child_depth >= min_depth and (
                     (normalized_types is None or isinstance(child, normalized_types))
                     and (
                         normalized_class_names is None
@@ -439,6 +440,9 @@ class StBridgeElement(metaclass=_AutoModel):
 
         if max_depth is not None and max_depth < 0:
             raise ValueError("max_depthに負数は指定できません")
+
+        if min_depth < 0:
+            raise ValueError("min_depthに負数は指定できません")
 
         if any(
             values is not None and not values
@@ -869,6 +873,19 @@ class StBridgeElement(metaclass=_AutoModel):
         if module is None:
             raise ValueError(f"{cls.__module__}が読み込まれていません")
         return module
+
+    @classmethod
+    def _get_type_same_module(cls, class_name: str) -> type[StBridgeElement]:
+        module: ModuleType = cls._get_module()
+        try:
+            result_class: type[StBridgeElement] = getattr(module, class_name)
+            if not issubclass(result_class, StBridgeElement):
+                raise ValueError(
+                    f"{cls.__module__}の{class_name}はStBridgeElementを継承していません"
+                )
+            return result_class
+        except AttributeError:
+            raise ValueError(f"{cls.__module__}に{class_name}はありません") from None
 
     @classmethod
     def _try_get_module_version(cls) -> str | None:

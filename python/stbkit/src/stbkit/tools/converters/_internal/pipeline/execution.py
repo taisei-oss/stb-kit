@@ -29,6 +29,7 @@ from ...._internal.utils.atomic_writer import (
     write_with_temp_file,
 )
 from ..building_geometry_to_ply_text import building_geometry_to_ply_text
+from ..stb_to_ifc_data.convert_option_stb_to_ifc import ConvertOptionStbToIfc
 from .data import (
     _Data,
     _DataFormat,
@@ -454,6 +455,7 @@ def execute_conversion(
     keep_temporary_files: bool = False,
     ifc_round_digits: int | None = None,
     ifc_round_digits_mm: int | None = None,
+    ifc_option: ConvertOptionStbToIfc | None = None,
 ) -> _ExecutionResult[_Data]:
     reporter = reporter or get_reporter()
     step = get_step(
@@ -474,6 +476,7 @@ def execute_conversion(
         on_step_completed=on_step_completed,
         ifc_round_digits=ifc_round_digits,
         ifc_round_digits_mm=ifc_round_digits_mm,
+        ifc_option=(ifc_option if ifc_option is not None else ConvertOptionStbToIfc()),
     )
     return _execute_step(step, input_data, context=context)
 

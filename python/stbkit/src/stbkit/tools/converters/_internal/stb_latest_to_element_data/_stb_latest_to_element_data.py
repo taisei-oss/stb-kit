@@ -7,6 +7,8 @@
 import contextlib
 from typing import TYPE_CHECKING
 
+from stbkit.core.data_model.common import StBridgeElement
+from stbkit.core.membership import MembershipRepository
 from stbkit.core.repository import get_repository
 from stbkit.core.stb_exceptions import NoneAccessError
 from stbkit.core.stb_reporting import Code, Phase, Reporter
@@ -34,6 +36,7 @@ from ...._internal.data_model.element_data import (
     Node,
 )
 from ...._internal.vectors import Vector3d
+from ..stb_to_ifc_data.convert_option_stb_to_ifc import StoryMode
 from . import open
 from .member.member_footing import stb_footing_to_line_element
 from .member.member_line import stb_element_to_element_line
@@ -65,6 +68,11 @@ def stb_to_element_data(
     stb: StBridge,
     *,
     reporter: Reporter,
+    include_src_concrete: bool = True,
+    include_src_steel: bool = True,
+    include_cft_concrete: bool = True,
+    include_cft_steel: bool = True,
+    story_mode: StoryMode = StoryMode.UNDEFINED,
 ) -> ElementData:
     reporter.info(
         "---ST-Bridge->ジオメトリデータ変換処理開始---",
@@ -136,7 +144,22 @@ def stb_to_element_data(
 
     result.extend(
         [
-            stb_element_to_element_line(repo, ele, node_coords, reporter)
+            stb_element_to_element_line(
+                repo,
+                ele,
+                node_coords,
+                reporter,
+                include_composite_concrete=(
+                    include_cft_concrete
+                    if ele.kind_structure_or_none == "CFT"
+                    else include_src_concrete
+                ),
+                include_composite_steel=(
+                    include_cft_steel
+                    if ele.kind_structure_or_none == "CFT"
+                    else include_src_steel
+                ),
+            )
             for ele in stb_member_lines
         ]
     )
@@ -171,4 +194,31 @@ def stb_to_element_data(
             result.append(
                 stb_footing_to_line_element(repo, stb_footing, node_coords, reporter)
             )
+    # 階の処理
+    if story_mode == StoryMode.LOOKING_DOWN or story_mode == StoryMode.LOOKING_UP:
+        m_repo: MembershipRepository = (
+            MembershipRepository(
+                stb=stb, repository=repo, looking_down=True, reporter=reporter
+            )
+            if story_mode == StoryMode.LOOKING_DOWN
+            else MembershipRepository(
+                stb=stb, repository=repo, looking_up=True, reporter=reporter
+            )
+        )
+        member_to_story: dict[tuple[type[StBridgeElement], int], int] = {}
+        for story_id, membership in m_repo.stories.items():
+            member_ids = (
+                membership.looking_up_member_ids
+                if story_mode == StoryMode.LOOKING_UP
+                else membership.looking_down_member_ids
+            )
+            for item in member_ids:
+                member_to_story[item] = story_id
+        for ele in result:
+            if (
+                ele.source_type
+                and ele.source_id
+                and issubclass(ele.source_type, StBridgeElement)
+            ):
+                ele.story_id = member_to_story.get((ele.source_type, ele.source_id))
     return result

@@ -10,6 +10,7 @@ from uuid import UUID
 
 from stbkit.core.stb_reporting import Reporter
 
+from ...vectors import Vector3d
 from ..element_data import ElementData
 
 if TYPE_CHECKING:
@@ -17,10 +18,34 @@ if TYPE_CHECKING:
 
 
 @dataclass(eq=False, order=False, kw_only=True, slots=True)
+class LineAxis:
+    p1: Vector3d
+    p2: Vector3d
+
+
+@dataclass(eq=False, order=False, kw_only=True, slots=True)
+class IfcGridAxis:
+    axis_tag: str | None = None
+    axis_curve: LineAxis | None = None
+    guid: UUID | None = None
+
+
+@dataclass(eq=False, order=False, kw_only=True, slots=True)
+class IfcGrid:
+    name: str | None = None
+    guid: UUID | None = None
+    u_axes: list[IfcGridAxis] = field(default_factory=list)
+    v_axes: list[IfcGridAxis] = field(default_factory=list)
+    w_axes: list[IfcGridAxis] = field(default_factory=list)
+
+
+@dataclass(eq=False, order=False, kw_only=True, slots=True)
 class IfcBuildingStorey:
     name: str | None = None
     guid: UUID | None = None
     elements: ElementData = field(default_factory=ElementData)
+    grids: list[IfcGrid] = field(default_factory=list)
+    elevation: float | None = None
 
 
 @dataclass(eq=False, order=False, kw_only=True, slots=True)

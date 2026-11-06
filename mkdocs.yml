@@ -46,6 +46,7 @@ nav:
       - 対応バージョン・形式: reference/versions-formats.md
   - プロジェクト情報:
       - リポジトリホーム README ↗: https://github.com/taisei-oss/stb-kit
+      - 引用情報 ↗: https://github.com/taisei-oss/stb-kit/blob/main/CITATION.cff
       - 互換性方針 ↗: https://github.com/taisei-oss/stb-kit/blob/main/COMPATIBILITY.md
       - ロードマップ  ↗: https://github.com/taisei-oss/stb-kit/blob/main/ROADMAP.md
       - 変更履歴  ↗: https://github.com/taisei-oss/stb-kit/blob/main/CHANGELOG.md

@@ -45,6 +45,7 @@ from stbkit.tools.converters._internal.pipeline.execution import (
 )
 from stbkit.tools.converters._internal.pipeline.stb_pipeline import StbData
 from stbkit.tools.converters._internal.pipeline.step import _ExecutionResult
+from stbkit.tools.converters._internal.stb_to_ifc_data import convert_option_stb_to_ifc
 
 from . import common
 from .constants_exit_code import (
@@ -72,6 +73,7 @@ class ConverterArgs:
     interactive: bool
     input_encoding: str | None
     via: str | None
+    looking_up: bool
     save_intermediate: dict[str, str | None]
     max_size: int
     logger: Logger
@@ -466,6 +468,13 @@ def _pipeline_convert(args: ConverterArgs) -> None:
         route_formats=route_formats,
         reporter=args.reporter,
         assign_guids=False,
+        ifc_option=(
+            convert_option_stb_to_ifc.ConvertOptionStbToIfc(
+                story_mode=convert_option_stb_to_ifc.StoryMode.LOOKING_UP
+            )
+            if args.looking_up
+            else None
+        ),
         on_step_completed=on_step_completed,
     )
     try:
@@ -527,6 +536,11 @@ def register(subparsers: _SubParsersAction[Any]) -> None:
         "省略時は自動検出またはutf-8を使用します。",
     )
     parser.add_argument(
+        "--looking-up",
+        action="store_true",
+        help="IFC変換時に部材の階所属を見上げ図相当として変換します。",
+    )
+    parser.add_argument(
         "--via",
         help=("中間形式を指定します。複数指定する場合はカンマで区切ります。"),
     )
@@ -575,6 +589,7 @@ def register_upgrade(subparsers: _SubParsersAction[Any]) -> None:
         to_format="stb",
         list_formats=False,
         via=None,
+        looking_up=False,
         save_intermediate=None,
     )
 
@@ -661,6 +676,7 @@ def _run(args: Namespace) -> None:
         interactive=interactive,
         input_encoding=args.input_encoding,
         via=args.via,
+        looking_up=bool(args.looking_up),
         save_intermediate=_get_save_intermediate(args.save_intermediate),
         max_size=get_max_size(args),
         logger=logger,

@@ -52,4 +52,6 @@ def stb_footing_to_line_element(
         axis_position=ShapePosition.DIAGRAM_CORE,
         path=stb_footing._path_xml(),
         node_ids=[stb_footing.id_node],
+        source_type=type(stb_footing),
+        source_id=stb_footing.id_or_none,
     )

@@ -76,6 +76,7 @@ class StbLatestToIfcIntermediateStep(
             raise TypeError(f"ST-Bridgeデータではありません: {type(stb)}")
         ifc_model: IfcModel = _stb_to_ifc_data.stb_to_ifc_data(
             stb,
+            option=context.ifc_option,
             reporter=context.reporter,
         )
         return _ExecutionResult(output=IfcIntermediateData(ifc_model))

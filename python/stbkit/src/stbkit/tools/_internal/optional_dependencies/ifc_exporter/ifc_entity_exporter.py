@@ -18,7 +18,7 @@ import numpy as np
 from ifcopenshell import entity_instance
 from numpy.typing import NDArray
 from stbkit.core._internal.transform.guid_tools import generate_uuid
-from stbkit.core.stb_exceptions import ZeroLengthMemberError
+from stbkit.core.stb_exceptions import DeveloperError, ZeroLengthMemberError
 from stbkit.core.stb_reporting import Code, Phase, Reporter, get_reporter
 
 from ....converters._internal import coord_converter
@@ -32,11 +32,12 @@ from ...data_model.element_data import (
 from ...data_model.ifc_data.entity_data import (
     IfcBuilding,
     IfcBuildingStorey,
+    IfcGrid,
     IfcModel,
     IfcProject,
     IfcSite,
 )
-from ...data_model.ifc_data.entity_names import EntityName
+from ...data_model.ifc_data.entity_names import EntityName, UvwAxes
 from ...matrix import RotationMatrix
 from ...utils.float_rounding import round_float
 from ...utils.guid_utils import to_ifc_guid
@@ -125,6 +126,42 @@ class IfcEntityExporter:
     def body(self, value: entity_instance) -> None:
         self._body = value
         self.representation_exporter.body = value
+
+    def create_grid(self, grid_data: IfcGrid) -> entity_instance:
+        ifc_grid = ifcopenshell.api.root.create_entity(
+            self.model,
+            ifc_class=EntityName.IFC_GRID,
+            name=grid_data.name if grid_data.name else "nameless",
+        )
+        _set_guid(ifc_grid, grid_data)
+        ifcopenshell.api.geometry.edit_object_placement(
+            self.model, product=ifc_grid, matrix=np.eye(4)
+        )
+        for uvw, axes_data in zip(
+            (UvwAxes.UAxes, UvwAxes.VAxes, UvwAxes.WAxes),
+            (grid_data.u_axes, grid_data.v_axes, grid_data.w_axes),
+            strict=True,
+        ):
+            for axis_data in axes_data:
+                ifc_axis = ifcopenshell.api.grid.create_grid_axis(
+                    self.model,
+                    grid=ifc_grid,
+                    axis_tag=axis_data.axis_tag if axis_data.axis_tag else "nameless",
+                    uvw_axes=uvw.value,
+                    same_sense=True,
+                )
+                if not axis_data.axis_curve:
+                    raise DeveloperError(
+                        f"通り心{axis_data.axis_tag}にaxis_curveが設定されていません"
+                    )
+                ifcopenshell.api.grid.create_axis_curve(
+                    self.model,
+                    grid_axis=ifc_axis,
+                    p1=np.array(axis_data.axis_curve.p1, dtype=float),
+                    p2=np.array(axis_data.axis_curve.p2, dtype=float),
+                    is_si=True,
+                )
+        return ifc_grid
 
     def create_entity_plane_element(
         self,
@@ -319,12 +356,17 @@ class IfcEntityExporter:
             name=ifc_building_storey.name,
         )
         _set_guid(building_storey, ifc_building_storey)
+        if ifc_building_storey.elevation is not None:
+            building_storey.Elevation = ifc_building_storey.elevation
         n_element: int = len(ifc_building_storey.elements)
         self.reporter.info(
             message=f"---要素のIFCエンティティ変換処理({n_element}件)---",
             code=Code.PROGRESS_INFO,
             phase=Phase.CONVERT_IFC,
         )
+        grids: list[entity_instance] = [
+            self.create_grid(grid) for grid in ifc_building_storey.grids
+        ]
         elements: list[entity_instance] = []
         batch_size: int = 1000
         for i, element in enumerate(ifc_building_storey.elements, 1):
@@ -346,11 +388,11 @@ class IfcEntityExporter:
         # ifcopenshellのassign_containerは、呼ぶたびに集合演算を行うため
         # 処理時間がかかり順序も安定しなくなる。
         # そのため、参照関係はここで1度だけ作る。
-        if elements:
+        if grids or elements:
             self.model.create_entity(
                 EntityName.IFC_REL_CONTAINED_IN_SPATIAL_STRUCTURE.value,
                 GlobalId=to_ifc_guid(generate_uuid()),
-                RelatedElements=elements,
+                RelatedElements=grids + elements,
                 RelatingStructure=building_storey,
             )
         return building_storey
@@ -366,11 +408,16 @@ class IfcEntityExporter:
             self.create_entity_building_storey(building_storey)
             for building_storey in ifc_building.building_storeys
         ]
-        rel: entity_instance | None = ifcopenshell.api.aggregate.assign_object(
-            self.model, relating_object=building, products=building_storeys
-        )
-        if rel is not None:
-            rel.GlobalId = to_ifc_guid(generate_uuid())
+        # ifcopenshellのassign_objectは呼ぶたびに集合演算を行うため
+        # 処理時間がかかり順序も安定しなくなる。
+        # そのため、参照関係はここで1度だけ作る。
+        if building_storeys:
+            self.model.create_entity(
+                EntityName.IFC_REL_AGGREGATES.value,
+                GlobalId=to_ifc_guid(generate_uuid()),
+                RelatingObject=building,
+                RelatedObjects=building_storeys,
+            )
         return building
 
     def create_entity_ifc_site(self, ifc_site: IfcSite) -> entity_instance:

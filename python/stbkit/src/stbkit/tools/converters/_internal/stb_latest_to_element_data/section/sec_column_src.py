@@ -35,7 +35,12 @@ if TYPE_CHECKING:
 
 
 def stb_sec_column_src_to_shapes(
-    repo: RepositoryLatest, sec_column_src: StbSecColumnSrc, reporter: Reporter
+    repo: RepositoryLatest,
+    sec_column_src: StbSecColumnSrc,
+    reporter: Reporter,
+    *,
+    include_concrete: bool = True,
+    include_steel: bool = True,
 ) -> list[ShapePair] | tuple[list[ShapePair], list[ShapePair]] | None:
     shapes_rc: list[ShapePair] = []
     shapes_s: list[ShapePair] = []
@@ -44,7 +49,7 @@ def stb_sec_column_src_to_shapes(
     sec_figure_column_src: StbSecFigureColumnSrc | None = (
         sec_column_src.stb_sec_figure_column_src_or_none
     )
-    if sec_figure_column_src:
+    if include_concrete and sec_figure_column_src:
         name_rc: str = f"{sec_column_src.name_or_none}_RC"
         with contextlib.suppress(NoneAccessError):
             shapes_rc.append(
@@ -81,7 +86,7 @@ def stb_sec_column_src_to_shapes(
     sec_steel_figure_column_src: StbSecSteelFigureColumnSrc | None = (
         sec_column_src.stb_sec_steel_figure_column_src_or_none
     )
-    if sec_steel_figure_column_src:
+    if include_steel and sec_steel_figure_column_src:
         sec_steel_column_src_same: StbSecSteelColumnSrcSame | None = (
             sec_steel_figure_column_src.stb_sec_steel_column_src_same_or_none
         )

@@ -141,12 +141,22 @@ for column in stb.iter_descendants(stb_v2_1_1.StbColumn):
 for child in stb.iter_descendants(max_depth=1):
     ...
 
+# 列挙に自身を含める場合はmin_depth=0を指定します
+for element in stb.iter_descendants(min_depth=0):
+    ...
+
+# 深さ2の要素（孫）だけを列挙します
+for grandchild in stb.iter_descendants(min_depth=2, max_depth=2):
+    ...
+
 # Pythonクラス名またはXML要素名をstrで指定することもできます
 columns = stb.iter_descendants(class_names="StbSecColumnRc")
 rc_sections = stb.iter_descendants(xml_names="StbSecColumn_RC")
 ```
 
-クラス名・XML要素名による絞り込みは列挙する対象に適用され、中間要素は絞り込みにかかわらず全てたどります。strで絞り込んだ場合の戻り値型は`StBridgeElement`です。
+深さは自身が0、直下の子が1です。`min_depth`のデフォルトは1、`max_depth`のデフォルトは上限なしで、指定した下限と上限の深さを含みます。`min_depth`が`max_depth`より大きい場合、結果は空です。負の深さを指定すると`ValueError`が発生します。
+
+クラス名・XML要素名による絞り込みは列挙する対象に適用され、自身を含む場合は自身にも適用されます。中間要素は絞り込みにかかわらず全てたどります。strで絞り込んだ場合の戻り値型は`StBridgeElement`です。
 for文内で子要素の追加・削除・差し替えを行う場合は、走査中の構造変更を避けるため、先に`list(stb.iter_descendants())`で列挙を完了してください。
 
 `include_extensions=True`を指定すると、StbExtensionで定義された拡張子要素も探索します。

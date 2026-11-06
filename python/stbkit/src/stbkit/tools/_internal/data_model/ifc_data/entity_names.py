@@ -17,6 +17,7 @@ class EntityName(StrEnum):
     IFC_COLUMN = "IfcColumn"
     IFC_ELEMENT_ASSEMBLY = "IfcElementAssembly"
     IFC_FOOTING = "IfcFooting"
+    IFC_GRID = "IfcGrid"
     IFC_I_SHAPE_PROFILE_DEF = "IfcIShapeProfileDef"
     IFC_MEMBER = "IfcMember"
     IFC_PILE = "IfcPile"
@@ -30,3 +31,9 @@ class EntityName(StrEnum):
     IFC_T_SHAPE_PROFILE_DEF = "IfcTShapeProfileDef"
     IFC_U_SHAPE_PROFILE_DEF = "IfcUShapeProfileDef"
     IFC_WALL = "IfcWall"
+
+
+class UvwAxes(StrEnum):
+    UAxes = "UAxes"
+    VAxes = "VAxes"
+    WAxes = "WAxes"

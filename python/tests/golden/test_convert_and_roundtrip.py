@@ -13,6 +13,7 @@ import pytest
 import stbkit.core._internal.constants
 import stbkit.core.stb_io._internal.serializer
 from freezegun import freeze_time
+from stbkit.core.stb_reporting import Code, Phase, get_reporter
 from stbkit.testutils.fixture_repository import (
     ConversionNodeSpec,
     FixtureFormat,
@@ -27,6 +28,7 @@ from stbkit.testutils.golden_runner import (
     run_schema_check_spec,
 )
 from stbkit.testutils.patches import IncrementalUUID
+from stbkit.tools.converters._internal.pipeline.data import _DataFormat
 
 PATCHES: Final[tuple[tuple[Any, str, str], ...]] = (
     (stbkit.core._internal.constants, "PACKAGE_VERSION", "0.0.0"),
@@ -106,3 +108,22 @@ def test_schema_check_no_xsd(
 
 def test_schema_check_line_count(spec: RoundTripSpec) -> None:
     run_schema_check_line_count_spec(spec)
+
+
+@pytest.mark.requires_ifcopenshell
+def test_ifc_validate(
+    spec: RoundTripSpec, run_context: RunContext, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import ifcopenshell
+    import ifcopenshell.validate
+    from ifcopenshell.validate import json_logger
+
+    if spec.format.to_data_format_set().format != _DataFormat.IFC:
+        raise NotImplementedError("スキーマチェックはIFC形式のみ行います。")
+    ifc_file = ifcopenshell.open(spec.source_path)
+    logger = json_logger()  # type: ignore[no-untyped-call]
+    ifcopenshell.validate.validate(ifc_file, logger)
+    reporter = get_reporter()
+    for issue in logger.statements:
+        reporter.error(str(issue), code=Code.SCHEMA_ERROR, phase=Phase.VALIDATE)
+        raise RuntimeError("IFCがスキーマ違反です")

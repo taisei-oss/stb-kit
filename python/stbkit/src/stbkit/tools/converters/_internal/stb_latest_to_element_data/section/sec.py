@@ -79,6 +79,9 @@ def get_shapes_element_line(
     | StbFoundationColumn
     | StbParapet,
     reporter: Reporter,
+    *,
+    include_src_concrete: bool = True,
+    include_src_steel: bool = True,
 ) -> list[ShapePair] | tuple[list[ShapePair], list[ShapePair]] | None:
     if isinstance(ele, StbFoundationColumn):
         foundation_column_shapes: list[ShapePair] = []
@@ -141,7 +144,13 @@ def get_shapes_element_line(
         case StbSecColumnS():
             return sec_column_s.stb_sec_column_s_to_shapes(repo, section, reporter)
         case StbSecColumnSrc():
-            return sec_column_src.stb_sec_column_src_to_shapes(repo, section, reporter)
+            return sec_column_src.stb_sec_column_src_to_shapes(
+                repo,
+                section,
+                reporter,
+                include_concrete=include_src_concrete,
+                include_steel=include_src_steel,
+            )
         case StbSecColumnCft():
             return sec_column_cft.stb_sec_column_cft_to_shapes(repo, section, reporter)
         case StbSecBeamRc():
@@ -149,7 +158,13 @@ def get_shapes_element_line(
         case StbSecBeamS():
             return sec_beam_s.stb_sec_beam_s_to_shapes(repo, section, reporter)
         case StbSecBeamSrc():
-            return sec_beam_src.stb_sec_beam_src_to_shapes(repo, section, reporter)
+            return sec_beam_src.stb_sec_beam_src_to_shapes(
+                repo,
+                section,
+                reporter,
+                include_concrete=include_src_concrete,
+                include_steel=include_src_steel,
+            )
         case StbSecBraceS():
             return sec_brace_s.stb_sec_brace_s_to_shapes(repo, section, reporter)
         case StbSecFoundationRc():

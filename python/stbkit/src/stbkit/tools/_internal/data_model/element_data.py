@@ -58,6 +58,9 @@ class ElementPlane:
     path: str | None = None
     node_ids: list[int] = field(default_factory=list)
     node_points: list[Vector3d] | None = None
+    source_type: type | None = None
+    source_id: int | None = None
+    story_id: int | None = None
 
 
 @dataclass(eq=False, order=False, kw_only=True, slots=True)
@@ -73,6 +76,9 @@ class ElementLine:
     axis_position: ShapePosition = ShapePosition.CENTER_CENTER
     path: str | None = None
     node_ids: list[int] = field(default_factory=list)
+    source_type: type | None = None
+    source_id: int | None = None
+    story_id: int | None = None
 
 
 @dataclass(eq=False, order=False, kw_only=True, slots=True)
@@ -84,6 +90,9 @@ class ElementLineSrc:
     rc: ElementLine | None = None
     path: str | None = None
     node_ids: list[int] = field(default_factory=list)
+    source_type: type | None = None
+    source_id: int | None = None
+    story_id: int | None = None
 
 
 class ElementData(list[ElementLine | ElementPlane | ElementLineSrc]):

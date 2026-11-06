@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: STB-KIT
+authors:
+  - name: TAISEI CORPORATION
+preferred-citation:
+  type: article
+  title: "ST-Bridgeデータ活用のための汎用ライブラリの開発　基本データモデル設計"
+  authors:
+    - family-names: 松野
+      given-names: 勇輝
+  journal: 日本建築学会大会学術講演梗概集
+  url: "https://www.aij.or.jp/paper/detail.html?productId=720431"
+  volume: "2026"
+  pages: 221-222
+  year: 2026
+  month: 7

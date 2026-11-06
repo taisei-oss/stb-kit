@@ -11,6 +11,7 @@ from typing import Any, Protocol, cast
 
 from stbkit.core.stb_reporting import NullReporter, Reporter
 
+from ..stb_to_ifc_data.convert_option_stb_to_ifc import ConvertOptionStbToIfc
 from .data import _Data
 
 
@@ -27,6 +28,7 @@ class _ExecutionContext:
     CLIの中間ファイル保存など、変換処理そのものとは独立した処理の実装のために使用する。"""
     ifc_round_digits: int | None = None
     ifc_round_digits_mm: int | None = None
+    ifc_option: ConvertOptionStbToIfc = field(default_factory=ConvertOptionStbToIfc)
 
 
 @dataclass(frozen=True)

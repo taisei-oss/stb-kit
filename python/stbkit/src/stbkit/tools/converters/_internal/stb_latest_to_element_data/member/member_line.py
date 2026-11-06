@@ -443,6 +443,9 @@ def stb_element_to_element_line(
     | StbParapet,
     node_coords: dict[int, Vector3d],
     reporter: Reporter,
+    *,
+    include_composite_concrete: bool = True,
+    include_composite_steel: bool = True,
 ) -> ElementLine | ElementLineSrc:
     axis_position: ShapePosition = get_axis_position(stb_element)
     element_type: ElementType = get_element_type(stb_element)
@@ -457,8 +460,17 @@ def stb_element_to_element_line(
     lengths: list[float] = [length]
     angle: float = get_angle(stb_element)
     name: str = name_converter.stb_element_to_ifc_name(stb_element)
+    is_composite = stb_element.kind_structure_or_none in ("SRC", "CFT")
+    include_concrete = not is_composite or include_composite_concrete
+    include_steel = not is_composite or include_composite_steel
     shapes: list[ShapePair] | tuple[list[ShapePair], list[ShapePair]] | None = (
-        sec.get_shapes_element_line(repo, stb_element, reporter)
+        sec.get_shapes_element_line(
+            repo,
+            stb_element,
+            reporter,
+            include_src_concrete=include_concrete,
+            include_src_steel=include_steel,
+        )
     )
     if isinstance(shapes, tuple):
         shapes_rc, shapes_s = shapes
@@ -466,12 +478,35 @@ def stb_element_to_element_line(
         lengths_rc: list[float] = [length]
         if shapes_s and shapes_s[0].start and len(shapes_s) > 1:
             lengths_s = get_lengths(repo, stb_element, length, kind="S")
-        lengths_s = check_lengths(length, lengths_s, shapes_s, reporter, stb_element)
+        if include_steel or stb_element.kind_structure_or_none == "CFT":
+            lengths_s = check_lengths(
+                length, lengths_s, shapes_s, reporter, stb_element
+            )
         if stb_element.kind_structure_or_none == "CFT":
             lengths_rc = lengths_s
         elif shapes_rc and shapes_rc[0].start and len(shapes_rc) > 1:
             lengths_rc = get_lengths(repo, stb_element, length, kind="RC")
-        lengths_rc = check_lengths(length, lengths_rc, shapes_rc, reporter, stb_element)
+        if include_concrete:
+            lengths_rc = check_lengths(
+                length, lengths_rc, shapes_rc, reporter, stb_element
+            )
+
+        if not include_concrete or not include_steel:
+            return ElementLine(
+                element_type=element_type,
+                name=name,
+                guid=stb_element.guid_or_none,
+                lengths=lengths_rc if include_concrete else lengths_s,
+                point_start=point_start,
+                point_end=point_end,
+                angle=angle,
+                shapes=shapes_rc if include_concrete else shapes_s,
+                axis_position=axis_position,
+                path=stb_element._path_xml(),
+                node_ids=node_ids,
+                source_type=type(stb_element),
+                source_id=stb_element.id_or_none,
+            )
 
         element_line_s: ElementLine = ElementLine(
             element_type=element_type,
@@ -503,6 +538,8 @@ def stb_element_to_element_line(
             steel=element_line_s,
             path=stb_element._path_xml(),
             node_ids=node_ids,
+            source_type=type(stb_element),
+            source_id=stb_element.id_or_none,
         )
         return element_line_src
 
@@ -533,5 +570,7 @@ def stb_element_to_element_line(
         axis_position=axis_position,
         path=stb_element._path_xml(),
         node_ids=node_ids,
+        source_type=type(stb_element),
+        source_id=stb_element.id_or_none,
     )
     return element_line

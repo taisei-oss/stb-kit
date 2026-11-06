@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ST_BRIDGE xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://www.building-smart.or.jp/dl" version="2.0.2">
+ <StbCommon project_name="frame_1x1x1_rc" app_name="stbkit-studio" app_version="0.1.0-beta.5" convert_app_name="stbkit-core-rs" convert_app_version="0.1.0-beta.5"/>
+ <StbModel>
+  <StbNodes>
+   <StbNode id="111" X="0" Y="0" Z="0" kind="ON_GRID"/>
+   <StbNode id="112" X="5000" Y="0" Z="0" kind="ON_GRID"/>
+   <StbNode id="121" X="0" Y="5000" Z="0" kind="ON_GRID"/>
+   <StbNode id="122" X="5000" Y="5000" Z="0" kind="ON_GRID"/>
+   <StbNode id="211" X="0" Y="0" Z="5000" kind="ON_GRID"/>
+   <StbNode id="212" X="5000" Y="0" Z="5000" kind="ON_GRID"/>
+   <StbNode id="221" X="0" Y="5000" Z="5000" kind="ON_GRID"/>
+   <StbNode id="222" X="5000" Y="5000" Z="5000" kind="ON_GRID"/>
+  </StbNodes>
+  <StbAxes>
+   <StbParallelAxes group_name="X" X="0" Y="0" angle="270">
+    <StbParallelAxis id="11" name="X1" distance="0">
+     <StbNodeIdList>
+      <StbNodeId id="111"/>
+      <StbNodeId id="121"/>
+      <StbNodeId id="211"/>
+      <StbNodeId id="221"/>
+     </StbNodeIdList>
+    </StbParallelAxis>
+    <StbParallelAxis id="12" name="X2" distance="5000">
+     <StbNodeIdList>
+      <StbNodeId id="112"/>
+      <StbNodeId id="122"/>
+      <StbNodeId id="212"/>
+      <StbNodeId id="222"/>
+     </StbNodeIdList>
+    </StbParallelAxis>
+   </StbParallelAxes>
+   <StbParallelAxes group_name="Y" X="0" Y="0" angle="0">
+    <StbParallelAxis id="21" name="Y1" distance="0">
+     <StbNodeIdList>
+      <StbNodeId id="111"/>
+      <StbNodeId id="112"/>
+      <StbNodeId id="211"/>
+      <StbNodeId id="212"/>
+     </StbNodeIdList>
+    </StbParallelAxis>
+    <StbParallelAxis id="22" name="Y2" distance="5000">
+     <StbNodeIdList>
+      <StbNodeId id="121"/>
+      <StbNodeId id="122"/>
+      <StbNodeId id="221"/>
+      <StbNodeId id="222"/>
+     </StbNodeIdList>
+    </StbParallelAxis>
+   </StbParallelAxes>
+  </StbAxes>
+  <StbStories>
+   <StbStory id="1" name="1F" height="0" kind="GENERAL">
+    <StbNodeIdList>
+     <StbNodeId id="111"/>
+     <StbNodeId id="112"/>
+     <StbNodeId id="121"/>
+     <StbNodeId id="122"/>
+    </StbNodeIdList>
+   </StbStory>
+   <StbStory id="2" name="2F" height="5000" kind="ROOF">
+    <StbNodeIdList>
+     <StbNodeId id="211"/>
+     <StbNodeId id="212"/>
+     <StbNodeId id="221"/>
+     <StbNodeId id="222"/>
+    </StbNodeIdList>
+   </StbStory>
+  </StbStories>
+  <StbMembers>
+   <StbColumns>
+    <StbColumn id="11" name="X1Y1" id_node_bottom="111" id_node_top="211" id_section="1" kind_structure="RC"/>
+    <StbColumn id="12" name="X2Y1" id_node_bottom="112" id_node_top="212" id_section="1" kind_structure="RC"/>
+    <StbColumn id="21" name="X1Y2" id_node_bottom="121" id_node_top="221" id_section="1" kind_structure="RC"/>
+    <StbColumn id="22" name="X2Y2" id_node_bottom="122" id_node_top="222" id_section="1" kind_structure="RC"/>
+   </StbColumns>
+   <StbGirders>
+    <StbGirder id="1" name="Z1/Y1/X1-X2" id_node_start="111" id_node_end="112" id_section="1" kind_structure="RC" isFoundation="true"/>
+    <StbGirder id="2" name="Z1/Y2/X1-X2" id_node_start="121" id_node_end="122" id_section="1" kind_structure="RC" isFoundation="true"/>
+    <StbGirder id="3" name="Z1/X1/Y1-Y2" id_node_start="111" id_node_end="121" id_section="1" kind_structure="RC" isFoundation="true"/>
+    <StbGirder id="4" name="Z1/X2/Y1-Y2" id_node_start="112" id_node_end="122" id_section="1" kind_structure="RC" isFoundation="true"/>
+    <StbGirder id="5" name="Z2/Y1/X1-X2" id_node_start="211" id_node_end="212" id_section="1" kind_structure="RC" isFoundation="false"/>
+    <StbGirder id="6" name="Z2/Y2/X1-X2" id_node_start="221" id_node_end="222" id_section="1" kind_structure="RC" isFoundation="false"/>
+    <StbGirder id="7" name="Z2/X1/Y1-Y2" id_node_start="211" id_node_end="221" id_section="1" kind_structure="RC" isFoundation="false"/>
+    <StbGirder id="8" name="Z2/X2/Y1-Y2" id_node_start="212" id_node_end="222" id_section="1" kind_structure="RC" isFoundation="false"/>
+   </StbGirders>
+  </StbMembers>
+  <StbSections>
+   <StbSecColumn_RC id="1" name="C1">
+    <StbSecFigureColumn_RC>
+     <StbSecColumn_RC_Rect width_X="800" width_Y="800"/>
+    </StbSecFigureColumn_RC>
+   </StbSecColumn_RC>
+   <StbSecBeam_RC id="1" name="G1">
+    <StbSecFigureBeam_RC>
+     <StbSecBeam_RC_Straight width="400" depth="700"/>
+    </StbSecFigureBeam_RC>
+   </StbSecBeam_RC>
+  </StbSections>
+ </StbModel>
+</ST_BRIDGE>

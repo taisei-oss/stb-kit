@@ -63,6 +63,8 @@ class Code(StrEnum):
     """スキーマ違反"""
     SCHEMA_VERSION_MISMATCH = "schema_version_mismatch"
     """スキーマのバージョンが異なる"""
+    SPECIFICATION_MISMATCH = "specification_mismatch"
+    """仕様の都合で変換不可能"""
     TEST = "test"
     """テスト用"""
     TYPE_MISMATCH = "type_mismatch"

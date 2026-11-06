@@ -82,8 +82,14 @@ def create_local_line_meshes(
         if axis_position != ShapePosition.CENTER_CENTER:
             offset_start: Vector2d = shape.start.get_position_point(axis_position)
             start_point2ds = [point - offset_start for point in start_point2ds]
+            if start_in_point2ds is not None:
+                start_in_point2ds = [
+                    point - offset_start for point in start_in_point2ds
+                ]
             offset_end: Vector2d = shape_end.get_position_point(axis_position)
             end_point2ds = [point - offset_end for point in end_point2ds]
+            if end_in_point2ds is not None:
+                end_in_point2ds = [point - offset_end for point in end_in_point2ds]
 
         if len(start_point2ds) != len(end_point2ds):
             raise AssertionError("断面のStartとEndの頂点数が異なります")

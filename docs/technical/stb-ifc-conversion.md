@@ -15,13 +15,33 @@ ST-Bridgeから生成した部材は、次の空間へ配置します。
 - IfcProject
 - IfcSite (name="Site")
 - IfcBuilding (name="Building")
-- IfcBuildingStorey (name="1FL")
+- IfcBuildingStorey (nameはST-Bridgeで階が定義されている場合は階名、定義がない場合は`undefined`)
 - 各部材エンティティ
 
 IfcProject.nameはStbCommonのproject_nameとします。
 
-現在ST-Bridgeの階の設定にかかわらず、すべての要素が1FLに配置されます。
-階ごとの配置は今後対応予定です。
+ST-Bridgeに階の定義がある場合、階に対応したIfcBuildingStoreyを生成します。
+柱、壁などの部材は、最下部の節点の位置に基づき、配置階を決定します。（見下げ図相当）
+
+階に所属できない要素（最下部の節点がどこの階にも属さず,一番下の層よりも下にある要素）は、"undefined"階に配置されます。
+
+オプションにより、最上部の節点の位置に基づいて配置階を決定することができます。（見上げ図相当）
+
+ST-Bridgeに階の定義がない場合、すべての要素が"undefined"階に配置されます。
+
+階の定義がなく、変換された部材もない場合は、通り心は"undefined"階に配置されます。通り心もない場合は、階は生成しません。
+
+### 通り心の変換
+
+通り心は生成した最初の階(ST-Bridge上で最初に定義された階)に配置します。
+
+ST-Bridgeの平行軸（`StbParallelAxes`）をIFCの`IfcGrid`として出力します。`StbParallelAxes`から2つの組み合わせを選び、そのペアで`IfcGrid`を作成し、`StbParallelAxis`を`IfcGridAxis`に対応させます。`StbParallelAxes`の`group_name`は`IfcGrid.Name`、`StbParallelAxis`の`name`は`IfcGridAxis.AxisTag`に設定します。
+
+全て異なる方向の平行軸が奇数個の場合などは、1つ`WAxes`をもつ`IfcGrid`を作成します。
+
+`IfcGrid`は`UAxes`と`VAxes`が必須であり、UとVは平行でない必要があります。そのため、平行軸が1つしかないか、平行軸でangleが平行な軸が多い場合は、UとVの組み合わせをうまく作れないため、IfcGridを作成できない場合があります。
+
+IFCでは通り心は端点を定義する必要があるため、節点のXY座標範囲をもとに、余白をとって線を配置しています。この処理のため、節点が近くに存在しない通り心は変換できません。
 
 ## 変換の原則
 
@@ -49,6 +69,8 @@ StbOpenArrangementは現状では独立したIFC部材にはせず、StbWallま�
 SRC,CFTについては、親をIfcElementAssemblyとし、子部材をIfcRelAggregatesで関連付けます。
 そのため、guidの対応はIfcColumnなどではなく、IfcElementAssemblyが対応します。
 guidは一意である必要があることから、IfcColumnなどの子部材のGlobalIdは新規生成します。
+
+PythonAPIから利用する場合は、SRCとCFTの出力形式を指定できます。`ConvertOptionStbToIfc`の`src_output_mode`と`cft_output_mode`で指定します。`RC_ONLY`ではコンクリート形状のみ、`STEEL_ONLY`では鉄骨形状のみを単一剤として出力し、そのGlobalIdにST-Bridgeのguidを対応させます。`RC_AND_STEEL`は上記の既定の挙動です。
 
 下記要素は変換非対応のため、IFCのエンティティが作られません。
 
