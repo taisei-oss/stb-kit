@@ -138,8 +138,6 @@ PythonAPIから利用する場合は、SRCとCFTの出力形式を指定でき�
 
 StbSecUndefined, StbSecSteelUndefinedおよび断面が不明な場合は10×10mmの仮定断面とし、IfcRectangleProfileDefで押し出します。
 
-※現状では鉄骨梁の鉄骨レベルが一律-150になっています。今後修正予定です。
-
 ### 面材系部材（壁・スラブ）
 
 - 板材は板厚方向への押し出し形状(SweptSolid)とします

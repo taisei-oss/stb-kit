@@ -121,7 +121,7 @@
     </StbSecFigureColumn_SRC>
     <StbSecSteelFigureColumn_SRC>
      <StbSecSteelColumn_SRC_Same>
-      <StbSecSteelColumn_SRC_ShapeCross1 shape_X="H-588x300x12x20" shape_Y="H-588x300x12x20" strength_main_X="SN400" offset_XX="100.0" offset_XY="-244.0" offset_YX="244.0" offset_YY="-100.0"/>
+      <StbSecSteelColumn_SRC_ShapeCross1 shape_X="H-588x300x12x20" shape_Y="H-588x300x12x20" strength_main_X="SN400" offset_XX="100.0" offset_XY="-214.0" offset_YX="214.0" offset_YY="-100.0"/>
      </StbSecSteelColumn_SRC_Same>
     </StbSecSteelFigureColumn_SRC>
    </StbSecColumn_SRC>

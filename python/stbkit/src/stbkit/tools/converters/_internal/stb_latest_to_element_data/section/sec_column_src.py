@@ -27,6 +27,7 @@ from ....._internal.data_model.shape_data import (
     ShapeCircle,
     ShapePair,
     ShapeRectangle,
+    pos_label,
 )
 from . import sec_steel
 
@@ -116,10 +117,10 @@ def stb_sec_column_src_to_shapes(
                         repo,
                         bottom,
                         reporter,
-                    )
+                    ).with_label(pos_label("pos", bottom.pos_or_none))
                 )
             except StopIteration:
-                shapes_s.append(SHAPE_PAIR_UNDEFINED)
+                shapes_s.append(SHAPE_PAIR_UNDEFINED.with_label("pos=BOTTOM"))
             try:
                 top: StbSecSteelColumnSrcNotSame = next(
                     not_same for not_same in src_not_same_list if not_same.pos == "TOP"
@@ -129,10 +130,10 @@ def stb_sec_column_src_to_shapes(
                         repo,
                         top,
                         reporter,
-                    )
+                    ).with_label(pos_label("pos", top.pos_or_none))
                 )
             except StopIteration:
-                shapes_s.append(SHAPE_PAIR_UNDEFINED)
+                shapes_s.append(SHAPE_PAIR_UNDEFINED.with_label("pos=TOP"))
         elif src_three_types_list:
             try:
                 bottom_three: StbSecSteelColumnSrcThreeTypes = next(
@@ -145,10 +146,10 @@ def stb_sec_column_src_to_shapes(
                         repo,
                         bottom_three,
                         reporter,
-                    )
+                    ).with_label(pos_label("pos", bottom_three.pos_or_none))
                 )
             except StopIteration:
-                shapes_s.append(SHAPE_PAIR_UNDEFINED)
+                shapes_s.append(SHAPE_PAIR_UNDEFINED.with_label("pos=BOTTOM"))
             try:
                 center_three: StbSecSteelColumnSrcThreeTypes = next(
                     three_types
@@ -160,10 +161,10 @@ def stb_sec_column_src_to_shapes(
                         repo,
                         center_three,
                         reporter,
-                    )
+                    ).with_label(pos_label("pos", center_three.pos_or_none))
                 )
             except StopIteration:
-                shapes_s.append(SHAPE_PAIR_UNDEFINED)
+                shapes_s.append(SHAPE_PAIR_UNDEFINED.with_label("pos=CENTER"))
             try:
                 top_three: StbSecSteelColumnSrcThreeTypes = next(
                     three_types
@@ -175,9 +176,9 @@ def stb_sec_column_src_to_shapes(
                         repo,
                         top_three,
                         reporter,
-                    )
+                    ).with_label(pos_label("pos", top_three.pos_or_none))
                 )
             except StopIteration:
-                shapes_s.append(SHAPE_PAIR_UNDEFINED)
+                shapes_s.append(SHAPE_PAIR_UNDEFINED.with_label("pos=TOP"))
 
     return (shapes_rc, shapes_s)

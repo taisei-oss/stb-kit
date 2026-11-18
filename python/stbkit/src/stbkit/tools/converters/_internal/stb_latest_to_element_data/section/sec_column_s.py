@@ -19,7 +19,12 @@ from stbkit.api.stb_latest import (
     StbSecSteelFigureColumnS,
 )
 
-from ....._internal.data_model.shape_data import SHAPE_PAIRS_UNKNOWN, Shape, ShapePair
+from ....._internal.data_model.shape_data import (
+    SHAPE_PAIRS_UNKNOWN,
+    Shape,
+    ShapePair,
+    pos_label,
+)
 from . import sec_steel
 
 if TYPE_CHECKING:
@@ -71,7 +76,11 @@ def stb_sec_column_s_to_shapes(
                     shape = sec_steel.stb_sec_steel_name_to_shape(
                         repo, shape_name, reporter
                     )
-                    result.append(ShapePair(shape))
+                    result.append(
+                        ShapePair(shape).with_label(
+                            pos_label("pos", not_same.pos_or_none)
+                        )
+                    )
         elif three_types_list:
             try:
                 three_types_bottom: StbSecSteelColumnSThreeTypes = next(
@@ -107,7 +116,11 @@ def stb_sec_column_s_to_shapes(
                     shape = sec_steel.stb_sec_steel_name_to_shape(
                         repo, shape_name, reporter
                     )
-                    result.append(ShapePair(shape))
+                    result.append(
+                        ShapePair(shape).with_label(
+                            pos_label("pos", three_types.pos_or_none)
+                        )
+                    )
         if (
             sec_c.is_reference_direction_or_none is not None
             and not sec_c.is_reference_direction_or_none

@@ -145,6 +145,7 @@ class ConversionNodeSpec:
 @dataclass(frozen=True, kw_only=True)
 class RoundTripSpec:
     case_id: str
+    case_dir: Path
     format: FixtureFormat
     source_path: Path
     compare_options: CompareOptions
@@ -154,13 +155,11 @@ class RoundTripSpec:
 
     @property
     def schema_check_path(self) -> Path:
-        return self.source_path.parent / f"schema_check.{self.source_path.name}.txt"
+        return self.case_dir / f"schema_check.{self.source_path.name}.txt"
 
     @property
     def schema_check_no_xsd_path(self) -> Path:
-        return (
-            self.source_path.parent / f"schema_check_no_xsd.{self.source_path.name}.txt"
-        )
+        return self.case_dir / f"schema_check_no_xsd.{self.source_path.name}.txt"
 
 
 class FixtureCase:
@@ -428,6 +427,7 @@ class FixtureCase:
             result.append(
                 RoundTripSpec(
                     case_id=self.case_id,
+                    case_dir=self.case_dir,
                     format=fmt,
                     source_path=input_spec.path,
                     compare_options=input_spec.compare_options,
@@ -443,6 +443,7 @@ class FixtureCase:
                     result.append(
                         RoundTripSpec(
                             case_id=self.case_id,
+                            case_dir=self.case_dir,
                             format=fmt,
                             source_path=spec.golden_output_path,
                             compare_options=spec.compare_options,
@@ -462,11 +463,19 @@ class FixtureRepository:
     def list_case_ids(self) -> list[str]:
         if not self.cases_dir.exists():
             return []
-        return sorted(
-            p.name
-            for p in self.cases_dir.iterdir()
-            if p.is_dir() and (p / "case.yml").exists()
+        case_dirs = [
+            path
+            for path in self.cases_dir.iterdir()
+            if path.is_dir() and (path / "case.yml").exists()
+        ]
+        case_dirs.extend(
+            child
+            for parent in self.cases_dir.iterdir()
+            if parent.is_dir()
+            for child in parent.iterdir()
+            if child.is_dir() and (child / "case.yml").exists()
         )
+        return sorted(path.relative_to(self.cases_dir).as_posix() for path in case_dirs)
 
     def get_case(self, case_id: str) -> FixtureCase:
         case_dir = self.cases_dir / case_id

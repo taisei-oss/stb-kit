@@ -6,8 +6,13 @@
 
 import pytest
 
-from stbkit.core.data_model.stb_v2_1_0 import StbNode
-from stbkit.core.stb_exceptions import NoneAccessError
+from stbkit.core.data_model.stb_v2_1_1 import (
+    StbCommon,
+    StbExtensions,
+    StbNode,
+    StBridge,
+)
+from stbkit.core.stb_exceptions import NoneAccessError, SchemaError
 
 
 def test_getter() -> None:
@@ -39,3 +44,15 @@ def test_setter_or_none() -> None:
     assert node.x == 100.0
     node.x_or_none = None
     assert node.x_or_none is None
+
+
+def test_setter_child_none() -> None:
+    stb: StBridge = StBridge(stb_common=StbCommon(), stb_extensions=StbExtensions())
+    assert stb.stb_common_or_none is not None
+    assert stb.stb_extensions_or_none is not None
+    # 必須項目にNoneを設定するとスキーマエラー
+    with pytest.raises(SchemaError):
+        stb.stb_common_or_none = None
+    # 必須でなければそのまま設定できる
+    stb.stb_extensions_or_none = None
+    assert stb.stb_extensions_or_none is None

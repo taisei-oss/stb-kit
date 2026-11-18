@@ -17,6 +17,7 @@ from ....._internal.data_model.shape_data import (
     SHAPE_PAIR_UNKNOWN,
     ShapePair,
     ShapeRectangle,
+    pos_label,
 )
 
 
@@ -54,7 +55,11 @@ def stb_sec_beam_rc_to_shapes(
 ) -> list[ShapePair]:
     result: list[ShapePair] = []
     for figure in stb_sec_beam_rc.stb_sec_figure_beam_rc:
-        result.append(stb_figure_beam_rc_to_shapes(figure, stb_sec_beam_rc.name))
+        result.append(
+            stb_figure_beam_rc_to_shapes(figure, stb_sec_beam_rc.name).with_label(
+                pos_label("order", figure.order_or_none)
+            )
+        )
     return result
 
 
@@ -63,5 +68,9 @@ def stb_sec_beam_src_to_shapes_rc(
 ) -> list[ShapePair]:
     result: list[ShapePair] = []
     for figure in stb_sec_beam_src.stb_sec_figure_beam_src:
-        result.append(stb_figure_beam_rc_to_shapes(figure, stb_sec_beam_src.name))
+        result.append(
+            stb_figure_beam_rc_to_shapes(figure, stb_sec_beam_src.name).with_label(
+                pos_label("order", figure.order_or_none)
+            )
+        )
     return result

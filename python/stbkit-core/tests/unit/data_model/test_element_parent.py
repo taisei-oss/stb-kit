@@ -39,6 +39,17 @@ def test_element_parent() -> None:
     assert stb2._parent is None
 
 
+def test_child_or_none_parent() -> None:
+    nodes: StbNodes = StbNodes()
+    root: StBridge = StBridge(stb_model=StbModel(stb_nodes=nodes))
+    assert nodes._parent is root.stb_model
+
+    root.stb_model.stb_nodes_or_none = None
+
+    assert root.stb_model.stb_nodes_or_none is None
+    assert nodes._parent is None
+
+
 def test_element_list_parent() -> None:
     node: StbNode = StbNode()
     assert node._parent is None

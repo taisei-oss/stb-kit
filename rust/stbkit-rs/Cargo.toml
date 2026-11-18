@@ -6,7 +6,7 @@
 
 [package]
 name = "stbkit-rs"
-version = "0.1.0-beta.6"
+version = "0.1.0-beta.7"
 edition = "2024"
 license.workspace = true
 
@@ -18,7 +18,7 @@ serde = [
 
 [dependencies]
 serde = { version = "1.0.229", features = ["derive"], optional = true }
-uuid = { version = "1.28.0", features = ["v4", "v7"] }
+uuid = { version = "1.29.3", features = ["v4", "v7"] }
 
 [dev-dependencies]
 regex = "1"
@@ -30,8 +30,8 @@ strum = { version = "0.28", features = ["derive"] }
 eframe = { version = "0.37.0", default-features = false, features = ["default_fonts", "glow"] }
 three-d = { version = "0.19.0", default-features = false }
 # webではjsが必要
-uuid = { version = "1.28.0", features = ["js"] }
-wasm-bindgen-futures = "0.4.79"
+uuid = { version = "1.29.3", features = ["js"] }
+wasm-bindgen-futures = "0.4.80"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 eframe = { version = "0.37.0", default-features = false, features = ["accesskit", "default_fonts", "glow", "wayland", "x11"] }

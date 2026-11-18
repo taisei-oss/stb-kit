@@ -34,6 +34,14 @@ STB-KITのバージョンについての考え方は[COMPATIBILITY](COMPATIBILIT
 
 - なし
 
+## [0.1.0b7]
+
+### Fixed
+
+- v2.0.2からのupgradeやIFC、PLY変換で、SRC梁の鉄骨断面のオフセットが正しく引き継がれるように修正
+- v2.0.2からのupgradeで、S梁・SRC梁のハンチ・5種類断面の変換時に、S断面とSRC断面で同じ断面IDがある場合に生じる不具合を修正
+- 省略可能な単一子要素にNoneを設定できない不具合を修正
+
 ## [0.1.0b6]
 
 ### Breaking

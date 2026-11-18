@@ -77,7 +77,7 @@ def stb_sec_foundation_rc_to_shapes_and_depth(
                     width_x=tapered_rect.width_x,
                     width_y=tapered_rect.width_y,
                 )
-            ),
+            ).with_label("bottom"),
             ShapePair(
                 ShapeRectangle(
                     name=f"{stb_sec_foundation_rc.name}_switch",
@@ -89,7 +89,7 @@ def stb_sec_foundation_rc_to_shapes_and_depth(
                     width_x=top_width_x,
                     width_y=top_width_y,
                 ),
-            ),
+            ).with_label("taper"),
         ], [depth_tip, depth_base - depth_tip]
     triangle: StbSecFoundationRcTriangle | None = (
         figure.stb_sec_foundation_rc_triangle_or_none

@@ -139,10 +139,23 @@ class _AutoModel(type):
             ) -> Callable[[StBridgeElement, Any], None]:
 
                 def setter_child(self: StBridgeElement, value: Any) -> None:
+                    if value is None:
+                        if f_info.min_occurs == 1:
+                            raise SchemaError(
+                                f"{self._xml_class_name()}の{key_}は必須項目です"
+                            )
+                    elif not isinstance(value, StBridgeElement):
+                        raise TypeError(f"{key_}にはStBridgeElementを設定してください")
+
+                    old: object = getattr(self, p_name, None)
+                    if (
+                        isinstance(old, StBridgeElement)
+                        and old is not value
+                        and old._parent is self
+                    ):
+                        old._attach_to_parent(None)
                     if isinstance(value, StBridgeElement):
                         value._attach_to_parent(self)
-                    else:
-                        raise TypeError(f"{key_}にはStBridgeElementを設定してください")
                     setattr(self, p_name, value)
 
                 def setter_children(self: StBridgeElement, value: Any) -> None:

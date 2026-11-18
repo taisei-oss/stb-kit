@@ -33,9 +33,10 @@ class FieldValidator(BaseValidator):
     """field_infoによるチェック"""
 
     def validate(self, ctx: ValidationContext) -> bool:
-        return self.validate_element(obj=ctx.obj(), reporter=ctx.reporter)
+        return FieldValidator.validate_element(obj=ctx.obj(), reporter=ctx.reporter)
 
-    def validate_element(self, obj: StBridgeElement, reporter: Reporter) -> bool:
+    @staticmethod
+    def validate_element(obj: StBridgeElement, reporter: Reporter) -> bool:
         is_valid = True
         for field_name, field_info in obj._fields.items():
             p_field_name = private_field_name(field_name)
@@ -90,7 +91,7 @@ class FieldValidator(BaseValidator):
                             )
                             is_valid = False
                         if isinstance(value, StBridgeElement):
-                            is_valid &= self.validate_element(value, reporter)
+                            is_valid &= FieldValidator.validate_element(value, reporter)
                     else:
                         if not isinstance(value, list):
                             raise AssertionError(
@@ -127,7 +128,9 @@ class FieldValidator(BaseValidator):
                                 is_valid = False
                             for item in value:
                                 if isinstance(item, StBridgeElement):
-                                    is_valid &= self.validate_element(item, reporter)
+                                    is_valid &= FieldValidator.validate_element(
+                                        item, reporter
+                                    )
                                 else:
                                     raise TypeError(
                                         f"{obj.__class__.__name__}の[{field_name}]の要素がStBridgeElementではありません"

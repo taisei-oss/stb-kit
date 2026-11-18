@@ -19,6 +19,7 @@ from stbkit.core.stb_reporting import Code, Phase, Reporter, get_reporter
 from ..constants import REPAIR_DEFAULT_LENGTH_MM
 from . import _stb_v2_0_2_repair, _stb_v2_1_0_repair, _stb_v2_1_1_repair
 from ._common import Defaults, ElementRepairHook, RepairContext
+from ._repair_bar_arrangement import _repair_stb_sec_beam_rc
 from ._repair_node import _repair_node
 
 
@@ -171,7 +172,7 @@ def _repair_occurs(element: StBridgeElement, *, context: RepairContext) -> None:
                     _repair_occurs(item, context=context)
 
 
-_ELEMENT_HOOKS: tuple[ElementRepairHook, ...] = (_repair_node,)
+_ELEMENT_HOOKS: tuple[ElementRepairHook, ...] = (_repair_node, _repair_stb_sec_beam_rc)
 
 
 def repair_stb(

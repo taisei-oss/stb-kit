@@ -9,6 +9,8 @@ description: SRC柱
 
 input:
   format: stb_v2_0_2
+  compare-options:
+    ignore-application-information: true
 
 tree:
   to: stb_v2_1_0

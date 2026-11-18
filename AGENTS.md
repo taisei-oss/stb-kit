@@ -68,6 +68,26 @@ path: python/stbkit-testutils
 - 最低限の依存を用いてよい。
 - PyPIには公開せず、開発環境での利用を想定。
 
+### Rust
+
+Rustクレートは現状ではcrates.ioには公開せず、stbkit-nativeの内部処理として用意している。
+将来的には公開も検討するが、その前に公開APIの検討が必要。
+
+#### stbkit-rs
+path: rust/stbkit-rs
+
+- stbkitで利用するための3D描画やGUIを実装する。
+- 依存は最低限とする。
+
+### PythonのRust拡張パッケージ
+
+#### stbkit-native
+path: rust/stbkit-native
+
+- PythonからRustを呼び出すためのパッケージ。
+- Rustではpyo3の処理を中心に記載する。
+- PythonはRustを実行するためのスタブとし、Pythonの呼び出し関数等はpython/stbkitのnativeモジュールで実装する
+
 ## 開発ガイド
 
 ### ドキュメント

@@ -28,6 +28,7 @@ from ....._internal.data_model.shape_data import (
     ShapePipe,
     ShapeRectangle,
     ShapeUnknown,
+    pos_label,
 )
 from . import sec_steel
 
@@ -120,7 +121,7 @@ def stb_sec_column_cft_to_shapes(
                         ),
                         reporter,
                     )
-                ),
+                ).with_label(pos_label("pos", not_same_bottom.pos_or_none)),
                 ShapePair(
                     _filled_concrete_shape(
                         sec_steel.stb_sec_steel_name_to_shape(
@@ -128,19 +129,19 @@ def stb_sec_column_cft_to_shapes(
                         ),
                         reporter,
                     ),
-                ),
+                ).with_label(pos_label("pos", not_same_top.pos_or_none)),
             ],
             [
                 ShapePair(
                     sec_steel.stb_sec_steel_name_to_shape(
                         repo, not_same_bottom.shape, reporter
                     )
-                ),
+                ).with_label(pos_label("pos", not_same_bottom.pos_or_none)),
                 ShapePair(
                     sec_steel.stb_sec_steel_name_to_shape(
                         repo, not_same_top.shape, reporter
                     ),
-                ),
+                ).with_label(pos_label("pos", not_same_top.pos_or_none)),
             ],
         )
     elif three_types:
@@ -177,7 +178,7 @@ def stb_sec_column_cft_to_shapes(
                         ),
                         reporter,
                     )
-                ),
+                ).with_label(pos_label("pos", three_types_bottom.pos_or_none)),
                 ShapePair(
                     _filled_concrete_shape(
                         sec_steel.stb_sec_steel_name_to_shape(
@@ -185,7 +186,7 @@ def stb_sec_column_cft_to_shapes(
                         ),
                         reporter,
                     )
-                ),
+                ).with_label(pos_label("pos", three_types_center.pos_or_none)),
                 ShapePair(
                     _filled_concrete_shape(
                         sec_steel.stb_sec_steel_name_to_shape(
@@ -193,24 +194,24 @@ def stb_sec_column_cft_to_shapes(
                         ),
                         reporter,
                     )
-                ),
+                ).with_label(pos_label("pos", three_types_top.pos_or_none)),
             ],
             [
                 ShapePair(
                     sec_steel.stb_sec_steel_name_to_shape(
                         repo, three_types_bottom.shape, reporter
                     )
-                ),
+                ).with_label(pos_label("pos", three_types_bottom.pos_or_none)),
                 ShapePair(
                     sec_steel.stb_sec_steel_name_to_shape(
                         repo, three_types_center.shape, reporter
                     ),
-                ),
+                ).with_label(pos_label("pos", three_types_center.pos_or_none)),
                 ShapePair(
                     sec_steel.stb_sec_steel_name_to_shape(
                         repo, three_types_top.shape, reporter
                     ),
-                ),
+                ).with_label(pos_label("pos", three_types_top.pos_or_none)),
             ],
         )
 

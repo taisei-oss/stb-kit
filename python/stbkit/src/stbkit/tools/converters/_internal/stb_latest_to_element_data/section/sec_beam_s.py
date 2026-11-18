@@ -21,6 +21,7 @@ from stbkit.api.stb_latest import (
 from ....._internal.data_model.shape_data import (
     Shape,
     ShapePair,
+    pos_label,
 )
 from ....._internal.vectors import Vector2d
 from . import sec_steel
@@ -63,7 +64,11 @@ def stb_sec_beam_s_to_shapes(
                     shape.offset = offset
                 if not shape:
                     return []
-                result.append(ShapePair(shape))
+                result.append(
+                    ShapePair(shape).with_label(
+                        pos_label("order", s_s_b_s_shape.order_or_none)
+                    )
+                )
             elif taper:
                 shape_start: Shape = sec_steel.stb_sec_steel_name_to_shape(
                     repo, taper.start_shape, reporter
@@ -93,7 +98,7 @@ def stb_sec_beam_s_to_shapes(
                     ShapePair(
                         shape_start,
                         shape_end,
-                    )
+                    ).with_label(pos_label("order", s_s_b_s_shape.order_or_none))
                 )
         return result
     except (StbError, RuntimeError, AssertionError, TypeError, ValueError) as e:

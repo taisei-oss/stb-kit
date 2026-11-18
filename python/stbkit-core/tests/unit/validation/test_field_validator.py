@@ -13,8 +13,7 @@ def test_field_required_invalid() -> None:
     node: StbNode = StbNode()
 
     reporter: CollectingReporter = CollectingReporter()
-    validator: FieldValidator = FieldValidator()
-    assert not validator.validate_element(node, reporter)
+    assert not FieldValidator.validate_element(node, reporter)
     assert len(reporter.report) == 5
     assert not reporter.is_valid()
 
@@ -23,8 +22,7 @@ def test_field_required_valid() -> None:
     node: StbNode = StbNode(id=1, x=0.0, y=0.0, z=0.0, kind="ON_GRID")
 
     reporter: CollectingReporter = CollectingReporter()
-    validator: FieldValidator = FieldValidator()
-    assert validator.validate_element(node, reporter)
+    assert FieldValidator.validate_element(node, reporter)
     assert len(reporter.report) == 0
     assert reporter.is_valid()
 
@@ -33,8 +31,7 @@ def test_field_choice_invalid() -> None:
     node: StbNode = StbNode(id=1, x=0.0, y=0.0, z=0.0, kind="INVALID_KIND")
 
     reporter: CollectingReporter = CollectingReporter()
-    validator: FieldValidator = FieldValidator()
-    assert not validator.validate_element(node, reporter)
+    assert not FieldValidator.validate_element(node, reporter)
     assert len(reporter.report) == 1
     assert not reporter.is_valid()
 
@@ -43,8 +40,7 @@ def test_content_invalid() -> None:
     order: StbNodeIdOrder = StbNodeIdOrder()
 
     reporter: CollectingReporter = CollectingReporter()
-    validator: FieldValidator = FieldValidator()
-    assert not validator.validate_element(order, reporter)
+    assert not FieldValidator.validate_element(order, reporter)
     assert len(reporter.report) == 1
 
 
@@ -53,6 +49,5 @@ def test_content_valid() -> None:
     order.content = [1, 2, 3]
 
     reporter: CollectingReporter = CollectingReporter()
-    validator: FieldValidator = FieldValidator()
-    assert validator.validate_element(order, reporter)
+    assert FieldValidator.validate_element(order, reporter)
     assert len(reporter.report) == 0

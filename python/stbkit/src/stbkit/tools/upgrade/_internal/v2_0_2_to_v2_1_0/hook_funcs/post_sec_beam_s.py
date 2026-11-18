@@ -9,7 +9,7 @@ import copy
 import uuid
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Literal, Protocol
 from uuid import UUID
 
 from stbkit.core.data_model import stb_v2_0_2, stb_v2_1_0
@@ -52,6 +52,7 @@ class HasId(Protocol):
 class SteelBeamKind[TShape: StBridgeElement, TSection: HasId]:
     """SとSRCで分ける処理"""
 
+    kind_structure: Literal["S", "SRC"]
     straight_shape: Callable[[int, stb_v2_1_0.StbSecSteelBeamStraight], TShape]
     taper_shape: Callable[[int, stb_v2_1_0.StbSecSteelBeamTaper], TShape]
     set_figure: Callable[[TSection, list[TShape]], None]
@@ -67,6 +68,7 @@ def _set_figure_s(
 
 BEAM_KIND_S: SteelBeamKind[stb_v2_1_0.StbSecSteelBeamSShape, stb_v2_1_0.StbSecBeamS] = (
     SteelBeamKind(
+        kind_structure="S",
         straight_shape=lambda order, straight: stb_v2_1_0.StbSecSteelBeamSShape(
             order=order, stb_sec_steel_beam_straight=straight
         ),
@@ -90,6 +92,7 @@ def _set_figure_src(
 BEAM_KIND_SRC: SteelBeamKind[
     stb_v2_1_0.StbSecSteelBeamSrcShape, stb_v2_1_0.StbSecBeamSrc
 ] = SteelBeamKind(
+    kind_structure="SRC",
     straight_shape=lambda order, straight: stb_v2_1_0.StbSecSteelBeamSrcShape(
         order=order, stb_sec_steel_beam_straight=straight
     ),
@@ -238,14 +241,17 @@ def stb_sec_steel_figure_beam_s_to_v210[TShape: StBridgeElement, TSection: HasId
 def stb_sec_steel_figure_beam_s_haunch_to_v210[
     TShape: StBridgeElement,
     TSection: HasId,
+    TSectionFrom: HasId,
 ](
     figure: SteelFigure | None,
+    source_section: TSectionFrom,
     id_section: int,
     v202_girders: list[stb_v2_0_2.StbGirder],
     v202_beams: list[stb_v2_0_2.StbBeam],
     v210_girders: list[stb_v2_1_0.StbGirder],
     v210_beams: list[stb_v2_1_0.StbBeam],
     v210_sec_beam_s_list: list[TSection],
+    section_mapping: dict[tuple[str, int], list[TSection]],
     ng_section_id: set[int],
     *,
     kind: SteelBeamKind[TShape, TSection],
@@ -260,7 +266,10 @@ def stb_sec_steel_figure_beam_s_haunch_to_v210[
         for v202_beam, v210_beam in zip(
             v202_girders_and_beams, v210_girders_and_beams, strict=False
         ):
-            if v202_beam.id_section != id_section:
+            if (
+                v202_beam.kind_structure != kind.kind_structure
+                or v202_beam.id_section != id_section
+            ):
                 continue
             if isinstance(v210_beam, stb_v2_1_0.StbGirder):
                 v210_beam.stb_girder_steel_switch.clear()
@@ -325,7 +334,10 @@ def stb_sec_steel_figure_beam_s_haunch_to_v210[
     for v202_beam, v210_beam in zip(
         v202_girders_and_beams, v210_girders_and_beams, strict=False
     ):
-        if v202_beam.id_section != id_section:
+        if (
+            v202_beam.kind_structure != kind.kind_structure
+            or v202_beam.id_section != id_section
+        ):
             continue
         key = (
             v202_beam.kind_haunch_start_or_none or "SLOPE",
@@ -406,6 +418,9 @@ def stb_sec_steel_figure_beam_s_haunch_to_v210[
             v210_sec_beam_s.guid = uuid.uuid4()
             kind.set_figure(v210_sec_beam_s, v210_shapes)
             v210_sec_beam_s_list.append(v210_sec_beam_s)
+            section_mapping.setdefault(
+                (type(source_section).__name__, source_section.id), []
+            ).append(v210_sec_beam_s)
             for v210_target_beam in v210_target_beams:
                 v210_target_beam.id_section = new_id_section
         elif v210_sec_beam_s is not None:
@@ -484,14 +499,17 @@ def get_haunch_edge_shape(
 def stb_sec_steel_figure_beam_s_five_types_to_v210[
     TShape: StBridgeElement,
     TSection: HasId,
+    TSectionFrom: HasId,
 ](
     figure: SteelFigure | None,
+    source_section: TSectionFrom,
     id_section: int,
     v202_girders: list[stb_v2_0_2.StbGirder],
     v202_beams: list[stb_v2_0_2.StbBeam],
     v210_girders: list[stb_v2_1_0.StbGirder],
     v210_beams: list[stb_v2_1_0.StbBeam],
     v210_sec_beam_s_list: list[TSection],
+    section_mapping: dict[tuple[str, int], list[TSection]],
     v210_sec_steel: stb_v2_1_0.StbSecSteel,
     repo_sec_steel: RepositoryV2_1_0,
     ng_section_id: set[int],
@@ -515,7 +533,10 @@ def stb_sec_steel_figure_beam_s_five_types_to_v210[
         for v202_beam, v210_beam in zip(
             v202_girders_and_beams, v210_girders_and_beams, strict=False
         ):
-            if v202_beam.id_section != id_section:
+            if (
+                v202_beam.kind_structure != kind.kind_structure
+                or v202_beam.id_section != id_section
+            ):
                 continue
             if isinstance(v210_beam, stb_v2_1_0.StbGirder):
                 v210_beam.stb_girder_steel_switch.clear()
@@ -581,7 +602,10 @@ def stb_sec_steel_figure_beam_s_five_types_to_v210[
     for v202_beam, v210_beam in zip(
         v202_girders_and_beams, v210_girders_and_beams, strict=False
     ):
-        if v202_beam.id_section != id_section:
+        if (
+            v202_beam.kind_structure != kind.kind_structure
+            or v202_beam.id_section != id_section
+        ):
             continue
         is_joint_inside_haunch_start: bool | None = None
         if (
@@ -942,6 +966,9 @@ def stb_sec_steel_figure_beam_s_five_types_to_v210[
                 v210_sec_beam_s.guid = uuid.uuid4()
                 kind.set_figure(v210_sec_beam_s, v210_shapes)
                 v210_sec_beam_s_list.append(v210_sec_beam_s)
+                section_mapping.setdefault(
+                    (type(source_section).__name__, source_section.id), []
+                ).append(v210_sec_beam_s)
                 for v210_target_beam in v210_target_beams:
                     v210_target_beam.id_section = new_id_section
             elif v210_sec_beam_s is not None:
@@ -973,13 +1000,13 @@ def _post_sec_beam_steel[
     ng_section_id: set[int],
     post: Callable[[stb_v2_1_0.StBridge], None] | None = None,
     reporter: Reporter,
-) -> None:
+) -> dict[tuple[str, int], list[TSection]]:
     try:
         v210_sec_steel: stb_v2_1_0.StbSecSteel = (
             v210.stb_model.stb_sections.stb_sec_steel
         )
     except NoneAccessError:
-        return
+        return {}
     v202_s_b_s_list: list[TSectionFrom] | None = None
     v210_s_b_s_list: list[TSection] | None = None
     try:
@@ -1008,9 +1035,11 @@ def _post_sec_beam_steel[
         v202_beams = []
         v210_beams = []
     repo_sec_steel: RepositoryV2_1_0 = RepositoryV2_1_0(v210_sec_steel)
+    section_mapping: dict[tuple[str, int], list[TSection]] = {}
     if v202_s_b_s_list and v210_s_b_s_list:
         for i, v202_s_b_s in enumerate(v202_s_b_s_list):
             v210_s_b_s = v210_s_b_s_list[i]
+            section_mapping[(type(v202_s_b_s).__name__, v202_s_b_s.id)] = [v210_s_b_s]
             figure = to_figure(v202_s_b_s)
             stb_sec_steel_figure_beam_s_to_v210(
                 figure,
@@ -1021,24 +1050,28 @@ def _post_sec_beam_steel[
             )
             stb_sec_steel_figure_beam_s_haunch_to_v210(
                 figure,
-                v210_s_b_s.id,
+                source_section=v202_s_b_s,
+                id_section=v210_s_b_s.id,
                 v202_girders=v202_girders,
                 v202_beams=v202_beams,
                 v210_girders=v210_girders,
                 v210_beams=v210_beams,
                 v210_sec_beam_s_list=v210_s_b_s_list,
+                section_mapping=section_mapping,
                 ng_section_id=ng_section_id,
                 kind=kind,
                 reporter=reporter,
             )
             stb_sec_steel_figure_beam_s_five_types_to_v210(
                 figure,
-                v210_s_b_s.id,
+                source_section=v202_s_b_s,
+                id_section=v210_s_b_s.id,
                 v202_girders=v202_girders,
                 v202_beams=v202_beams,
                 v210_girders=v210_girders,
                 v210_beams=v210_beams,
                 v210_sec_beam_s_list=v210_s_b_s_list,
+                section_mapping=section_mapping,
                 v210_sec_steel=v210_sec_steel,
                 repo_sec_steel=repo_sec_steel,
                 kind=kind,
@@ -1047,6 +1080,8 @@ def _post_sec_beam_steel[
             )
         if post is not None:
             post(v210)
+
+    return section_mapping
 
 
 def post_sec_beam_s(
@@ -1083,76 +1118,87 @@ def post_sec_beam_s(
         ]
 
 
-def _set_src_s_vertical_offset(
-    v210: stb_v2_1_0.StBridge, *, reporter: Reporter
+def _post_src_section_mapping(
+    v202: stb_v2_0_2.StBridge,
+    v210: stb_v2_1_0.StBridge,
+    section_mapping: dict[tuple[str, int], list[stb_v2_1_0.StbSecBeamSrc]],
 ) -> None:
-    """SRC梁の鉄骨位置を下げる。
-
-    TODO:
-        鉄骨の位置を一律-150にしているので、見直しが必要
-    """
-    for v210_sec_beam in v210.stb_model.stb_sections.stb_sec_beam_src:
-        figure_beam = v210_sec_beam.stb_sec_steel_figure_beam_src_or_none
-        if figure_beam is None:
+    try:
+        stb_sec_bem_src = v202.stb_model.stb_sections.stb_sec_beam_src
+    except NoneAccessError:
+        return
+    for v202_sec_beam_src in stb_sec_bem_src:
+        if v202_sec_beam_src.id_or_none is None:
             continue
-        for shape in figure_beam.stb_sec_steel_beam_src_shape:
-            if shape.stb_sec_steel_beam_straight_or_none is not None:
-                shape.stb_sec_steel_beam_straight.vertical_offset = -150.0
-                reporter.warning(
-                    message="SRC梁の上下方向オフセットは仮定として-150.0を設定しました",
-                    code=Code.NOT_IMPLEMENTED,
-                    phase=Phase.UPGRADE,
-                    stb_element=shape.stb_sec_steel_beam_straight,
-                    attr_name="vertical_offset",
-                )
-            if shape.stb_sec_steel_beam_taper_or_none is not None:
-                shape.stb_sec_steel_beam_taper.start_vertical_offset = -150.0
-                shape.stb_sec_steel_beam_taper.end_vertical_offset = -150.0
-                reporter.warning(
-                    message="SRC梁の上下方向オフセットは仮定として-150.0を設定しました",
-                    code=Code.NOT_IMPLEMENTED,
-                    phase=Phase.UPGRADE,
-                    stb_element=shape.stb_sec_steel_beam_taper,
-                    attr_name="start_vertical_offset",
-                )
-                reporter.warning(
-                    message="SRC梁の上下方向オフセットは仮定として-150.0を設定しました",
-                    code=Code.NOT_IMPLEMENTED,
-                    phase=Phase.UPGRADE,
-                    stb_element=shape.stb_sec_steel_beam_taper,
-                    attr_name="end_vertical_offset",
-                )
+        v210_sections = section_mapping.get(
+            (type(v202_sec_beam_src).__name__, v202_sec_beam_src.id), []
+        )
+        steel_figure = v202_sec_beam_src.stb_sec_steel_figure_beam_src_or_none
+        if steel_figure is None:
+            continue
+        offset: float | None = steel_figure.offset_or_none
+        level: float | None = steel_figure.level_or_none
+        for v210_section in v210_sections:
+            v210_figure = v210_section.stb_sec_steel_figure_beam_src_or_none
+            if v210_figure is None:
+                continue
+            for v210_shape in v210_figure.stb_sec_steel_beam_src_shape:
+                straight = v210_shape.stb_sec_steel_beam_straight_or_none
+                if straight is not None:
+                    if offset:
+                        straight.horizontal_offset = offset
+                    if level:
+                        straight.vertical_offset = level
+                taper = v210_shape.stb_sec_steel_beam_taper_or_none
+                if taper:
+                    if offset:
+                        taper.start_horizontal_offset = offset
+                        taper.end_horizontal_offset = offset
+                    if level:
+                        taper.start_vertical_offset = level
+                        taper.end_vertical_offset = level
 
 
 def post_sec_beam_src_s(
     v202: stb_v2_0_2.StBridge, v210: stb_v2_1_0.StBridge, *, reporter: Reporter
 ) -> None:
     ng_section_id: set[int] = set()
-    _post_sec_beam_steel(
-        v202,
-        v210,
-        kind=BEAM_KIND_SRC,
-        ng_section_id=ng_section_id,
-        sections_from=lambda sections: sections.stb_sec_beam_src,
-        sections_to=lambda sections: sections.stb_sec_beam_src,
-        to_figure=lambda section: (
-            SteelFigure(
-                original_element=section.stb_sec_steel_figure_beam_src,
-                straight=section.stb_sec_steel_figure_beam_src.stb_sec_steel_beam_src_straight_or_none,
-                tapers=section.stb_sec_steel_figure_beam_src.stb_sec_steel_beam_src_taper,
-                joints=section.stb_sec_steel_figure_beam_src.stb_sec_steel_beam_src_joint,
-                haunches=section.stb_sec_steel_figure_beam_src.stb_sec_steel_beam_src_haunch,
-                five_types=section.stb_sec_steel_figure_beam_src.stb_sec_steel_beam_src_five_types,
-            )
-            if section.stb_sec_steel_figure_beam_src_or_none is not None
-            else None
-        ),
-        post=lambda stb: _set_src_s_vertical_offset(stb, reporter=reporter),
-        reporter=reporter,
+    section_mapping: dict[tuple[str, int], list[stb_v2_1_0.StbSecBeamSrc]] = (
+        _post_sec_beam_steel(
+            v202,
+            v210,
+            kind=BEAM_KIND_SRC,
+            ng_section_id=ng_section_id,
+            sections_from=lambda sections: sections.stb_sec_beam_src,
+            sections_to=lambda sections: sections.stb_sec_beam_src,
+            to_figure=lambda section: (
+                SteelFigure(
+                    original_element=section.stb_sec_steel_figure_beam_src,
+                    straight=section.stb_sec_steel_figure_beam_src.stb_sec_steel_beam_src_straight_or_none,
+                    tapers=section.stb_sec_steel_figure_beam_src.stb_sec_steel_beam_src_taper,
+                    joints=section.stb_sec_steel_figure_beam_src.stb_sec_steel_beam_src_joint,
+                    haunches=section.stb_sec_steel_figure_beam_src.stb_sec_steel_beam_src_haunch,
+                    five_types=section.stb_sec_steel_figure_beam_src.stb_sec_steel_beam_src_five_types,
+                )
+                if section.stb_sec_steel_figure_beam_src_or_none is not None
+                else None
+            ),
+            reporter=reporter,
+        )
     )
     if ng_section_id:
-        v210.stb_model.stb_sections.stb_sec_beam_src = [
+        existing_sections: list[stb_v2_1_0.StbSecBeamSrc] = [
             stb_sec_beam_src
             for stb_sec_beam_src in v210.stb_model.stb_sections.stb_sec_beam_src
             if stb_sec_beam_src.id_or_none not in ng_section_id
         ]
+        v210.stb_model.stb_sections.stb_sec_beam_src = existing_sections
+        section_mapping = {
+            source_key: [
+                target_section
+                for target_section in target_sections
+                if any(target_section is section for section in existing_sections)
+            ]
+            for source_key, target_sections in section_mapping.items()
+        }
+    _post_src_section_mapping(v202, v210, section_mapping)

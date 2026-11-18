@@ -34,9 +34,9 @@ const VIEWER_BACKGROUND_COLOR: [f32; 4] = [1.0, 1.0, 1.0, 1.0];
 const NODE_PICK_TOLERANCE_PX: f32 = 12.0;
 
 /// ソリッド表示用のデータ
-struct RenderBatch {
+pub(crate) struct RenderBatch {
     /// 通常表示用の描画オブジェクト
-    visual_gm: Gm<Mesh, PhysicalMaterial>,
+    pub(crate) visual_gm: Gm<Mesh, PhysicalMaterial>,
     /// 描画オプションで切り替えたときに入れ替えるマテリアル。
     alternate_material: Option<PhysicalMaterial>,
     /// ピッキング用の描画オブジェクト。
@@ -702,19 +702,7 @@ impl ModelViewer {
 
                 match display_mode {
                     DisplayMode::Solid => {
-                        let dir_light = DirectionalLight::new(
-                            &state.ctx,
-                            1.0,
-                            Srgba::WHITE,
-                            vec3(3.0, 4.0, -5.0),
-                        );
-                        // 光が当たらない側が黒くなってしまうので、反対側からも光を当てる
-                        let dir_light2 = DirectionalLight::new(
-                            &state.ctx,
-                            0.5,
-                            Srgba::WHITE,
-                            vec3(-3.0, -4.0, 5.0),
-                        );
+                        let (dir_light, dir_light2) = lights(&state.ctx);
                         let lights: [&dyn Light; 2] = [&dir_light, &dir_light2];
 
                         target.render(
@@ -899,7 +887,14 @@ fn nearest_node(
     nearest.map(|(node_index, _)| node_index)
 }
 
-fn create_render_batch(
+pub(crate) fn lights(ctx: &three_d::Context) -> (DirectionalLight, DirectionalLight) {
+    let dir_light = DirectionalLight::new(ctx, 1.0, Srgba::WHITE, vec3(3.0, 4.0, -5.0));
+    // 光が当たらない側が黒くなってしまうので、反対側からも光を当てる
+    let dir_light2 = DirectionalLight::new(ctx, 0.5, Srgba::WHITE, vec3(-3.0, -4.0, 5.0));
+    (dir_light, dir_light2)
+}
+
+pub(crate) fn create_render_batch(
     ctx: &three_d::Context,
     batch: CpuRenderBatch,
 ) -> Result<RenderBatch, String> {

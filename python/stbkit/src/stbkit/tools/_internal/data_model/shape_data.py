@@ -4,6 +4,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+from __future__ import annotations
+
 import math
 from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass, field
@@ -182,10 +184,22 @@ class Shape(metaclass=SlotsMergeMeta):
         return (self._y_min + self._y_max) / 2.0
 
 
+def pos_label(name: str, value: object, suffix: str | None = None) -> str | None:
+    if value is None:
+        return None
+    label = f"{name}={value}"
+    return f"{label} {suffix}" if suffix else label
+
+
 @dataclass(repr=False, eq=False, order=False)
 class ShapePair:
     start: Shape
     end: Shape | None = None
+    label: str | None = None
+    """どの位置の断面かを示すラベル。("order=1", "pos=TOP"など)。"""
+
+    def with_label(self, label: str | None) -> ShapePair:
+        return ShapePair(self.start, self.end, label)
 
 
 @dataclass(eq=False, order=False, kw_only=True)

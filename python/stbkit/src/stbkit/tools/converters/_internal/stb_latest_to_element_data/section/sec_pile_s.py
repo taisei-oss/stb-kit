@@ -18,6 +18,7 @@ from ....._internal.data_model.shape_data import (
     SHAPE_PAIRS_UNKNOWN,
     ShapePair,
     ShapePipe,
+    pos_label,
 )
 from ... import name_converter
 
@@ -50,7 +51,7 @@ def stb_sec_pile_s_to_shapes_and_length(
                                 d=straight.d_or_none or 0.0,
                                 t=straight.t_or_none or 0.0,
                             )
-                        )
+                        ).with_label(pos_label("id_order", pile.id_order_or_none))
                     )
                     lengths.append(straight.length_pile_or_none or 0.0)
                 case StbSecPileSRotational() as rotational:
@@ -61,7 +62,7 @@ def stb_sec_pile_s_to_shapes_and_length(
                                 d=rotational.d2_or_none or 0.0,
                                 t=(rotational.d2_or_none or 0.0) / 2.0,
                             )
-                        )
+                        ).with_label(pos_label("id_order", pile.id_order_or_none, "d2"))
                     )
                     lengths.append(rotational.t_or_none or 0.0)
                     shapes.append(
@@ -71,7 +72,7 @@ def stb_sec_pile_s_to_shapes_and_length(
                                 d=rotational.d1_or_none or 0.0,
                                 t=rotational.t_or_none or 0.0,
                             )
-                        )
+                        ).with_label(pos_label("id_order", pile.id_order_or_none, "d1"))
                     )
                     lengths.append(
                         (rotational.length_pile_or_none or 0.0)
@@ -90,7 +91,7 @@ def stb_sec_pile_s_to_shapes_and_length(
                                 d=taper.d1_or_none or 0.0,
                                 t=taper.t_or_none or 0.0,
                             ),
-                        )
+                        ).with_label(pos_label("id_order", pile.id_order_or_none))
                     )
                     lengths.append(taper.length_pile_or_none or 0.0)
                 case _:

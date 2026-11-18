@@ -60,15 +60,21 @@ def stb_sec_pile_rc_to_shapes(
                 extend_foot.angle_extended_foot_taper_or_none or 0.0
             )
             if length_extend_foot > 0.0:
-                result.append(ShapePair(ShapeCircle(name=name, d=d_foot)))
+                result.append(
+                    ShapePair(ShapeCircle(name=name, d=d_foot)).with_label(
+                        "extended_foot"
+                    )
+                )
             if 0.0 < angle_extend_foot_taper < 90.0 and length_extend_foot > 0.0:
                 result.append(
                     ShapePair(
                         ShapeCircle(name=name, d=d_foot),
                         ShapeCircle(name=name, d=d_axial),
-                    )
+                    ).with_label("extended_foot_taper")
                 )
-            result.append(ShapePair(ShapeCircle(name=name, d=d_axial)))
+            result.append(
+                ShapePair(ShapeCircle(name=name, d=d_axial)).with_label("axial")
+            )
         extend_top: (
             StbSecPileRcConventionalExtendedTop
             | StbSecPileRcConventionalExtendedTopFoot
@@ -85,15 +91,19 @@ def stb_sec_pile_rc_to_shapes(
                 extend_top.angle_extended_top_taper_or_none or 0.0
             )
             if not isinstance(extend_top, StbSecPileRcConventionalExtendedTopFoot):
-                result.append(ShapePair(ShapeCircle(name=name, d=d_axial)))
+                result.append(
+                    ShapePair(ShapeCircle(name=name, d=d_axial)).with_label("axial")
+                )
             if 0.0 < angle_extend_top_taper < 90.0:
                 result.append(
                     ShapePair(
                         ShapeCircle(name=name, d=d_axial),
                         ShapeCircle(name=name, d=d_top),
-                    )
+                    ).with_label("extended_top_taper")
                 )
-            result.append(ShapePair(ShapeCircle(name=name, d=d_top)))
+            result.append(
+                ShapePair(ShapeCircle(name=name, d=d_top)).with_label("extended_top")
+            )
         return result
         # 拡底、拡頭系の処理ここまで
 
