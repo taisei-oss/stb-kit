@@ -1,0 +1,51 @@
+# Copyright 2026 TAISEI CORPORATION
+# SPDX-License-Identifier: MPL-2.0
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+# ifcopenshellの各バージョンでエラーが出ないか確認する。
+# 下限と最新版で動けば、その間のバージョンでも動くとみなす。
+# goldenの出力はバージョンによって異なるため、出力の厳密比較は行わず、
+# 変換でエラーが生じないことと、出力IFCがスキーマに適合することを確認する。
+
+name: ci-ifcopenshell
+
+on:
+  push:
+    branches:
+      - main
+      - stg
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  conversion:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ifcopenshell:
+          - "ifcopenshell==0.8.5"
+          - "ifcopenshell>=0.8.5"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-uv
+      - run: uv sync --locked
+      - name: Install ifcopenshell
+        run: |
+          uv pip install --upgrade '${{ matrix.ifcopenshell }}'
+          uv run --no-sync python -c "import ifcopenshell; print('ifcopenshell:', ifcopenshell.version)"
+      - name: Convert and validate IFC
+        run: |
+          output_dir="$(mktemp -d)"
+          uv run --no-sync stbkit convert tests/fixtures/cases/frame_1x1x1_rc/frame_1x1x1_rc.stb_v2_0_2.stb -o "$output_dir/frame.ifc"
+          uv run --no-sync stbkit convert tests/fixtures/cases/girder_src/girder_src.stb_v2_1_0.stb -o "$output_dir/girder.ifc"
+          uv run --no-sync stbkit convert tests/fixtures/cases/open_wall/open_wall.stb_v2_1_1.stb -o "$output_dir/wall.ifc"
+          uv run --no-sync stbkit convert tests/fixtures/cases/column_cft/column_cft.stb_v2_0_2.stb -o "$output_dir/column.ifc"
+          uv run --no-sync stbkit convert tests/fixtures/cases/slab/slab.stb_v2_0_2.stb -o "$output_dir/slab.ifc"
+          uv run --no-sync python -m ifcopenshell.validate "$output_dir"/*.ifc

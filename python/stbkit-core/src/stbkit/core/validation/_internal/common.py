@@ -6,8 +6,50 @@
 
 from abc import ABC, abstractmethod
 
-from ...data_model.common import StBridgeRoot
-from ...stb_reporting import NullReporter, Reporter
+from ...data_model.common import StBridgeElement, StBridgeRoot
+from ...stb_reporting import Code, NullReporter, Phase, Reporter, Severity
+
+
+class _ValidationLoadReporter(Reporter):
+    def __init__(self, reporter: Reporter) -> None:
+        self._reporter = reporter
+
+    def _emit(
+        self,
+        severity: Severity,
+        message: str,
+        *,
+        code: Code | None = None,
+        phase: Phase | None = None,
+        element_guid: str | None = None,
+        xpath: str | None = None,
+        value: str | None = None,
+        stb_element: StBridgeElement | None = None,
+        attr_name: str | None = None,
+        ref_element_guid: str | None = None,
+        ref_xpath: str | None = None,
+        ref_value: str | None = None,
+        ref_stb_element: StBridgeElement | None = None,
+        ref_attr_name: str | None = None,
+    ) -> None:
+        if code is Code.REPAIR_LOG:
+            return
+        self._reporter._emit(
+            severity,
+            message,
+            code=code,
+            phase=phase,
+            element_guid=element_guid,
+            xpath=xpath,
+            value=value,
+            stb_element=stb_element,
+            attr_name=attr_name,
+            ref_element_guid=ref_element_guid,
+            ref_xpath=ref_xpath,
+            ref_value=ref_value,
+            ref_stb_element=ref_stb_element,
+            ref_attr_name=ref_attr_name,
+        )
 
 
 class ValidationContext:
@@ -17,7 +59,8 @@ class ValidationContext:
         reporter: Reporter,
         stb: StBridgeRoot | None = None,
         xml: str | None = None,
-        report_load: bool = True,
+        use_xsd: bool = False,
+        _report_invalid_values: bool = False,
     ) -> None:
         """バリデーションを行うコンテキスト。
 
@@ -25,9 +68,8 @@ class ValidationContext:
             reporter: 出力するReporter
             stb: 検証するST-Bridgeのデータモデル
             xml: 検証するST-BridgeのXML文字列
-            report_load: XML文字列からモデルをloadするときに、
-                エラーをreporterへ記録するかどうか。
-                読み込み時の退避報告と同じエラーをvalidatorが別の根拠で報告する場合に、Falseを指定して二重記録を防ぐ。
+            use_xsd: XSDによる検証を行うかどうか。
+                Trueにすると、XSDチェックと重複するSTB-KITによる報告を除外する。
         """
         if stb is None and xml is None:
             raise ValueError("stbまたはxmlのいずれかを指定する必要があります")
@@ -39,8 +81,14 @@ class ValidationContext:
             check_no_doctype(xml)
         self._stb: StBridgeRoot | None = stb
         self._xml: str | None = xml
-        self._report_load: bool = report_load
+        self._report_load: bool = not use_xsd
+        self._use_xsd: bool = use_xsd
         self.reporter: Reporter = reporter
+        # 退避済みの不整値を報告するかどうか。
+        # 読み込み時やスキーマチェック時は
+        # 元ファイルの不整値を報告する必要があるため、Trueにする
+        # 編集後や出力時のチェックでは、すでに不整値が退避されているためFalseにする。
+        self._report_invalid_values: bool = _report_invalid_values
 
     def obj(self) -> StBridgeRoot:
         from ...stb_io._internal.xml_io import _raw_loads
@@ -49,7 +97,11 @@ class ValidationContext:
             assert self._xml is not None, "StBridgeまたはXMLのいずれかが必要です"
             self._stb = _raw_loads(
                 self._xml,
-                reporter=self.reporter if self._report_load else NullReporter(),
+                reporter=(
+                    _ValidationLoadReporter(self.reporter)
+                    if self._report_load
+                    else NullReporter()
+                ),
             )
         return self._stb
 
@@ -58,7 +110,7 @@ class ValidationContext:
 
         if self._xml is None:
             assert self._stb is not None, "StBridgeまたはXMLのいずれかが必要です"
-            self._xml = _raw_dumps(self._stb, reporter=self.reporter)
+            self._xml = _raw_dumps(self._stb, reporter=NullReporter(), _strict=False)
         return self._xml
 
 

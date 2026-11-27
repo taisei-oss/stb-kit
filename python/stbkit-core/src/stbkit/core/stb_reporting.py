@@ -39,12 +39,15 @@ class Severity(IntEnum):
 class Code(StrEnum):
     """メッセージの分類コード。"""
 
+    CONVERT_LOG = "convert_log"
+    """変換処理のログ"""
     DIFF = "diff"
     """差分（比較結果）"""
     DEVELOPER_ERROR = "developer_error"
     """実装にバグがあることを示すエラー"""
     EXTENSION_ERROR = "extension_error"
-    """拡張の定義/使用に関するエラー"""
+    """拡張の定義/使用に関するエラー。
+    仕様違反はSCHEMA_ERRORを利用する。"""
     MEMBER_NOT_FOUND = "member_not_found"
     """部材が見つからない"""
     MISSING_ATTRIBUTE = "missing_attribute"

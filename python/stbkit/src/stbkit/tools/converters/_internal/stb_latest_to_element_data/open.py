@@ -14,7 +14,7 @@ from stbkit.api.stb_latest import (
     StbSecOpenRc,
 )
 
-from ...._internal.data_model.element_data import ElementPlane
+from ...._internal.data_model.element_data import ElementOpen, ElementPlane
 from ...._internal.vectors import Vector2d
 
 
@@ -65,7 +65,6 @@ def add_open(
             continue
         if not plane.thickness:
             continue
-        opens: list[list[Vector2d]] = plane.opens
         x = stb_open.position_x
         y = stb_open.position_y
         if (
@@ -76,11 +75,22 @@ def add_open(
         w = stb_sec_open.length_x
         h = stb_sec_open.length_y
         if x is not None and y is not None and w and h:
-            opens.append(
-                [
-                    Vector2d(x, y),
-                    Vector2d(x + w, y),
-                    Vector2d(x + w, y + h),
-                    Vector2d(x, y + h),
-                ]
+            open_points: list[Vector2d] = [
+                Vector2d(x, y),
+                Vector2d(x + w, y),
+                Vector2d(x + w, y + h),
+                Vector2d(x, y + h),
+            ]
+            open_name: str = str(stb_open.id_or_none or "")
+            if stb_open.name_or_none:
+                open_name += f"_{stb_open.name}"
+            plane.opens.append(
+                ElementOpen(
+                    points=open_points,
+                    name=open_name,
+                    guid=stb_open.guid_or_none,
+                    path=stb_open._path_xml(),
+                    source_type=type(stb_open),
+                    source_id=stb_open.id_or_none,
+                )
             )

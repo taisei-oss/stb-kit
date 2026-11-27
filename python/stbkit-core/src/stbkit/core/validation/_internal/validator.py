@@ -19,6 +19,7 @@ def validate_schema(
     xsd_path: Path | None = None,
     require_xsd: bool = False,
     exclude_legal_extensions: bool = True,
+    _report_invalid_values: bool = False,
 ) -> bool:
     """ST-Bridgeのスキーマチェックを実施する。
 
@@ -33,6 +34,8 @@ def validate_schema(
     また、値が空文字列でないかなどのSTB-KIT独自のチェックも併せて行います。
 
     検出した不適合は例外にせず、reporterへ出力します。
+    XML文字列の検証では、読み込み時に退避される元の不正値も報告します。
+    データモデルの検証では、読み込み時に退避し報告された不正値は既定では再報告しません。
     XSDチェックに必要なxmlschemaが未インストールの場合やXSDを解決できない場合は、
     require_xsdがFalseならスキップしてTrueを返します。
 
@@ -73,16 +76,18 @@ def validate_schema(
     ctx: ValidationContext
     match stb:
         case str():
-            # XSDでチェックする場合、読み込み時の退避エラーは
-            # XSDのチェック結果とかぶるため記録しない。
-            # XSDを使わない場合は、退避エラーが検出そのものになるため記録する。
             ctx = ValidationContext(
                 reporter=reporter,
                 xml=stb,
-                report_load=not _uses_xsd(xsd_path=xsd_path, require_xsd=require_xsd),
+                use_xsd=_uses_xsd(xsd_path=xsd_path, require_xsd=require_xsd),
+                _report_invalid_values=True,
             )
         case StBridgeRoot():
-            ctx = ValidationContext(reporter=reporter, stb=stb)
+            ctx = ValidationContext(
+                reporter=reporter,
+                stb=stb,
+                _report_invalid_values=_report_invalid_values,
+            )
         case _:
             raise ValueError("引数stbの型が異なります")
     return validator.validate(ctx)

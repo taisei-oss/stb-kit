@@ -1,1 +1,2 @@
-WARNING schema_error validate /ST_BRIDGE/StbModel/StbNodes/StbNode[1]/@X 必須属性[X]がnullです
+ERROR schema_error validate /ST_BRIDGE/StbModel/StbNodes/StbNode[1]/@X floatに変換できない値です: a (value: a)
+WARNING schema_error validate /ST_BRIDGE/StbModel/StbNodes/StbNode[1]/@X 不整値を退避したため、必須属性[X]がnullです

@@ -38,6 +38,7 @@ from stbkit.api.stb_latest import (
     StbSecParapetRc,
     StbSecPileRc,
     StbSecPileS,
+    StbSecSlabDeck,
     StbSecUndefined,
     StbStripFooting,
 )
@@ -188,25 +189,55 @@ def get_shapes_element_line(
 def get_slab_depth(
     repo: RepositoryLatest, stb_slab: stb_latest.StbSlab, reporter: Reporter
 ) -> float:
+    err_msg: str | None = None
     try:
-        section = repo.deref(stb_slab).id_section_or_none
+        section = repo.deref(stb_slab).id_section
+    except ReferenceElementNotFoundError:
+        section = None
+        err_msg = f"スラブ断面 id={stb_slab.id_section_or_none}が見つかりませんでした。"
     except SchemaError:
         section = None
+        err_msg = (
+            f"スラブ断面 id={stb_slab.id_section_or_none}で"
+            "スキーマエラーが発生しました。"
+        )
     if isinstance(section, stb_latest.StbSecSlabRc):
         try:
             return section.stb_sec_slab_rc_conventional.stb_sec_figure_slab_rc_conventional.stb_sec_slab_rc_conventional_straight.depth  # noqa:E501
-        except NoneAccessError:
-            pass
+        except NoneAccessError as e:
+            err_msg = str(e)
+    elif isinstance(section, StbSecSlabDeck):
+        try:
+            result: float = section.stb_sec_slab_deck_product[0].top_concrete
+            if len(section.stb_sec_slab_deck_product) > 1:
+                reporter.info(
+                    f"デッキ合成スラブ断面 id={stb_slab.id_section_or_none}には"
+                    "複数のデッキ製品があるため、最初のものを使用します",
+                    code=Code.CONVERT_LOG,
+                    phase=Phase.CONVERT_GEOMETRY,
+                    stb_element=stb_slab,
+                )
+            reporter.info(
+                f"デッキ合成スラブ断面 id={stb_slab.id_section_or_none}の厚さは"
+                "トップコンクリートの厚さを使用します",
+                code=Code.CONVERT_LOG,
+                phase=Phase.CONVERT_GEOMETRY,
+                stb_element=stb_slab,
+                value=str(result),
+            )
+            return result
+        except (NoneAccessError, IndexError) as e:
+            err_msg = str(e)
+    if not err_msg:
+        err_msg = f"スラブ断面 id={stb_slab.id_section_or_none}が処理できませんでした。"
     reporter.warning(
-        message=(
-            f"スラブ断面id={stb_slab.id_section_or_none}が"
-            f"見つかりませんでした。d={UNKNOWN_ELEMENT_SIZE_MM}mmで代替します"
-        ),
+        message=(f"{err_msg}d={UNKNOWN_ELEMENT_SIZE_MM}mmで代替します"),
         code=Code.MISSING_ATTRIBUTE,
         phase=Phase.CONVERT_GEOMETRY,
         stb_element=stb_slab,
         attr_name="id_section",
     )
+
     return UNKNOWN_ELEMENT_SIZE_MM
 
 

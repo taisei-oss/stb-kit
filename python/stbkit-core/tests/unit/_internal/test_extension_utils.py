@@ -311,8 +311,8 @@ def test_missing_define_attribute_child() -> None:
     assert len(invalid) == 1
     assert invalid[0].kind is _FieldKind.ATTRIBUTE
     assert invalid[0].value == "attr1"
-    assert invalid[0].reason == "拡張定義されていない拡張属性"
-    assert len(_messages(reporter, Code.EXTENSION_ERROR)) == 1
+    assert "拡張定義されていない拡張属性" in invalid[0].reason
+    assert len(_messages(reporter, Code.SCHEMA_ERROR)) == 1
 
 
 def test_missing_define_attribute_parent() -> None:
@@ -343,7 +343,7 @@ def test_missing_define_attribute_parent() -> None:
     assert node._extension is not None
     assert node._extension._attributes in (None, {})
     assert [invalid.value for invalid in _invalid_values(node)] == ["attr1"]
-    assert len(_messages(reporter, Code.EXTENSION_ERROR)) == 1
+    assert len(_messages(reporter, Code.SCHEMA_ERROR)) == 1
 
 
 def test_undefined_attribute() -> None:
@@ -389,7 +389,7 @@ def test_not_defined_extension() -> None:
     assert node._extension is not None
     assert node._extension._attributes in (None, {})
     assert [invalid.value for invalid in _invalid_values(node)] == ["error"]
-    assert len(_messages(reporter, Code.EXTENSION_ERROR)) == 1
+    assert len(_messages(reporter, Code.SCHEMA_ERROR)) == 1
 
 
 def test_defined_ext_element() -> None:
@@ -510,8 +510,8 @@ def test_missing_defined_ext_element() -> None:
     invalid: list[_InvalidValue] = _invalid_values(model)
     assert len(invalid) == 1
     assert invalid[0].kind is _FieldKind.ELEMENT
-    assert invalid[0].reason == "拡張定義されていない拡張子要素"
-    assert len(_messages(reporter, Code.EXTENSION_ERROR)) == 1
+    assert "拡張定義されていない拡張子要素" in invalid[0].reason
+    assert len(_messages(reporter, Code.SCHEMA_ERROR)) == 1
 
 
 def test_missing_defined_ext_element_and_attr() -> None:

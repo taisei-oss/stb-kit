@@ -73,6 +73,31 @@ Enum名称はクラス名＋属性名のPascalCaseになります。
 Enumの値は、値をLARGE_SNAKE_CASEにしたものになります。
 IntEnumなど頭が数字になる場合は`VALUE_5`のようになります。
 
+### hasattr利用の注意点
+
+現状では、hasattrを使う際に例外とならないように、NoneAccessErrorはAttributeErrorを継承しています。
+
+そのため、属性がNoneの場合はhasattrがFalseを返すようになります。
+
+副作用として、属性を代入する際に下記のようなコードを書くと、もとの属性がNoneの場合は代入が行われないことに注意が必要です。
+
+```python
+if hasattr(element, "id"):
+    element.id = 1
+```
+
+そのため、上記のような書き方をしたい場合は、or_noneプロパティを使う必要があります。
+この場合はidがNoneの場合でも代入が行われます。
+
+```python
+if hasattr(element, "id_or_none"):
+    element.id_or_none = 1
+```
+
+このような挙動となるため、できるだけ型ヒントを利用しhasattrに頼らないようにすることが推奨されます。
+
+改善案などがあればDiscussionなどで意見をいただけると助かります。
+
 ## 子要素
 
 最大回数が1の子要素は単一オブジェクト、最大回数の複数の子要素は種類別のリストになります。

@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Literal, overload
 from stbkit.core.data_model.common import StBridgeRoot
 from stbkit.core.stb_exceptions import UnsupportedStbVersionError
 from stbkit.core.stb_reporting import Code, Phase, Reporter, get_reporter
-from stbkit.core.validation._internal.validator import _validate
+from stbkit.core.validation._internal.validator import validate_schema
 
 from .common import convert_element
 from .v2_0_2_to_v2_1_0 import upgrade_v2_0_2_to_v2_1_0
@@ -37,7 +37,7 @@ def upgrade_v2_0_0_to_v2_0_1(
 ) -> "stb_v2_0_1.StBridge":
     from stbkit.core.data_model import stb_v2_0_1
 
-    reporter.info(
+    reporter.debug(
         "---v2.0.0->v2.0.1変換処理開始---",
         code=Code.PROGRESS_INFO,
         phase=Phase.UPGRADE,
@@ -49,18 +49,18 @@ def upgrade_v2_0_0_to_v2_0_1(
     )
     if isinstance(new_stb, stb_v2_0_1.StBridge):
         new_stb.version = stb_v2_0_1.VERSION
-        reporter.info(
+        reporter.debug(
             "---v2.0.0->v2.0.1変換処理完了---",
             code=Code.PROGRESS_INFO,
             phase=Phase.UPGRADE,
         )
-        reporter.info(
+        reporter.debug(
             "---v2.0.1バリデーション開始---",
             code=Code.PROGRESS_INFO,
             phase=Phase.UPGRADE,
         )
-        _validate(reporter=reporter, stb=new_stb)
-        reporter.info(
+        validate_schema(new_stb, reporter=reporter, _report_invalid_values=False)
+        reporter.debug(
             "---v2.0.1バリデーション完了---",
             code=Code.PROGRESS_INFO,
             phase=Phase.UPGRADE,
@@ -77,7 +77,7 @@ def upgrade_v2_0_1_to_v2_0_2(
 ) -> "stb_v2_0_2.StBridge":
     from stbkit.core.data_model import stb_v2_0_2
 
-    reporter.info(
+    reporter.debug(
         "---v2.0.1->v2.0.2変換処理開始---",
         code=Code.PROGRESS_INFO,
         phase=Phase.UPGRADE,
@@ -89,18 +89,18 @@ def upgrade_v2_0_1_to_v2_0_2(
     )
     if isinstance(new_stb, stb_v2_0_2.StBridge):
         new_stb.version = stb_v2_0_2.VERSION
-        reporter.info(
+        reporter.debug(
             "---v2.0.1->v2.0.2変換処理完了---",
             code=Code.PROGRESS_INFO,
             phase=Phase.UPGRADE,
         )
-        reporter.info(
+        reporter.debug(
             "---v2.0.2バリデーション開始---",
             code=Code.PROGRESS_INFO,
             phase=Phase.UPGRADE,
         )
-        _validate(reporter=reporter, stb=new_stb)
-        reporter.info(
+        validate_schema(new_stb, reporter=reporter, _report_invalid_values=False)
+        reporter.debug(
             "---v2.0.2バリデーション完了---",
             code=Code.PROGRESS_INFO,
             phase=Phase.UPGRADE,

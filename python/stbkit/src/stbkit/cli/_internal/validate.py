@@ -302,6 +302,7 @@ def _validate_report(
         xsd_path=xsd_path,
         require_xsd=require_xsd,
         exclude_legal_extensions=exclude_legal_extensions,
+        _report_invalid_values=True,
     )
     return reporter
 

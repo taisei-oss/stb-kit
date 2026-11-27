@@ -33,3 +33,5 @@ class ConvertOptionStbToIfc:
     cft_output_mode: CompositeOutputMode = CompositeOutputMode.RC_AND_STEEL
     src_output_mode: CompositeOutputMode = CompositeOutputMode.RC_AND_STEEL
     story_mode: StoryMode = StoryMode.LOOKING_DOWN
+    use_opening_element: bool = True
+    """開口をIfcOpeningElementとして出力する。Falseの場合は面材のprofileに含める。"""

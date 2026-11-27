@@ -98,6 +98,13 @@ def post_open(v202: stb_v2_0_2.StBridge, v210: stb_v2_1_0.StBridge) -> None:
             else:
                 new_v210_open.kind_member = "SLAB"
             new_v210_open.id_member = wall_or_slab.id
+            if index > 0 and v202_open.guid_or_none is not None:
+                # guidが被ってしまうため、新たに生成する。
+                new_v210_open.guid = uuid.uuid5(
+                    v202_open.guid_or_none,
+                    f"stbkit:v2_0_2_to_v2_1_0:StbOpenArrangement:{new_v210_open.kind_member.value}:"
+                    f"{wall_or_slab.id}:{index}",
+                )
             new_v210_open.id_section = id_section
             v210_opens.append(new_v210_open)
         v210_sec_open: stb_v2_1_0.StbSecOpenRc = stb_v2_1_0.StbSecOpenRc(

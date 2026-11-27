@@ -9,7 +9,7 @@ from typing import Final
 from stbkit.api import StBridgeRoot, loads
 
 from stbkit.core.data_model.common import _FieldKind, _InvalidValue
-from stbkit.core.data_model.stb_v2_1_1 import StbCommon, StBridge
+from stbkit.core.data_model.stb_v2_1_1 import StBridge
 from stbkit.core.stb_reporting import Code, CollectingReporter, Phase, Severity
 
 _INVALID_MAX_OCCURS_STB: Final = """<?xml version="1.0" encoding="UTF-8"?>
@@ -56,8 +56,7 @@ def test_loads_stores_invalid_value() -> None:
     assert invalid_values is not None
     assert len(invalid_values) == 1
     assert invalid_values[0].kind == _FieldKind.ELEMENT
-    assert isinstance(invalid_values[0].value, StbCommon)
-    assert invalid_values[0].value.project_name == "second"
+    assert invalid_values[0].value == 2
 
 
 def test_loads_reports_invalid_vale() -> None:
@@ -69,12 +68,11 @@ def test_loads_reports_invalid_vale() -> None:
     item = reporter.report[0]
     assert item.severity == Severity.ERROR.value
     assert item.code == Code.SCHEMA_ERROR.value
-    assert item.phase == Phase.LOAD.value
+    assert item.phase == Phase.VALIDATE.value
     assert item.xpath == "/ST_BRIDGE/StbCommon"
     assert "StbCommon" in item.message
     assert "最大回数" in item.message
     assert item.value == "2"
-    assert item.ref_value == "<=1"
 
 
 def test_loads_valid() -> None:

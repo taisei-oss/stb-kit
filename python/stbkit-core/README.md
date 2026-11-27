@@ -44,7 +44,7 @@ python -m pip install --pre stbkit-core
 ### ST-Bridgeファイルの節点データを表示する
 
 ```python
-import stbkit.core
+import stbkit.core.stb_io
 
 stb = stbkit.core.stb_io.load("example.stb")
 

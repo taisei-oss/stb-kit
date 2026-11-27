@@ -44,9 +44,12 @@ def to_ifc(
     from ._internal.stb_to_ifc_data._stb_to_ifc_data import stb_to_ifc_data
 
     reporter = get_reporter(logger, reporter)
+    convert_option = convert_option or convert_option_stb_to_ifc.ConvertOptionStbToIfc()
     stb = upgrade_to_latest(stb, reporter=reporter)
     ifc_model: IfcModel = stb_to_ifc_data(stb, reporter=reporter, option=convert_option)
-    return ifc_model.to_ifc(reporter=reporter)
+    return ifc_model.to_ifc(
+        reporter=reporter, use_opening_element=convert_option.use_opening_element
+    )
 
 
 __all__ = [

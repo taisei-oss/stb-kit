@@ -243,8 +243,8 @@ class IfcProfileExporter:
             EntityName.IFC_T_SHAPE_PROFILE_DEF.value,
             ProfileName=shape.name,
             ProfileType=PROFILE_TYPE_AREA,
-            Depth=round_float(shape.b, round_digits=self._round_digits_mm),
-            FlangeWidth=round_float(shape.a, round_digits=self._round_digits_mm),
+            Depth=round_float(shape.a, round_digits=self._round_digits_mm),
+            FlangeWidth=round_float(shape.b, round_digits=self._round_digits_mm),
             WebThickness=round_float(shape.t1, round_digits=self._round_digits_mm),
             FlangeThickness=round_float(
                 shape.t2,

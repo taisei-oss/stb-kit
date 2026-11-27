@@ -9,7 +9,7 @@ from stbkit.core.data_model import (
     stb_v2_1_0,
 )
 from stbkit.core.stb_reporting import Code, Phase, Reporter
-from stbkit.core.validation._internal.validator import _validate
+from stbkit.core.validation._internal.validator import validate_schema
 
 from .. import common
 from . import tables
@@ -22,7 +22,7 @@ def upgrade_v2_0_2_to_v2_1_0(
     *,
     reporter: Reporter,
 ) -> stb_v2_1_0.StBridge:
-    reporter.info(
+    reporter.debug(
         "---v2.0.2->v2.1.0変換処理開始---",
         code=Code.PROGRESS_INFO,
         phase=Phase.UPGRADE,
@@ -39,18 +39,18 @@ def upgrade_v2_0_2_to_v2_1_0(
     )
 
     if isinstance(new_stb, stb_v2_1_0.StBridge):
-        reporter.info(
+        reporter.debug(
             "---v2.0.2->v2.1.0変換処理完了---",
             code=Code.PROGRESS_INFO,
             phase=Phase.UPGRADE,
         )
-        reporter.info(
+        reporter.debug(
             "---v2.1.0バリデーション開始---",
             code=Code.PROGRESS_INFO,
             phase=Phase.UPGRADE,
         )
-        _validate(reporter=reporter, stb=new_stb)
-        reporter.info(
+        validate_schema(new_stb, reporter=reporter, _report_invalid_values=False)
+        reporter.debug(
             "---v2.1.0バリデーション完了---",
             code=Code.PROGRESS_INFO,
             phase=Phase.UPGRADE,

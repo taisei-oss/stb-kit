@@ -17,6 +17,7 @@ on:
       - "Cargo.lock"
       - "rust-toolchain.toml"
       - ".github/workflows/ci-rust.yml"
+      - ".github/actions/setup-uv/**"
   pull_request:
     paths:
       - "rust/**"
@@ -24,6 +25,7 @@ on:
       - "Cargo.lock"
       - "rust-toolchain.toml"
       - ".github/workflows/ci-rust.yml"
+      - ".github/actions/setup-uv/**"
   workflow_dispatch:
 
 concurrency:
@@ -39,13 +41,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v10.0.1
-        with:
-          enable-cache: true
-          cache-dependency-glob: uv.lock
+      - uses: ./.github/actions/setup-uv
       - run: | # PyO3用のPythonを用意
-          uv python install 3.14
-          echo "PYO3_PYTHON=$(uv python find 3.14)" >> "$GITHUB_ENV"
+          echo "PYO3_PYTHON=$(python -c 'import sys; print(sys.executable)')" >> "$GITHUB_ENV"
 
       - name: Setup Rust
         run: |

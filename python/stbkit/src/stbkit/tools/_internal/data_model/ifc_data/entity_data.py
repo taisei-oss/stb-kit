@@ -79,6 +79,7 @@ class IfcModel:
         reporter: Reporter,
         round_digits: int | None = None,
         round_digits_mm: int | None = None,
+        use_opening_element: bool = True,
     ) -> "ifcopenshell.file":
         from ...optional_dependencies.ifc_exporter.ifc_entity_exporter import (
             IfcEntityExporter,
@@ -89,4 +90,5 @@ class IfcModel:
             reporter=reporter,
             round_digits=round_digits,
             round_digits_mm=round_digits_mm,
+            use_opening_element=use_opening_element,
         )

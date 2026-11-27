@@ -205,12 +205,16 @@ def from_dict(
 
     # loadと同様にバリデーションと拡張修復を行う。
     # validatorはstb_ioも参照するため、循環インポートを避けてここでimportする。
-    from ..validation._internal.validator import _validate
+    from ..validation._internal.validator import validate_schema
 
-    _validate(reporter=reporter, stb=stb)
     ext_repo: ExtensionInfoRepository = ExtensionInfoRepository()
     ext_repo.register(stb, reporter=reporter, phase=Phase.LOAD)
-    ext_repo.repair_stb(stb, reporter=reporter, phase=Phase.LOAD)
+    ext_repo.repair_stb(stb, reporter=reporter, phase=Phase.LOAD, report_invalid=False)
+    validate_schema(
+        stb,
+        reporter=reporter,
+        _report_invalid_values=True,
+    )
     return stb
 
 
@@ -939,7 +943,7 @@ def _element_from_dict[TElement: StBridgeElement](
                     xml_path=element._path_xml(),
                     dict_path=path,
                     reason="辞書キーがstrではありません",
-                    reporter=reporter,
+                    key=str(raw_key),
                 )
                 continue
 
@@ -976,7 +980,6 @@ def _element_from_dict[TElement: StBridgeElement](
                     field_info,
                     value,
                     profile=profile,
-                    reporter=reporter,
                     path=field_path,
                 )
         return element
@@ -1017,7 +1020,6 @@ def _read_scalar_value(
     value: Any,
     *,
     profile: DictProfile,
-    reporter: Reporter,
     path: str,
 ) -> None:
     if field_info.kind is _FieldKind.CONTENT:
@@ -1027,12 +1029,10 @@ def _read_scalar_value(
             field_info,
             value,
             profile=profile,
-            reporter=reporter,
             path=path,
         )
         return
 
-    before = _invalid_value_count(element)
     try:
         if value is None:
             element._set_attribute_by_any(field_name, None)
@@ -1050,25 +1050,17 @@ def _read_scalar_value(
         else:
             element._set_attribute_by_any(field_name, value)
     except (SchemaError, TypeError, ValueError) as error:
-        if _invalid_value_count(element) == before:
-            setattr(element, private_field_name(field_name), None)
-            _store_invalid_value(
-                element,
-                kind=field_info.kind,
-                value=value,
-                xml_path=_field_xml_path(element, field_name, field_info),
-                dict_path=path,
-                reason=str(error),
-                reporter=reporter,
-            )
+        setattr(element, private_field_name(field_name), None)
+        _store_invalid_value(
+            element,
+            kind=field_info.kind,
+            value=value,
+            xml_path=_field_xml_path(element, field_name, field_info),
+            dict_path=path,
+            reason=str(error),
+            key=field_name,
+        )
         return
-
-    _report_new_invalid_values(
-        element,
-        start_index=before,
-        dict_path=path,
-        reporter=reporter,
-    )
 
 
 def _read_content_value(
@@ -1078,7 +1070,6 @@ def _read_content_value(
     value: Any,
     *,
     profile: DictProfile,
-    reporter: Reporter,
     path: str,
 ) -> None:
     try:
@@ -1104,7 +1095,7 @@ def _read_content_value(
             xml_path=element._path_xml(),
             dict_path=path,
             reason=str(error),
-            reporter=reporter,
+            key=field_name,
         )
 
 
@@ -1159,7 +1150,7 @@ def _read_child_value(
                     xml_path=_field_xml_path(element, field_name, field_info),
                     dict_path=path,
                     reason="単一子要素にはMappingが必要です",
-                    reporter=reporter,
+                    key=field_name,
                 )
                 return
             child = child_type()
@@ -1183,7 +1174,7 @@ def _read_child_value(
                         f"要素[{field_name}]の最大回数"
                         f"[{field_info.max_occurs}]を超過しています"
                     ),
-                    reporter=reporter,
+                    key=field_name,
                 )
             return
         if not isinstance(value, Mapping):
@@ -1194,7 +1185,7 @@ def _read_child_value(
                 xml_path=_field_xml_path(element, field_name, field_info),
                 dict_path=path,
                 reason="単一子要素にはMappingが必要です",
-                reporter=reporter,
+                key=field_name,
             )
             return
         child = child_type()
@@ -1224,7 +1215,7 @@ def _read_child_value(
             xml_path=_field_xml_path(element, field_name, field_info),
             dict_path=path,
             reason="複数子要素にはlistが必要です",
-            reporter=reporter,
+            key=field_name,
         )
         return
 
@@ -1249,7 +1240,7 @@ def _read_child_value(
                     f"要素[{field_name}]の最大回数"
                     f"[{field_info.max_occurs}]を超過しています"
                 ),
-                reporter=reporter,
+                key=field_name,
             )
             continue
         if not isinstance(item, Mapping):
@@ -1263,7 +1254,7 @@ def _read_child_value(
                 ),
                 dict_path=item_path,
                 reason="子要素の各項目にはMappingが必要です",
-                reporter=reporter,
+                key=field_name,
             )
             continue
         child = child_type()
@@ -1305,7 +1296,7 @@ def _read_unknown_key(
             xml_path=element._path_xml(),
             dict_path=path,
             reason=("内容を持たない要素に内容が指定されています"),
-            reporter=reporter,
+            key=key,
         )
         return
 
@@ -1367,7 +1358,7 @@ def _read_unknown_child(
                 xml_path=f"{element._path_xml()}/{raw_name}",
                 dict_path=item_path,
                 reason="未知の子要素にはMappingが必要です",
-                reporter=reporter,
+                key=raw_name,
             )
             continue
         child = _StBridgeExtensionElement(name=raw_name)
@@ -1396,34 +1387,6 @@ def _field_xml_path(
     return element._path_xml(field_name)
 
 
-def _invalid_value_count(element: StBridgeElement) -> int:
-    extension = element._extension
-    if extension is None or extension._invalid_values is None:
-        return 0
-    return len(extension._invalid_values)
-
-
-def _report_new_invalid_values(
-    element: StBridgeElement,
-    *,
-    start_index: int,
-    dict_path: str,
-    reporter: Reporter,
-) -> None:
-    extension = element._extension
-    if extension is None or extension._invalid_values is None:
-        return
-    for invalid in extension._invalid_values[start_index:]:
-        reporter.error(
-            message=f"{dict_path}: {invalid.reason}",
-            code=Code.SCHEMA_ERROR,
-            phase=Phase.LOAD,
-            xpath=invalid.path,
-            value=str(invalid.value),
-            stb_element=element,
-        )
-
-
 def _store_invalid_value(
     element: StBridgeElement,
     *,
@@ -1432,21 +1395,14 @@ def _store_invalid_value(
     xml_path: str,
     dict_path: str,
     reason: str,
-    reporter: Reporter,
+    key: str,
 ) -> None:
     element._ensure_extension._set_invalid_value(
         _InvalidValue(
             kind=kind,
             value=value,
             path=xml_path,
-            reason=reason,
+            reason=f"{dict_path}: {reason}",
+            key=key,
         )
-    )
-    reporter.error(
-        message=f"{dict_path}: {reason}",
-        code=Code.SCHEMA_ERROR,
-        phase=Phase.LOAD,
-        xpath=xml_path,
-        value=str(value),
-        stb_element=element,
     )

@@ -8,10 +8,9 @@ from __future__ import annotations
 
 from collections.abc import Callable, Sequence
 from enum import Enum
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Final
 from uuid import UUID
 
-from ..._internal.name_converter import private_field_name
 from ...stb_exceptions import SchemaError, TypeMismatchError
 from ...stb_typing import (
     Angle,
@@ -299,6 +298,9 @@ def validate_uuid(
         )
 
 
+VALID_IN_XSD_TAG: Final = "[valid_in_xsd]"
+
+
 def str_to_angle(
     value: str, *, element: StBridgeElement | None = None, attr_name: str | None = None
 ) -> Angle:
@@ -314,12 +316,29 @@ def str_to_angle(
 
 def str_to_bool(
     value: str, *, element: StBridgeElement | None = None, attr_name: str | None = None
-) -> bool:
+) -> tuple[bool, str | None]:
+    # ST-Bridgeではbool値は"true"または"false"と記載する必要があるため、警告を出す
+    # 根拠: ST-Bridge v2.1.1 仕様書 1.5節
+    match value:
+        case "true":
+            return True, None
+        case "false":
+            return False, None
+        case "1":
+            return (
+                True,
+                f'ST-Bridgeはbool値は"true"と記載する必要があります{VALID_IN_XSD_TAG}',
+            )
+        case "0":
+            return (
+                False,
+                f'ST-Bridgeはbool値は"false"と記載する必要があります{VALID_IN_XSD_TAG}',
+            )
     match value.lower():
         case "true":
-            return True
+            return True, 'ST-Bridgeはbool値は"true"と記載する必要があります'
         case "false":
-            return False
+            return False, 'ST-Bridgeはbool値は"false"と記載する必要があります'
         case _:
             raise SchemaError(
                 f"boolに変換できない値です: {value}",
@@ -518,15 +537,22 @@ def str_to_str(
 
 def str_to_uuid(
     value: str, *, element: StBridgeElement | None = None, attr_name: str | None = None
-) -> UUID:
+) -> tuple[UUID, str | None]:
     try:
         result: UUID = UUID(value)
-        validate_uuid(result, element=element, attr_name=attr_name)
-        return result
     except (ValueError, AttributeError):
         raise SchemaError(
             f"UUIDに変換できない値です: {value}", element=element, attr_name=attr_name
         ) from None
+    # GUIDの書式は小文字の16進数32桁（[0-9a-f]{32}）であるため、書式が違う場合は警告
+    # 根拠: ST-Bridge v2.1.1 仕様書 1.7節
+    if value != result.hex:
+        msg: str = (
+            "GUIDは32桁の16進数値を文字列表現した値とする必要があります"
+            "(16進数値の'a'から'f'は、小文字とする)"
+        )
+        return result, msg
+    return result, None
 
 
 def str_to_typed_value(
@@ -535,46 +561,56 @@ def str_to_typed_value(
     *,
     element: StBridgeElement | None = None,
     attr_name: str | None = None,
-) -> Any:
+) -> tuple[Any, str | None]:
+    """文字列をフィールド用のデータ型へ変換する
+
+    Returns:
+        tuple[Any, str | None]: 変換後の値。
+            元の文字列に問題がある場合はエラーメッセージを付ける。
+    """
     match data_type:
         case DataType.ANGLE:
-            return str_to_angle(value, element=element, attr_name=attr_name)
+            return str_to_angle(value, element=element, attr_name=attr_name), None
         case DataType.BOOL:
             return str_to_bool(value, element=element, attr_name=attr_name)
         case DataType.FLOAT:
-            return str_to_float(value, element=element, attr_name=attr_name)
+            return str_to_float(value, element=element, attr_name=attr_name), None
         case DataType.INT:
-            return str_to_int(value, element=element, attr_name=attr_name)
+            return str_to_int(value, element=element, attr_name=attr_name), None
         case DataType.LENGTH:
-            return str_to_length(value, element=element, attr_name=attr_name)
+            return str_to_length(value, element=element, attr_name=attr_name), None
         case DataType.MONOLIST:
-            return str_to_monolist(value, element=element, attr_name=attr_name)
+            return str_to_monolist(value, element=element, attr_name=attr_name), None
         case DataType.MONOLIST_LENGTH:
-            return str_to_monolist_length(value, element=element, attr_name=attr_name)
+            return str_to_monolist_length(
+                value, element=element, attr_name=attr_name
+            ), None
         case DataType.MONOLIST_ID:
-            return str_to_monolist_id(value, element=element, attr_name=attr_name)
+            return str_to_monolist_id(value, element=element, attr_name=attr_name), None
         case DataType.NON_NEGATIVE_INTEGER:
             return str_to_non_negative_integer(
                 value, element=element, attr_name=attr_name
-            )
+            ), None
         case DataType.NON_NEGATIVE_LENGTH:
             return str_to_non_negative_length(
                 value, element=element, attr_name=attr_name
-            )
+            ), None
         case DataType.POSITIVE_INTEGER:
-            return str_to_positive_integer(value, element=element, attr_name=attr_name)
+            return str_to_positive_integer(
+                value, element=element, attr_name=attr_name
+            ), None
         case DataType.POSITIVE_INTEGER_LIST:
             return str_to_positive_integer_list(
                 value, element=element, attr_name=attr_name
-            )
+            ), None
         case DataType.RATIO:
-            return str_to_ratio(value, element=element, attr_name=attr_name)
+            return str_to_ratio(value, element=element, attr_name=attr_name), None
         case DataType.STR:
-            return str_to_str(value, element=element, attr_name=attr_name)
+            return str_to_str(value, element=element, attr_name=attr_name), None
         case DataType.UUID:
             return str_to_uuid(value, element=element, attr_name=attr_name)
         case DataType.INT_ENUM | DataType.STR_ENUM:
-            return str_to_enum(value, element=element, attr_name=attr_name)
+            return str_to_enum(value, element=element, attr_name=attr_name), None
         case _:
             raise NotImplementedError(f"未対応のDataTypeです: {data_type}")
 
@@ -585,19 +621,25 @@ def any_to_typed_value(
     *,
     element: StBridgeElement | None = None,
     attr_name: str | None = None,
-) -> Any:
+) -> tuple[Any, str | None]:
+    """任意の型をフィールド用のデータ型へ変換する
+
+    Returns:
+        tuple[Any, str | None]: 変換後の値。
+            元の文字列に問題がある場合はエラーメッセージを付ける。
+    """
     if data_type == DataType.MONOLIST:
         validate_monolist(value, element=element, attr_name=attr_name)
-        return value
+        return value, None
     elif data_type == DataType.MONOLIST_LENGTH:
         validate_monolist_length(value, element=element, attr_name=attr_name)
-        return value
+        return value, None
     elif data_type == DataType.MONOLIST_ID:
         validate_monolist_id(value, element=element, attr_name=attr_name)
-        return value
+        return value, None
     elif data_type == DataType.POSITIVE_INTEGER_LIST:
         validate_positive_integer_list(value, element=element, attr_name=attr_name)
-        return value
+        return value, None
     elif data_type in (DataType.INT_ENUM, DataType.STR_ENUM):
         if element is None or attr_name is None:
             raise RuntimeError("enum変換にはelementとattr_nameが必要です")
@@ -609,10 +651,10 @@ def any_to_typed_value(
             )
         validate_enum(value, element=element, attr_name=attr_name)
         if isinstance(value, enum_type):
-            return value
-        return enum_type(value)
+            return value, None
+        return enum_type(value), None
     elif isinstance(value, data_type.to_type()):
-        return value
+        return value, None
     elif isinstance(value, str):
         return str_to_typed_value(
             value, data_type, element=element, attr_name=attr_name
@@ -629,94 +671,92 @@ def any_to_typed_value(
 def make_attribute_setter(
     key: str, data_type: DataType, has_choice: bool
 ) -> Callable[[StBridgeElement, Any], None]:
-    p_name: str = private_field_name(key)
-
     def setter_angle(self: StBridgeElement, value: Any) -> None:
         if value is not None:
             validate_angle(value, element=self, attr_name=key)
-        setattr(self, p_name, value)
+        self._set_attribute_for_setter(key, value)
 
     def setter_bool(self: StBridgeElement, value: Any) -> None:
         if value is not None:
             validate_bool(value, element=self, attr_name=key)
-        setattr(self, p_name, value)
+        self._set_attribute_for_setter(key, value)
 
     def setter_enum(self: StBridgeElement, value: Any) -> None:
         if value is not None:
             validate_enum(value, element=self, attr_name=key)
             if isinstance(value, Enum):
-                setattr(self, p_name, value)
+                self._set_attribute_for_setter(key, value)
             fi = self._field_info(key)
             if not isinstance(fi.py_type, type):
                 raise RuntimeError()
             enum_type: type = fi.py_type
             value = enum_type(value)
-        setattr(self, p_name, value)
+        self._set_attribute_for_setter(key, value)
 
     def setter_float(self: StBridgeElement, value: Any) -> None:
         if value is not None:
             validate_float(value, element=self, attr_name=key)
-        setattr(self, p_name, value)
+        self._set_attribute_for_setter(key, value)
 
     def setter_int(self: StBridgeElement, value: Any) -> None:
         if value is not None:
             validate_int(value, element=self, attr_name=key)
-        setattr(self, p_name, value)
+        self._set_attribute_for_setter(key, value)
 
     def setter_length(self: StBridgeElement, value: Any) -> None:
         if value is not None:
             validate_length(value, element=self, attr_name=key)
-        setattr(self, p_name, value)
+        self._set_attribute_for_setter(key, value)
 
     def setter_monolist(self: StBridgeElement, value: Any) -> None:
         if value is not None:
             validate_monolist(value, element=self, attr_name=key)
-        setattr(self, p_name, value)
+        self._set_attribute_for_setter(key, value)
 
     def setter_monolist_id(self: StBridgeElement, value: Any) -> None:
         if value is not None:
             validate_monolist_id(value, element=self, attr_name=key)
-        setattr(self, p_name, value)
+        self._set_attribute_for_setter(key, value)
 
     def setter_monolist_length(self: StBridgeElement, value: Any) -> None:
         if value is not None:
             validate_monolist_length(value, element=self, attr_name=key)
-        setattr(self, p_name, value)
+        self._set_attribute_for_setter(key, value)
 
     def setter_non_negative_integer(self: StBridgeElement, value: Any) -> None:
         if value is not None:
             validate_non_negative_integer(value, element=self, attr_name=key)
-        setattr(self, p_name, value)
+        self._set_attribute_for_setter(key, value)
 
     def setter_non_negative_length(self: StBridgeElement, value: Any) -> None:
         if value is not None:
             validate_non_negative_length(value, element=self, attr_name=key)
-        setattr(self, p_name, value)
+        self._set_attribute_for_setter(key, value)
 
     def setter_positive_integer(self: StBridgeElement, value: Any) -> None:
         if value is not None:
             validate_positive_integer(value, element=self, attr_name=key)
-        setattr(self, p_name, value)
+        self._set_attribute_for_setter(key, value)
 
     def setter_positive_integer_list(self: StBridgeElement, value: Any) -> None:
         if value is not None:
             validate_positive_integer_list(value, element=self, attr_name=key)
-        setattr(self, p_name, value)
+        self._set_attribute_for_setter(key, value)
 
     def setter_ratio(self: StBridgeElement, value: Any) -> None:
         if value is not None:
             validate_ratio(value, element=self, attr_name=key)
-        setattr(self, p_name, value)
+        self._set_attribute_for_setter(key, value)
 
     def setter_str(self: StBridgeElement, value: Any) -> None:
         if value is not None:
             validate_str(value, element=self, attr_name=key)
-        setattr(self, p_name, value)
+        self._set_attribute_for_setter(key, value)
 
     def setter_uuid(self: StBridgeElement, value: Any) -> None:
         if value is not None:
             validate_uuid(value, element=self, attr_name=key)
-        setattr(self, p_name, value)
+        self._set_attribute_for_setter(key, value)
 
     if has_choice:
         return setter_enum

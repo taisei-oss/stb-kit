@@ -18,9 +18,10 @@ from stbkit.core.stb_reporting import (
     Code,
     CollectingReporter,
     Phase,
-    Reporter,
 )
 from stbkit.core.validation._internal.schema_validator import FieldValidator
+
+from ._common import RepairContext
 
 
 @runtime_checkable
@@ -41,7 +42,9 @@ class _StbSecBeamRcLike(Protocol):
     def stb_sec_bar_arrangement_beam_rc(self, value: list[StBridgeElement]) -> None: ...
 
 
-def _repair_stb_sec_beam_rc(element: StBridgeElement, /, *, reporter: Reporter) -> None:
+def _repair_stb_sec_beam_rc(
+    element: StBridgeElement, /, *, context: RepairContext
+) -> None:
     if element._xml_name() == "StbSecBeam_RC":
         if (
             isinstance(element, _StbSecBeamRcLikeV20)
@@ -49,9 +52,11 @@ def _repair_stb_sec_beam_rc(element: StBridgeElement, /, *, reporter: Reporter) 
         ):
             tmp_reporter: CollectingReporter = CollectingReporter()
             if not FieldValidator.validate_element(
-                element.stb_sec_bar_arrangement_beam_rc_or_none, tmp_reporter
+                element.stb_sec_bar_arrangement_beam_rc_or_none,
+                tmp_reporter,
+                _report_invalid_values=False,
             ):
-                reporter.error(
+                context.reporter.error(
                     "梁配筋情報に不正値が含まれていたため、配筋情報を削除しました"
                     f"{tmp_reporter.report.to_text().replace('\n', '')}",
                     code=Code.REPAIR_LOG,
@@ -65,12 +70,16 @@ def _repair_stb_sec_beam_rc(element: StBridgeElement, /, *, reporter: Reporter) 
             tmp_reporter = CollectingReporter()
             is_valid: bool = True
             for child in element.stb_sec_bar_arrangement_beam_rc:
-                is_valid &= FieldValidator.validate_element(child, tmp_reporter)
+                is_valid &= FieldValidator.validate_element(
+                    child,
+                    tmp_reporter,
+                    _report_invalid_values=False,
+                )
             if not is_valid:
                 # 配筋情報は一部のみ削除するとorderが崩れるため、
                 # 不正が1か所あったらすべて削除する
                 for child in element.stb_sec_bar_arrangement_beam_rc:
-                    reporter.error(
+                    context.reporter.error(
                         "梁配筋情報に不正値が含まれていたため、配筋情報を削除しました"
                         f"{tmp_reporter.report.to_text().replace('\n', '')}",
                         code=Code.REPAIR_LOG,

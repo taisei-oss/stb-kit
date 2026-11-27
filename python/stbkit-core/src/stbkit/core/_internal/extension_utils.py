@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 
 from ..data_model.common import StBridgeElement, StBridgeRoot, _FieldKind, _InvalidValue
 from ..stb_reporting import Code, Phase, Reporter
+from .invalid_value_reporting import report_invalid_value
 from .name_converter import private_field_name
 
 
@@ -174,6 +175,8 @@ class ExtensionInfoRepository:
         stb_element: StBridgeElement,
         reporter: Reporter,
         phase: Phase = Phase.VALIDATE,
+        *,
+        report_invalid: bool = True,
     ) -> None:
         ext = stb_element._extension
         element_name: str = stb_element._xml_name()
@@ -186,54 +189,63 @@ class ExtensionInfoRepository:
                     value = ext._attributes.pop(key)
                     # 未知属性はモデルの_field_infoに存在しないため、XPathを直接生成する
                     path_xml = f"{stb_element._path_xml()}/@{key}"
-                    reporter.error(
-                        message=(
-                            f"要素[{element_name}]の不明な拡張属性[{key}]を削除しました"
-                        ),
-                        code=Code.EXTENSION_ERROR,
-                        phase=phase,
-                        value=value,
-                        xpath=path_xml,
-                    )
                     ext._set_invalid_value(
                         _InvalidValue(
                             kind=_FieldKind.ATTRIBUTE,
                             value=value,
                             path=path_xml,
-                            reason="拡張定義されていない拡張属性",
+                            reason=f"要素[{element_name}]に拡張定義されていない拡張属性[{key}]があります。",
+                            key=key,
                         )
                     )
+                    if report_invalid:
+                        report_invalid_value(
+                            reporter,
+                            message=f"要素[{element_name}]に拡張定義されていない拡張属性[{key}]があります",
+                            phase=phase,
+                            value=value,
+                            xpath=path_xml,
+                            is_extension=True,
+                        )
             if ext._children:
                 for i in reversed(range(len(ext._children))):
                     child = ext._children[i]
                     child_name: str = child._xml_name()
                     if not self._is_allowed_child(child=child, parent=stb_element):
-                        reporter.error(
-                            message=(
-                                f"要素[{element_name}]の不明な拡張要素[{child_name}]を削除しました"
-                            ),
-                            code=Code.EXTENSION_ERROR,
-                            phase=phase,
-                            xpath=child._path_xml(),
-                        )
+                        path_xml = child._path_xml()
                         ext._set_invalid_value(
                             _InvalidValue(
                                 kind=_FieldKind.ELEMENT,
-                                value=child,
-                                path=child._path_xml(),
-                                reason="拡張定義されていない拡張子要素",
+                                value=child_name,
+                                path=path_xml,
+                                reason=f"要素[{element_name}]に拡張定義されていない拡張子要素[{child_name}]があります。",
+                                key=child_name,
                             )
                         )
                         ext._children.pop(i)
+                        if report_invalid:
+                            report_invalid_value(
+                                reporter,
+                                message=f"要素[{element_name}]に拡張定義されていない拡張子要素[{child_name}]があります",
+                                phase=phase,
+                                xpath=path_xml,
+                                is_extension=True,
+                            )
                 for child in ext._children:
-                    self.repair_stb(child, reporter, phase)
+                    self.repair_stb(
+                        child, reporter, phase, report_invalid=report_invalid
+                    )
         for key, fi in stb_element._fields.items():
             if fi.kind is _FieldKind.ELEMENT:
                 p_name: str = private_field_name(key)
                 value = getattr(stb_element, p_name)
                 if isinstance(value, StBridgeElement):
-                    self.repair_stb(value, reporter, phase)
+                    self.repair_stb(
+                        value, reporter, phase, report_invalid=report_invalid
+                    )
                 elif isinstance(value, list):
                     for v in value:
                         if isinstance(v, StBridgeElement):
-                            self.repair_stb(v, reporter, phase)
+                            self.repair_stb(
+                                v, reporter, phase, report_invalid=report_invalid
+                            )

@@ -269,19 +269,13 @@ class _StbDataModelBuilder:
     def _invalid_content(self, frame: _Element, content: str) -> None:
         reason: str = f"要素[{frame.xml_name}]は内容を持ちません"
         path_xml: str = frame.element._path_xml()
-        self._reporter.error(
-            message=f"{reason}。内容を不正値として退避しました",
-            code=Code.SCHEMA_ERROR,
-            phase=Phase.LOAD,
-            xpath=path_xml,
-            value=content,
-        )
         frame.element._ensure_extension._set_invalid_value(
             _InvalidValue(
                 kind=_FieldKind.CONTENT,
                 value=content,
                 path=path_xml,
                 reason=reason,
+                key=content_py_attr_name(),
             )
         )
 
@@ -294,21 +288,17 @@ class _StbDataModelBuilder:
         assert max_occurs is not None, "最大回数が未定義です"
         count: int = self._stack[-1].child_counts[frame.xml_name]
         path_xml: str = f"{parent._path_xml()}/{frame.xml_name}"
-        reason: str = f"要素[{frame.xml_name}]の最大回数[{max_occurs}]を超過しています"
-        self._reporter.error(
-            message=f"{reason}。超過分を不正値として退避しました",
-            code=Code.SCHEMA_ERROR,
-            phase=Phase.LOAD,
-            xpath=path_xml,
-            value=str(count),
-            ref_value=f"<={max_occurs}",
+        reason: str = (
+            f"要素[{frame.xml_name}]の個数[{count}]が"
+            f"最大回数[{max_occurs}]を超過しています"
         )
         parent._ensure_extension._set_invalid_value(
             _InvalidValue(
                 kind=_FieldKind.ELEMENT,
-                value=frame.element,
+                value=count,
                 path=path_xml,
                 reason=reason,
+                key=excess_of,
             )
         )
 

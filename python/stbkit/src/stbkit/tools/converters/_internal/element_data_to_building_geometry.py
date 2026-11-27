@@ -276,7 +276,7 @@ def element_plane_to_element_mesh(
     out_points2d: list[Vector2d] = [
         Vector2d(v.x, v.y) for v in to_plate_element_coord(element.points)
     ]
-    in_points2d: list[list[Vector2d]] = element.opens or []
+    in_points2d: list[list[Vector2d]] = [opening.points for opening in element.opens]
     try:
         vertices2d, faces, new_out_points, new_in_points = create_mesh(
             out_points2d, in_points2d
@@ -436,7 +436,8 @@ def _plane_points(
     loops: list[tuple[SurfaceLoopType, list[Vector3d]]] = [
         (SurfaceLoopType.OUTER, [point.mm_to_m() for point in node_points])
     ]
-    for open_point2ds in element.opens:
+    for opening in element.opens:
+        open_point2ds = opening.points
         if len(open_point2ds) < 3:
             continue
         open_point3ds: list[Vector3d] = to_global_coord_plate(

@@ -501,12 +501,7 @@ def test_from_dict_continues_after_value_and_structure_errors() -> None:
     assert any(
         invalid.value == "unknown" for invalid in node._extension._invalid_values
     )
-    assert any(
-        isinstance(invalid.value, StBridgeElement)
-        and invalid.value._xml_name() == "UnknownChild"
-        for invalid in node._extension._invalid_values
-    )
-    assert any(item.phase == Phase.LOAD.value for item in reporter.report)
+    assert any(item.phase == Phase.VALIDATE.value for item in reporter.report)
     assert any("必須要素" in item.message for item in reporter.report)
 
 
@@ -579,7 +574,7 @@ def test_extension_repository_moves_undefined_key_to_invalid_value() -> None:
     assert any(
         invalid.value == "invalid" for invalid in nodes._extension._invalid_values
     )
-    assert any(item.code == "extension_error" for item in reporter.report)
+    assert any(item.code == "schema_error" for item in reporter.report)
 
 
 def test_list_single_value_is_only_accepted_by_xmltodict_profile() -> None:

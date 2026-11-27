@@ -31,7 +31,7 @@ def stb_to_ifc_data(
     option: ConvertOptionStbToIfc | None = None,
     reporter: Reporter,
 ) -> IfcModel:
-    reporter.info(
+    reporter.debug(
         "---ST-Bridge->IFCジオメトリデータ変換処理開始---",
         code=Code.PROGRESS_INFO,
         phase=Phase.CONVERT_IFC,
@@ -85,7 +85,7 @@ def stb_to_ifc_data(
         project_name = "Untitled Project"
     project: IfcProject = IfcProject(name=project_name, site=site)
     model: IfcModel = IfcModel(project=project)
-    reporter.info(
+    reporter.debug(
         "---ST-Bridge->IFCジオメトリデータ変換処理終了---",
         code=Code.PROGRESS_INFO,
         phase=Phase.CONVERT_IFC,

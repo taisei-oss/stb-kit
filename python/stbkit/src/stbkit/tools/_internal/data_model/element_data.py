@@ -48,13 +48,28 @@ class Node:
 
 
 @dataclass(eq=False, order=False, kw_only=True, slots=True)
+class ElementOpen:
+    """開口
+
+    座標は開口を設ける面材の部材座標系。
+    """
+
+    points: list[Vector2d]
+    name: str | None = None
+    guid: UUID | None = None
+    path: str | None = None
+    source_type: type | None = None
+    source_id: int | None = None
+
+
+@dataclass(eq=False, order=False, kw_only=True, slots=True)
 class ElementPlane:
     element_type: ElementType | None = None
     name: str | None = None
     guid: UUID | None = None
     points: list[Vector3d] | None = None
     thickness: float | None = None
-    opens: list[list[Vector2d]] = field(default_factory=list)
+    opens: list[ElementOpen] = field(default_factory=list)
     path: str | None = None
     node_ids: list[int] = field(default_factory=list)
     node_points: list[Vector3d] | None = None

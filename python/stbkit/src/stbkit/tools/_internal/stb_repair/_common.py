@@ -7,7 +7,10 @@
 from dataclasses import dataclass
 from typing import Protocol
 
-from stbkit.core.data_model.common import StBridgeElement
+from stbkit.core._internal.utils.version_utils import Version
+from stbkit.core.data_model.common import StBridgeElement, StBridgeRoot
+from stbkit.core.repository import get_repository
+from stbkit.core.repository.repo_common import RepositoryBase
 from stbkit.core.stb_reporting import Reporter
 
 
@@ -21,10 +24,27 @@ class Defaults:
 
 @dataclass
 class RepairContext:
+    stb: StBridgeRoot
     defaults: Defaults
     reporter: Reporter
     unknown_section_id: int | None = None
+    _repo: RepositoryBase | None = None
+    _version: Version | None = None
+
+    @property
+    def repo(self) -> RepositoryBase:
+        if self._repo is None:
+            self._repo = get_repository(self.stb)
+        return self._repo
+
+    @property
+    def version(self) -> Version:
+        if self._version is None:
+            self._version = Version(self.stb.version)
+        return self._version
 
 
 class ElementRepairHook(Protocol):
-    def __call__(self, element: StBridgeElement, /, *, reporter: Reporter) -> None: ...
+    def __call__(
+        self, element: StBridgeElement, /, *, context: RepairContext
+    ) -> None: ...

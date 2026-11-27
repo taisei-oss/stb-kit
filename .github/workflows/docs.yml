@@ -24,10 +24,7 @@ jobs:
       STBKIT_GA4_MEASUREMENT_ID: ${{ vars.STBKIT_GA4_MEASUREMENT_ID }}
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v10.0.1
-        with:
-          enable-cache: true
-          cache-dependency-glob: uv.lock
+      - uses: ./.github/actions/setup-uv
 
       - name: Ensure stbkit version is published on PyPI
         run: python .github/scripts/check_pypi_release.py

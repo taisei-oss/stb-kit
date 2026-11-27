@@ -17,5 +17,3 @@ input:
         StbNode:
           exclude-attributes:
             - X
-  schema-check:
-    line-count-diff: 1

@@ -26,6 +26,7 @@ from ...constants import UNKNOWN_ELEMENT_SIZE_MM
 from ...data_model.element_data import (
     ElementLine,
     ElementLineSrc,
+    ElementOpen,
     ElementPlane,
     ElementType,
 )
@@ -96,11 +97,13 @@ class IfcEntityExporter:
         reporter: Reporter | None = None,
         round_digits: int | None = None,
         round_digits_mm: int | None = None,
+        use_opening_element: bool = True,
     ) -> None:
         self._model: ifcopenshell.file | None = model
         self._body: entity_instance | None = None
         self._round_digits: int | None = round_digits
         self._round_digits_mm: int | None = round_digits_mm
+        self._use_opening_element: bool = use_opening_element
         self.reporter: Reporter = reporter or get_reporter()
         self.representation_exporter: IfcRepresentationExporter = (
             IfcRepresentationExporter(
@@ -194,7 +197,11 @@ class IfcEntityExporter:
 
         representation = self.representation_exporter.get_plate_representation(
             thickness=thickness,
-            opens=plane_element.opens,
+            opens=(
+                None
+                if self._use_opening_element
+                else [opening.points for opening in plane_element.opens]
+            ),
             points=plane_element.points,
         )
 
@@ -211,7 +218,55 @@ class IfcEntityExporter:
         ifcopenshell.api.geometry.edit_object_placement(
             self.model, product=plate_element, matrix=matrix
         )
+        if self._use_opening_element:
+            for open_element in plane_element.opens:
+                self.create_entity_open_element(
+                    open_element,
+                    plate_element=plate_element,
+                    thickness=thickness,
+                )
         return plate_element
+
+    def create_entity_open_element(
+        self,
+        open_element: ElementOpen,
+        *,
+        plate_element: entity_instance,
+        thickness: float,
+    ) -> entity_instance:
+        opening: entity_instance = ifcopenshell.api.root.create_entity(
+            self.model,
+            ifc_class=EntityName.IFC_OPENING_ELEMENT.value,
+            name=open_element.name,
+        )
+        _set_guid(opening, open_element)
+        representation = self.representation_exporter.get_open_representation(
+            thickness=thickness,
+            points=open_element.points,
+        )
+        ifcopenshell.api.geometry.assign_representation(
+            self.model, product=opening, representation=representation
+        )
+        # edit_object_placementは丸め誤差が生じやすいため
+        # エンティティを直接作成する。
+        opening.ObjectPlacement = self.model.create_entity(
+            "IfcLocalPlacement",
+            PlacementRelTo=plate_element.ObjectPlacement,
+            RelativePlacement=self.model.create_entity(
+                "IfcAxis2Placement3D",
+                Location=self.model.create_entity(
+                    "IfcCartesianPoint", Coordinates=(0.0, 0.0, 0.0)
+                ),
+            ),
+        )
+        # 他の要素と同様、参照関係は直接作る。
+        self.model.create_entity(
+            EntityName.IFC_REL_VOIDS_ELEMENT.value,
+            GlobalId=to_ifc_guid(generate_uuid()),
+            RelatingBuildingElement=plate_element,
+            RelatedOpeningElement=opening,
+        )
+        return opening
 
     def create_entity_element_line(
         self,
@@ -359,7 +414,7 @@ class IfcEntityExporter:
         if ifc_building_storey.elevation is not None:
             building_storey.Elevation = ifc_building_storey.elevation
         n_element: int = len(ifc_building_storey.elements)
-        self.reporter.info(
+        self.reporter.debug(
             message=f"---要素のIFCエンティティ変換処理({n_element}件)---",
             code=Code.PROGRESS_INFO,
             phase=Phase.CONVERT_IFC,
@@ -374,13 +429,13 @@ class IfcEntityExporter:
             if e is not None:
                 elements.append(e)
             if i % batch_size == 0 or i == n_element:
-                self.reporter.info(
+                self.reporter.debug(
                     message=f"---要素のIFCエンティティ変換処理（{i}/{n_element}件）---",
                     code=Code.PROGRESS_INFO,
                     phase=Phase.CONVERT_IFC,
                 )
         n_element = len(elements)
-        self.reporter.info(
+        self.reporter.debug(
             message=f"---要素のIFCエンティティ配置処理({n_element}件)---",
             code=Code.PROGRESS_INFO,
             phase=Phase.CONVERT_IFC,
@@ -472,8 +527,9 @@ class IfcEntityExporter:
         reporter: Reporter,
         round_digits: int | None = None,
         round_digits_mm: int | None = None,
+        use_opening_element: bool = True,
     ) -> ifcopenshell.file:
-        reporter.info(
+        reporter.debug(
             "---IFCジオメトリデータ->IFC Entityデータ変換処理開始---",
             code=Code.PROGRESS_INFO,
             phase=Phase.CONVERT_IFC,
@@ -484,12 +540,13 @@ class IfcEntityExporter:
             reporter=reporter,
             round_digits=round_digits,
             round_digits_mm=round_digits_mm,
+            use_opening_element=use_opening_element,
         )
 
         if not ifc_model.project:
             raise AssertionError("projectが設定されていません")
         exporter.create_entity_project(ifc_model.project)
-        reporter.info(
+        reporter.debug(
             "---IFCジオメトリデータ->IFC Entityデータ変換処理終了---",
             code=Code.PROGRESS_INFO,
             phase=Phase.CONVERT_IFC,

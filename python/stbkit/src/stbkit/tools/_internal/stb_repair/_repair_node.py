@@ -9,7 +9,9 @@
 from typing import Protocol, runtime_checkable
 
 from stbkit.core.data_model.common import StBridgeElement
-from stbkit.core.stb_reporting import Code, Phase, Reporter
+from stbkit.core.stb_reporting import Code, Phase
+
+from ._common import RepairContext
 
 
 @runtime_checkable
@@ -22,7 +24,7 @@ class _NodeLike(Protocol):
     def id_member_or_none(self, value: str | None) -> None: ...
 
 
-def _repair_node(element: StBridgeElement, /, *, reporter: Reporter) -> None:
+def _repair_node(element: StBridgeElement, /, *, context: RepairContext) -> None:
     if (
         element._xml_name() == "StbNode"
         and isinstance(element, _NodeLike)
@@ -31,7 +33,7 @@ def _repair_node(element: StBridgeElement, /, *, reporter: Reporter) -> None:
     ):
         before_id_member = element.id_member_or_none
         element.id_member_or_none = None
-        reporter.warning(
+        context.reporter.warning(
             f"節点種類[{element.kind_or_none}]はid_memberが不要であるため、削除しました",
             code=Code.REPAIR_LOG,
             phase=Phase.REPAIR,

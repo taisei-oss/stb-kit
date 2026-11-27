@@ -34,6 +34,24 @@ STB-KITのバージョンについての考え方は[COMPATIBILITY](COMPATIBILIT
 
 - なし
 
+## [0.1.0b8]
+
+### Added
+
+- ST-BridgeからIFCへの変換で、壁・スラブの開口をIfcOpeningElement(IfcRelVoidsElement)として出力するように変更。
+
+### Changed
+
+- validateで、不正値の場合にnullであるというメッセージになっているのを、不正値であるというメッセージに変更
+- データモデルで新しく値を設定したら、診断用に保持している不正値を削除する仕様に変更
+- validateにboolean、GUIDの書式チェックを追加
+- IFC,PLY変換で、デッキスラブの板厚にトップコンクリート厚さを採用するように変更
+
+### Fixed
+
+- IFC変換時に、T型鋼の成とフランジ幅が逆になっていた不具合を修正
+- upgrade時に、壁開口のGUIDが重複する場合がある不具合を修正
+
 ## [0.1.0b7]
 
 ### Fixed

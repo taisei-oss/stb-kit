@@ -28,6 +28,7 @@ from typing import (
 from .._internal.name_converter import private_field_name, property_name
 from ..stb_exceptions import NoneAccessError, SchemaError
 from ._internal.stb_types import DataType
+from ._internal.type_validation import VALID_IN_XSD_TAG as _VALID_IN_XSD_TAG
 from ._internal.type_validation import any_to_typed_value as _any_to_typed_value
 from ._internal.type_validation import make_attribute_setter as _make_attribute_setter
 from ._internal.type_validation import str_to_typed_value as _str_to_typed_value
@@ -156,7 +157,7 @@ class _AutoModel(type):
                         old._attach_to_parent(None)
                     if isinstance(value, StBridgeElement):
                         value._attach_to_parent(self)
-                    setattr(self, p_name, value)
+                    self._set_attribute_for_setter(key_, value)
 
                 def setter_children(self: StBridgeElement, value: Any) -> None:
                     if not isinstance(value, Sequence) or isinstance(
@@ -182,11 +183,10 @@ class _AutoModel(type):
                     if isinstance(current, _StBridgeElementList):
                         current.clear()
                         current.extend(items)
+                        self._clear_invalid_value(key_)
                     else:
-                        setattr(
-                            self,
-                            p_name,
-                            _StBridgeElementList(parent=self, iterable=items),
+                        self._set_attribute_for_setter(
+                            key_, _StBridgeElementList(parent=self, iterable=items)
                         )
 
                 if f_info.kind == _FieldKind.ELEMENT:
@@ -233,7 +233,7 @@ class _AutoModel(type):
                         value = _StBridgeElementList(parent=self, iterable=value)
                 if isinstance(value, StBridgeElement):
                     value._attach_to_parent(self)
-                setattr(self, f"_{field_name}", value)
+                self._set_attribute(field_name, value)
 
         if "__init__" not in namespace:
             namespace["__init__"] = __init__
@@ -249,6 +249,8 @@ class _InvalidValue:
     value: Any
     path: str
     reason: str
+    key: str
+    is_xsd_invalid: bool = True
 
 
 class _ExtensionData:
@@ -528,6 +530,29 @@ class StBridgeElement(metaclass=_AutoModel):
         field_str = ", ".join(field_strs)
         return f"{self.__class__.__name__}({field_str})"
 
+    def _clear_invalid_value(self, key: str) -> None:
+        if self._extension is not None and self._extension._invalid_values is not None:
+            self._extension._invalid_values = [
+                invalid_value
+                for invalid_value in self._extension._invalid_values
+                if invalid_value.key != key
+            ]
+
+    def _set_attribute(self, key: str, value: object) -> None:
+        """属性を設定する。
+        プロパティ経由ではなく、フィールドへ直接設定する。
+        """
+        setattr(self, private_field_name(key), value)
+
+    def _set_attribute_for_setter(self, key: str, value: object) -> None:
+        """属性を設定する。(セッター用)
+
+        チェック等は行わず設定するため、事前にバリデーションなどが完了した後に呼び出す。
+        不整値がある場合は削除する。
+        """
+        self._set_attribute(key, value)
+        self._clear_invalid_value(key)
+
     def _set_attribute_check(self, key: str, value: Any) -> tuple[str, DataType] | None:
         fi: _FieldInfo | None = self._fields.get(key)
         if fi is None:
@@ -541,9 +566,8 @@ class StBridgeElement(metaclass=_AutoModel):
             raise RuntimeError(
                 f"{self.__class__.__name__}.{key}のdata_typeが指定されていません"
             )
-        p_name: str = private_field_name(key)
         if value is None:
-            setattr(self, p_name, None)
+            self._set_attribute(key, None)
             return None
         if value == "":
             self._ensure_extension._set_invalid_value(
@@ -552,17 +576,48 @@ class StBridgeElement(metaclass=_AutoModel):
                     value=value,
                     path=self._path_xml(attr_name=key),
                     reason="属性に空の値が指定されています",
+                    key=key,
                 )
             )
-            setattr(self, p_name, None)
+            self._set_attribute(key, None)
             return None
         return key, fi.data_type
 
-    def _set_attribute_by_any(self, key: str, value: Any) -> None:
+    def _set_invalid_attribute(
+        self,
+        key: str,
+        value: Any,
+        reason: str,
+        set_value: Any = None,
+        is_xsd_invalid: bool = True,
+    ) -> _InvalidValue:
+        """不整値を記録し、属性を設定する。
+
+        Args:
+            key: 属性名。
+            value: 元の値。
+            reason: 不整値の理由。
+            set_value: 属性に設定する値。省略した場合はNone。
+            is_xsd_invalid: XSDでも不整値と扱われるかどうか。
+        """
+        invalid = _InvalidValue(
+            kind=_FieldKind.ATTRIBUTE,
+            value=value,
+            path=self._path_xml(attr_name=key),
+            reason=reason,
+            key=key,
+            is_xsd_invalid=is_xsd_invalid,
+        )
+        self._ensure_extension._set_invalid_value(invalid)
+        self._set_attribute(key, set_value)
+        return invalid
+
+    def _set_attribute_by_any(self, key: str, value: Any) -> _InvalidValue | None:
+        """属性を設定する(LOAD用)"""
         fi: _FieldInfo | None = self._fields.get(key)
         if fi is None:
             self._ensure_extension._set_attribute(key, value)
-            return
+            return None
         if fi.kind == _FieldKind.ELEMENT:
             raise TypeError(
                 f"{self._name_for_log(key)}は子要素なので属性を設定できません"
@@ -571,44 +626,38 @@ class StBridgeElement(metaclass=_AutoModel):
             raise RuntimeError(
                 f"{self.__class__.__name__}.{key}のdata_typeが指定されていません"
             )
-        p_name: str = private_field_name(key)
         if value is None:
-            setattr(self, p_name, None)
-            return
+            self._set_attribute(key, None)
+            return None
         if value == "":
-            self._ensure_extension._set_invalid_value(
-                _InvalidValue(
-                    kind=_FieldKind.ATTRIBUTE,
-                    value=value,
-                    path=self._path_xml(attr_name=key),
-                    reason="属性に空の値が指定されています",
-                )
+            return self._set_invalid_attribute(
+                key, value, "属性に空の値が指定されています"
             )
-            setattr(self, p_name, None)
-            return
         try:
-            typed_value: Any = _any_to_typed_value(
+            typed_value, err_msg = _any_to_typed_value(
                 value, fi.data_type, element=self, attr_name=key
             )
-            setattr(self, p_name, typed_value)
-        except SchemaError as e:
-            self._ensure_extension._set_invalid_value(
-                _InvalidValue(
-                    kind=_FieldKind.ATTRIBUTE,
-                    value=value,
-                    path=self._path_xml(attr_name=key),
-                    reason=str(e),
+            if err_msg:
+                is_xsd_invalid: bool = True
+                if _VALID_IN_XSD_TAG in err_msg:
+                    is_xsd_invalid = False
+                    err_msg = err_msg.replace(_VALID_IN_XSD_TAG, "")
+                return self._set_invalid_attribute(
+                    key, value, err_msg, typed_value, is_xsd_invalid=is_xsd_invalid
                 )
-            )
-            setattr(self, p_name, None)
+            self._set_attribute(key, typed_value)
+        except SchemaError as e:
+            return self._set_invalid_attribute(key, value, e.message)
+        return None
 
     def _set_attribute_by_str(
         self, key: str, value: str | None, raw_attr_name: str
-    ) -> None:
+    ) -> _InvalidValue | None:
+        """属性を設定する(LOAD用)"""
         fi: _FieldInfo | None = self._fields.get(key)
         if fi is None:
             self._ensure_extension._set_attribute(raw_attr_name, value)
-            return
+            return None
         if fi.kind == _FieldKind.ELEMENT:
             raise TypeError(
                 f"{self._name_for_log(key)}は子要素なので属性を設定できません"
@@ -617,36 +666,29 @@ class StBridgeElement(metaclass=_AutoModel):
             raise RuntimeError(
                 f"{self.__class__.__name__}.{key}のdata_typeが指定されていません"
             )
-        p_name: str = private_field_name(key)
         if value is None:
-            setattr(self, p_name, None)
-            return
+            self._set_attribute(key, None)
+            return None
         if value == "":
-            self._ensure_extension._set_invalid_value(
-                _InvalidValue(
-                    kind=_FieldKind.ATTRIBUTE,
-                    value=value,
-                    path=self._path_xml(attr_name=key),
-                    reason="属性に空の値が指定されています",
-                )
+            return self._set_invalid_attribute(
+                key, value, "属性に空の値が指定されています"
             )
-            setattr(self, p_name, None)
-            return
         try:
-            typed_value: Any = _str_to_typed_value(
+            typed_value, err_msg = _str_to_typed_value(
                 value, fi.data_type, element=self, attr_name=key
             )
-            setattr(self, p_name, typed_value)
-        except SchemaError as e:
-            self._ensure_extension._set_invalid_value(
-                _InvalidValue(
-                    kind=_FieldKind.ATTRIBUTE,
-                    value=value,
-                    path=self._path_xml(attr_name=key),
-                    reason=str(e),
+            if err_msg:
+                is_xsd_invalid: bool = True
+                if _VALID_IN_XSD_TAG in err_msg:
+                    is_xsd_invalid = False
+                    err_msg = err_msg.replace(_VALID_IN_XSD_TAG, "")
+                return self._set_invalid_attribute(
+                    key, value, err_msg, typed_value, is_xsd_invalid=is_xsd_invalid
                 )
-            )
-            setattr(self, p_name, None)
+            self._set_attribute(key, typed_value)
+        except SchemaError as e:
+            return self._set_invalid_attribute(key, value, e.message)
+        return None
 
     def _field_info(self, attr_name: str) -> _FieldInfo:
         try:

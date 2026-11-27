@@ -173,6 +173,33 @@ class IfcRepresentationExporter:
         )
         return representation
 
+    def get_open_representation(
+        self,
+        thickness: float,
+        points: list[Vector2d],
+    ) -> entity_instance:
+        if len(points) < 3:
+            raise AssertionError("開口の頂点数が足りません")
+        round_digits_m = (
+            None if self._round_digits_mm is None else self._round_digits_mm + 3
+        )
+        shape: ShapeArbitrary = ShapeArbitrary()
+        shape.out_points.extend(
+            round_vector2d(point, round_digits=self._round_digits_mm)
+            for point in points
+        )
+        profile = self.profile_exporter.get_profile(shape)
+        representation = ifcopenshell.api.geometry.add_profile_representation(
+            self.model,
+            context=self.body,
+            profile=profile,
+            depth=round_float(
+                mm_to_m(thickness),
+                round_digits=round_digits_m,
+            ),
+        )
+        return representation
+
     def get_unknown_plate_representation(
         self, points: list[Vector3d]
     ) -> entity_instance:

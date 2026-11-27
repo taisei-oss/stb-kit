@@ -4,6 +4,9 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+from uuid import UUID
+
+import pytest
 from stbkit.core.data_model.stb_v2_0_2 import (
     VERSION,
     StbCommon,
@@ -22,7 +25,10 @@ from stbkit.core.stb_reporting import CollectingReporter, Severity
 from stbkit.api import stb_latest, upgrade_to_latest
 
 
-def test_upgrade_shared_open() -> None:
+@pytest.mark.parametrize(
+    "open_guid", [UUID("11111111-2222-3333-4444-555555555555"), None]
+)
+def test_upgrade_shared_open(open_guid: UUID | None) -> None:
     """1つのStbOpenを3枚の壁が参照する場合、壁ごとに開口配置が作られる。"""
     stb: StBridge = StBridge(
         version=VERSION,
@@ -63,6 +69,7 @@ def test_upgrade_shared_open() -> None:
                     stb_open=[
                         StbOpen(
                             id=1,
+                            guid=open_guid,
                             position_x=100.0,
                             position_y=200.0,
                             length_x=300.0,
@@ -86,6 +93,18 @@ def test_upgrade_shared_open() -> None:
     # 壁ごとに別インスタンス・別IDでなければ、後から設定した部材で上書きされる
     assert len({id(placement) for placement in arrs}) == 3
     assert len({placement.id for placement in arrs}) == 3
+    guids = [placement.guid_or_none for placement in arrs]
+    assert guids[0] == open_guid
+    if open_guid is None:
+        assert guids == [None, None, None]
+    else:
+        assert all(guid is not None for guid in guids)
+        assert len(set(guids)) == 3
+        # guidが決定的に生成されることの確認
+        upgraded_again = upgrade_to_latest(stb, reporter=CollectingReporter())
+        arrangements_again = upgraded_again.stb_model.stb_members.stb_open_arrangements
+        arrs_again = arrangements_again.stb_open_arrangement
+        assert [placement.guid_or_none for placement in arrs_again] == guids
     # 形状は同じなので、断面は3枚で共有する
     assert len({placement.id_section for placement in arrs}) == 1
 

@@ -24,10 +24,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v10.0.1
-        with:
-          enable-cache: true
-          cache-dependency-glob: uv.lock
+      - uses: ./.github/actions/setup-uv
       - run: uv sync --locked
       - run: uv run ruff check .
       - run: uv run ruff format --check .
@@ -40,13 +37,9 @@ jobs:
         python-version: ["3.14", "3.13", "3.12"]
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
+      - uses: ./.github/actions/setup-uv
         with:
           python-version: ${{ matrix.python-version }}
-      - uses: astral-sh/setup-uv@v10.0.1
-        with:
-          enable-cache: true
-          cache-dependency-glob: uv.lock
       - run: uv sync --locked --python "${{ matrix.python-version }}"
       - run: uv run --python "${{ matrix.python-version }}" --no-sync pytest
   python-test-linux-no-ifc:
@@ -58,13 +51,9 @@ jobs:
         python-version: ["3.15"]
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
+      - uses: ./.github/actions/setup-uv
         with:
           python-version: ${{ matrix.python-version }}
-      - uses: astral-sh/setup-uv@v10.0.1
-        with:
-          enable-cache: true
-          cache-dependency-glob: uv.lock
           cache-suffix: py-3.15
       - run: uv sync --locked --python "${{ matrix.python-version }}" --no-install-package ifcopenshell
       - run: uv run --python "${{ matrix.python-version }}" --no-sync pytest -m "not requires_ifcopenshell"
@@ -72,8 +61,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v10.0.1
-        with:
-          enable-cache: true
-          cache-dependency-glob: uv.lock
+      - uses: ./.github/actions/setup-uv
       - run: uv run --locked --only-group docs scripts/docs.py build --include-generated-api

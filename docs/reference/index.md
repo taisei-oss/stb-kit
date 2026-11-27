@@ -1,6 +1,6 @@
 # リファレンス
 
-- Python APIリファレンス（ドキュメントサイト公開後に掲載予定）
+- [Python APIリファレンス](../_generated/reference/python/index.md)
 - [環境変数の設定](environment-settings.md)
 - [対応バージョン・形式](versions-formats.md)
 

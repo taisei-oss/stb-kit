@@ -1,1 +1,1 @@
-ERROR extension_error load /ST_BRIDGE/StbCommon/ErrorChild[1] 要素[StbCommon]の不明な拡張要素[ErrorChild]を削除しました
+ERROR schema_error validate /ST_BRIDGE/StbCommon/ErrorChild[1] 要素[StbCommon]に拡張定義されていない拡張子要素[ErrorChild]があります。 (value: ErrorChild)

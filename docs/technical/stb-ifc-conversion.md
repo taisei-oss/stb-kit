@@ -64,13 +64,14 @@ IFCでは通り心は端点を定義する必要があるため、節点のXY座
 | StbFooting | IfcFooting |
 | StbPile | IfcPile |
 
-StbOpenArrangementは現状では独立したIFC部材にはせず、StbWallまたはStbSlabに対応するIfcWall, IfcSlabに形状のみ反映しています。
+既定では、StbOpenArrangementはIfcOpeningElementとし、StbWallまたはStbSlabに対応するIfcWall, IfcSlabにIfcRelVoidsElementで紐づけます。
+StbOpenArrangementのguidはIfcOpeningElementのGlobalIdに対応させます。
 
 SRC,CFTについては、親をIfcElementAssemblyとし、子部材をIfcRelAggregatesで関連付けます。
 そのため、guidの対応はIfcColumnなどではなく、IfcElementAssemblyが対応します。
 guidは一意である必要があることから、IfcColumnなどの子部材のGlobalIdは新規生成します。
 
-PythonAPIから利用する場合は、SRCとCFTの出力形式を指定できます。`ConvertOptionStbToIfc`の`src_output_mode`と`cft_output_mode`で指定します。`RC_ONLY`ではコンクリート形状のみ、`STEEL_ONLY`では鉄骨形状のみを単一剤として出力し、そのGlobalIdにST-Bridgeのguidを対応させます。`RC_AND_STEEL`は上記の既定の挙動です。
+PythonAPIから利用する場合は、SRCとCFTの出力形式を指定できます。`ConvertOptionStbToIfc`の`src_output_mode`と`cft_output_mode`で指定します。`RC_ONLY`ではコンクリート形状のみ、`STEEL_ONLY`では鉄骨形状のみを単一部材として出力し、そのGlobalIdにST-Bridgeのguidを対応させます。`RC_AND_STEEL`は上記の既定の挙動です。
 
 下記要素は変換非対応のため、IFCのエンティティが作られません。
 
@@ -142,7 +143,7 @@ StbSecUndefined, StbSecSteelUndefinedおよび断面が不明な場合は10×10m
 
 - 板材は板厚方向への押し出し形状(SweptSolid)とします
 - profileは任意形状(Arbitrary)を利用します
-- 開口形状はprofileに含めます。
+- 既定では開口形状はprofileに含めず、IfcOpeningElementとして出力します。
 - 現状では開口の回転には対応していません
 
 #### 板厚の設定
@@ -150,8 +151,9 @@ StbSecUndefined, StbSecSteelUndefinedおよび断面が不明な場合は10×10m
 - StbSecSlab_RC_ConventionalStraight, StbSecWall_RC_Straightは通常の板厚を取得します
 - テーパー形状は対応していないため、10mmの仮定板厚になります。
 - StbSecSlabPrecast, StbSecProductSlabPrecastはST-Bridgeから板厚を取得できないため、10mmの仮定板厚になります。
+- デッキスラブ（`StbSecSlabDeck`）は、`StbSecSlabDeckProduct`の`top_concrete`を板厚として使用します。デッキ高さを含む全厚ではなく、トップコンクリート厚さを用います。デッキスラブは同等品として複数の製品をもてるため、その場合は最初のものを使用し、その旨を情報メッセージとして出力します。実装で厚さを取得できなかった場合は警告を出し、10mmの仮定板厚で代替します。
 
-## 多段面で断面切り替え位置が取得できなかった場合
+## 多断面で断面切り替え位置が取得できなかった場合
 
 ST-Bridgeで、断面の切り替え位置の数と断面数がうまく取得できずに整合しなかった場合、警告を出したうえで断面切り替え位置を部材長を等分割した位置に置き換えます。
 
@@ -161,6 +163,8 @@ ST-Bridgeで、断面の切り替え位置の数と断面数がうまく取得�
 - guidがなければ新規guidを生成します
 - IfcRelAggregatesやIfcRelContainedInSpatialStructureも新規guidとなります
 - SRCとCFTはIfcElementAssemblyに要素のguidが振られるため、子要素のIfcColumn等は新規guidとなります。
+- IFC変換は、ST-Bridgeを最新版に変換してからIFCへ変換します。
+  v2.0.2からv2.1.0の変換の際に、1つの要素が複数の要素になる場合があり（StbOpen→StbOpenArrangementが該当）、この時2つ目以降の要素は新規のGUIDが付与されるため、IFC側から元の要素との対応がわからなくなる場合があります。
 
 ## 単位
 

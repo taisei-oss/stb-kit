@@ -33,20 +33,75 @@ class FieldValidator(BaseValidator):
     """field_infoによるチェック"""
 
     def validate(self, ctx: ValidationContext) -> bool:
-        return FieldValidator.validate_element(obj=ctx.obj(), reporter=ctx.reporter)
+        return FieldValidator.validate_element(
+            obj=ctx.obj(),
+            reporter=ctx.reporter,
+            _report_invalid_values=ctx._report_invalid_values,
+            use_xsd=ctx._use_xsd,
+        )
 
     @staticmethod
-    def validate_element(obj: StBridgeElement, reporter: Reporter) -> bool:
+    def validate_element(
+        obj: StBridgeElement,
+        reporter: Reporter,
+        *,
+        _report_invalid_values: bool = False,
+        use_xsd: bool = False,
+    ) -> bool:
         is_valid = True
+        # invalid_valueチェック
+        if _report_invalid_values:
+            ext = obj._extension
+            if ext is not None and ext._invalid_values is not None:
+                for invalid_value in ext._invalid_values:
+                    if invalid_value.is_xsd_invalid and use_xsd:
+                        continue
+                    reporter.error(
+                        message=invalid_value.reason,
+                        code=Code.SCHEMA_ERROR,
+                        phase=Phase.VALIDATE,
+                        xpath=invalid_value.path,
+                        value=invalid_value.value,
+                        stb_element=obj,
+                    )
+                    is_valid = False
         for field_name, field_info in obj._fields.items():
             p_field_name = private_field_name(field_name)
             value: Any = getattr(obj, p_field_name)
+            if use_xsd:
+                if field_info.kind == _FieldKind.ELEMENT:
+                    if isinstance(value, StBridgeElement):
+                        children = [value]
+                    elif isinstance(value, list):
+                        children = value
+                    else:
+                        continue
+                    for child in children:
+                        if isinstance(child, StBridgeElement):
+                            is_valid &= FieldValidator.validate_element(
+                                child,
+                                reporter,
+                                _report_invalid_values=_report_invalid_values,
+                                use_xsd=True,
+                            )
+                continue
             match field_info.kind:
                 case _FieldKind.ATTRIBUTE:
                     if value is None:
                         if field_info.required:
+                            msg = f"必須属性[{obj._xml_name(field_name)}]がnullです"
+                            if (
+                                obj._extension is not None
+                                and obj._extension._invalid_values is not None
+                                and any(
+                                    invalid_value.kind == _FieldKind.ATTRIBUTE
+                                    and invalid_value.key == field_name
+                                    for invalid_value in obj._extension._invalid_values
+                                )
+                            ):
+                                msg = f"不整値を退避したため、{msg}"
                             reporter.warning(
-                                message=f"必須属性[{obj._xml_name(field_name)}]がnullです",
+                                message=msg,
                                 code=Code.SCHEMA_ERROR,
                                 phase=Phase.VALIDATE,
                                 stb_element=obj,
@@ -91,7 +146,11 @@ class FieldValidator(BaseValidator):
                             )
                             is_valid = False
                         if isinstance(value, StBridgeElement):
-                            is_valid &= FieldValidator.validate_element(value, reporter)
+                            is_valid &= FieldValidator.validate_element(
+                                value,
+                                reporter,
+                                _report_invalid_values=_report_invalid_values,
+                            )
                     else:
                         if not isinstance(value, list):
                             raise AssertionError(
@@ -129,7 +188,9 @@ class FieldValidator(BaseValidator):
                             for item in value:
                                 if isinstance(item, StBridgeElement):
                                     is_valid &= FieldValidator.validate_element(
-                                        item, reporter
+                                        item,
+                                        reporter,
+                                        _report_invalid_values=_report_invalid_values,
                                     )
                                 else:
                                     raise TypeError(
@@ -377,7 +438,6 @@ class SchemaValidator(CompositeValidator):
         exclude_legal_extensions: bool = False,
     ) -> None:
         validators: list[BaseValidator] = []
-        # XSDチェックとかぶるバリデーター
         if _uses_xsd(xsd_path=xsd_path, require_xsd=require_xsd):
             validators.append(
                 XsdSchemaValidator(
@@ -386,9 +446,7 @@ class SchemaValidator(CompositeValidator):
                     exclude_legal_extensions=exclude_legal_extensions,
                 )
             )
-        else:
-            validators.append(FieldValidator())
-        # XSDチェックとかぶらないバリデーター
+        validators.append(FieldValidator())
         validators.append(EmptyValueValidator())
         validators.append(ReferenceValidator())
         super().__init__(validators)

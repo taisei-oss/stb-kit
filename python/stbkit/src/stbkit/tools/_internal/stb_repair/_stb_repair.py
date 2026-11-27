@@ -21,6 +21,7 @@ from . import _stb_v2_0_2_repair, _stb_v2_1_0_repair, _stb_v2_1_1_repair
 from ._common import Defaults, ElementRepairHook, RepairContext
 from ._repair_bar_arrangement import _repair_stb_sec_beam_rc
 from ._repair_node import _repair_node
+from ._repair_unknown_section import repair_unknown_section
 
 
 def _repair_required_length(
@@ -40,7 +41,7 @@ def _repair_required_length(
                     stb_element=element,
                     attr_name=key,
                 )
-                setattr(element, p_name, context.defaults.default_length)
+                element._set_attribute_for_setter(key, context.defaults.default_length)
         elif field_info.required and field_info.data_type == DataType.FLOAT:
             value = getattr(element, p_name)
             if value is None:
@@ -53,7 +54,7 @@ def _repair_required_length(
                     stb_element=element,
                     attr_name=key,
                 )
-                setattr(element, p_name, context.defaults.default_float)
+                element._set_attribute_for_setter(key, context.defaults.default_float)
         if field_info.kind == _FieldKind.ELEMENT:
             child = getattr(element, p_name)
             if isinstance(child, StBridgeElement):
@@ -101,7 +102,7 @@ def _fill_required_attributes(
             stb_element=element,
             attr_name=key,
         )
-        setattr(element, p_name, default_value)
+        element._set_attribute_for_setter(key, default_value)
 
 
 def _instantiate_child(
@@ -136,7 +137,7 @@ def _repair_occurs(element: StBridgeElement, *, context: RepairContext) -> None:
                         phase=Phase.REPAIR,
                         stb_element=element,
                     )
-                    setattr(element, key, new_child)
+                    element._set_attribute_for_setter(key, new_child)
                     value = new_child
             if isinstance(value, StBridgeElement):
                 _repair_occurs(value, context=context)
@@ -152,6 +153,7 @@ def _repair_occurs(element: StBridgeElement, *, context: RepairContext) -> None:
                     phase=Phase.REPAIR,
                     stb_element=element,
                 )
+                element._clear_invalid_value(key)
             if field_info.min_occurs is not None and len(value) < field_info.min_occurs:
                 while len(value) < field_info.min_occurs:
                     new_child = _instantiate_child(field_info, context=context)
@@ -167,12 +169,17 @@ def _repair_occurs(element: StBridgeElement, *, context: RepairContext) -> None:
                     phase=Phase.REPAIR,
                     stb_element=element,
                 )
+                element._clear_invalid_value(key)
             for item in value:
                 if isinstance(item, StBridgeElement):
                     _repair_occurs(item, context=context)
 
 
-_ELEMENT_HOOKS: tuple[ElementRepairHook, ...] = (_repair_node, _repair_stb_sec_beam_rc)
+_ELEMENT_HOOKS: tuple[ElementRepairHook, ...] = (
+    _repair_node,
+    _repair_stb_sec_beam_rc,
+    repair_unknown_section,
+)
 
 
 def repair_stb(
@@ -187,12 +194,14 @@ def repair_stb(
     defaults: Defaults = Defaults(
         steel_strength=default_steel_strength, default_length=default_length
     )
-    context: RepairContext = RepairContext(defaults=defaults, reporter=reporter)
+    context: RepairContext = RepairContext(
+        stb=stb, defaults=defaults, reporter=reporter
+    )
     _repair_occurs(stb, context=context)
     _repair_required_length(stb, context=context)
     for element in stb.iter_descendants():
         for hook in _ELEMENT_HOOKS:
-            hook(element, reporter=reporter)
+            hook(element, context=context)
     from stbkit.core.data_model import stb_v2_0_2, stb_v2_1_0, stb_v2_1_1
 
     match stb:

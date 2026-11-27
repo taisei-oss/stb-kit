@@ -26,7 +26,6 @@ from ...stb_exceptions import (
 from ...stb_reporting import Code, CollectingReporter, Phase, Reporter, get_reporter
 from ...stb_typing import StbVersion, TextSource
 from ...validation import validate_schema
-from ...validation._internal.validator import _validate
 from . import loader, serializer, stream_reader
 
 if TYPE_CHECKING:
@@ -86,7 +85,11 @@ def dumps(
     ext_repo.repair_stb(stb, reporter=reporter, phase=Phase.DUMP)
     schema_reporter: CollectingReporter = CollectingReporter()
     if not validate_schema(
-        stb, reporter=schema_reporter, xsd_path=None, require_xsd=False
+        stb,
+        reporter=schema_reporter,
+        xsd_path=None,
+        require_xsd=False,
+        _report_invalid_values=False,
     ):
         raise SchemaError(
             "スキーマ違反のため出力できません\n" + schema_reporter.report.to_text()
@@ -474,11 +477,11 @@ def _finish_load(
             value=stb.version,
             ref_value=expected_version,
         )
-    if check_schema:
-        _validate(reporter=reporter, stb=stb)
     ext_repo: ExtensionInfoRepository = ExtensionInfoRepository()
     ext_repo.register(stb, reporter=reporter, phase=Phase.LOAD)
-    ext_repo.repair_stb(stb, reporter=reporter, phase=Phase.LOAD)
+    ext_repo.repair_stb(stb, reporter=reporter, phase=Phase.LOAD, report_invalid=False)
+    if check_schema:
+        validate_schema(reporter=reporter, stb=stb, _report_invalid_values=True)
     return stb
 
 
@@ -486,7 +489,7 @@ def _raw_loads(s: str, *, reporter: Reporter) -> StBridgeRoot:
     """バリデーションのためにXML文字列をデータモデルへ読み込む。
 
     読み込み時のスキーマチェックは呼び出し元のvalidatorが行うため、ここでは実行しない。
-    退避した不正値や拡張情報はreporterへ記録する。
+    退避した不正値は呼び出し元のvalidatorでチェックするため、ここでは記録しない。
     """
     return _finish_load(
         stream_reader.read_stream((s,), reporter=reporter),

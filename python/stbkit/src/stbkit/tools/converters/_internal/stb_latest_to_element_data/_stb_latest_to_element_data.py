@@ -74,7 +74,7 @@ def stb_to_element_data(
     include_cft_steel: bool = True,
     story_mode: StoryMode = StoryMode.UNDEFINED,
 ) -> ElementData:
-    reporter.info(
+    reporter.debug(
         "---ST-Bridge->ジオメトリデータ変換処理開始---",
         code=Code.PROGRESS_INFO,
         phase=Phase.CONVERT_GEOMETRY,

@@ -460,6 +460,26 @@ hasattrは内部でAttributeErrorだけをキャッチしてFalseを返す仕様
 そのため、NonAccessErrorにAttributeErrorを継承させることで、値がNoneのときは、hasattrがFalseを返す（＝アクセスできないことがわかる） という、実用的な挙動になります。
 プロパティが存在するのにhasattrでFalseが返るので、厳密には正しい挙動ではないですが実用性を重視しました。
 
+##### AttributeError継承の副作用
+
+値を取得する場合は上記の挙動で扱いやすいですが、値を設定する場合に上記の挙動が問題になることがわかっています。
+
+要素の型が不明で基底クラスに属性を設定したい場合、下記のように書く場合があります。
+
+~~~python
+element = StBridgeElement()
+# そのまま代入しようとするとmypyの警告が出る
+# また、StBridgeElementはslotsを利用しているため、対応していない属性は設定できない。
+element.id = 1
+
+# 属性があるかを確認してから代入する
+if hasattr(element, "id"):
+    element.id = 1
+~~~
+
+しかし、idに値が入っている場合は上記の挙動で問題ありませんが、値がNoneの場合はhasattrがFalseのため、代入が行われません。
+プロパティが存在するのにhasattrがFalseを返すことの副作用です。
+
 #### 値の動的型チェック
 
 プロパティ化したことで、代入時のバリデーションもかけられるようになります。

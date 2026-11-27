@@ -1,0 +1,25 @@
+# Copyright 2026 TAISEI CORPORATION
+# SPDX-License-Identifier: MPL-2.0
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+name: Setup uv
+inputs:
+  python-version:
+    required: false
+    default: "3.14"
+  cache-suffix:
+    required: false
+    default: ""
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v7
+      with:
+        python-version: ${{ inputs.python-version }}
+    - uses: astral-sh/setup-uv@v10.0.1
+      with:
+        enable-cache: true
+        cache-dependency-glob: uv.lock
+        cache-suffix: ${{ inputs.cache-suffix }}

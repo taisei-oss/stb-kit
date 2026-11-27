@@ -104,6 +104,7 @@ class IfcModelToIfcDataStep(_ExecutableStep[IfcIntermediateData, IfcData]):
             reporter=reporter,
             round_digits=context.ifc_round_digits,
             round_digits_mm=context.ifc_round_digits_mm,
+            use_opening_element=context.ifc_option.use_opening_element,
         )
         return _ExecutionResult(output=IfcData(ifc_file))
 

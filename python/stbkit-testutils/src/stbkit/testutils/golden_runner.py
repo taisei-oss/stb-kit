@@ -11,7 +11,7 @@ from typing import Final
 
 import pytest
 from stbkit.core.stb_io._internal.loader import _detect_encoding
-from stbkit.core.stb_reporting import CollectingReporter
+from stbkit.core.stb_reporting import CollectingReporter, Severity
 from stbkit.core.validation import validate_schema
 from stbkit.tools.converters._internal.pipeline.data import (
     _DataFormat,
@@ -59,10 +59,14 @@ def _normalize_ifc_time_offset(text: str) -> str:
 
 
 def _get_reporter_log_text(reporter: CollectingReporter) -> str | None:
-    if reporter.is_valid():
+    if reporter.is_valid(min_level=Severity.INFO):
         return None
     return reporter.report.to_text(
-        has_timestamp=False, has_code=True, has_phase=True, has_path=True
+        has_timestamp=False,
+        has_code=True,
+        has_phase=True,
+        has_path=True,
+        show_level=Severity.INFO,
     )
 
 
@@ -203,7 +207,11 @@ def run_schema_check_spec(
     reporter: CollectingReporter = CollectingReporter()
     xml: str = spec.source_path.read_text(encoding=_detect_encoding(spec.source_path))
     validate_schema(
-        xml, reporter=reporter, require_xsd=use_xsd, exclude_legal_extensions=True
+        xml,
+        reporter=reporter,
+        require_xsd=use_xsd,
+        exclude_legal_extensions=True,
+        _report_invalid_values=True,
     )
     verify_or_create_log_golden(
         actual_log=_get_reporter_log_text(reporter),
